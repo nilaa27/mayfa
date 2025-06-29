@@ -28,6 +28,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
         } 
         
         /* MODERN LOGIN STYLES */
@@ -92,6 +93,7 @@
             border: 2px solid rgba(255,255,255,0.25);
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             animation: float 4s ease-in-out infinite;
+            position: relative;
         }
         
         @keyframes float {
@@ -101,8 +103,43 @@
         
         .login-icon i {
             font-size: 48px;
-            color: white;
-            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+            color: #ffd166;
+            text-shadow: 0 0 15px rgba(255, 209, 102, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Lilin dan Api */
+        .candle {
+            position: absolute;
+            top: -10px;
+            width: 8px;
+            height: 15px;
+            background: linear-gradient(to bottom, #fff, #ffd166);
+            border-radius: 4px 4px 0 0;
+            z-index: 1;
+        }
+        
+        .flame {
+            position: absolute;
+            top: -22px;
+            width: 12px;
+            height: 20px;
+            background: linear-gradient(to bottom, #ffd166, #ff6b6b);
+            border-radius: 50% 50% 20% 20%;
+            animation: flicker 1.5s infinite alternate;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+        }
+        
+        @keyframes flicker {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
         }
         
         .login-box h1 { 
@@ -417,34 +454,91 @@
             z-index: 1; 
         } 
         
-        .balloon { 
-            position: absolute; 
-            bottom: -200px; 
-            border-radius: 50%; 
-            opacity: 0.7; 
-            z-index: 5; 
-            animation: floatBalloon 15s linear forwards; 
-            transform: translateZ(0); 
-        } 
+        /* Modern Balloon Styles */
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            z-index: 1;
+            animation: floatBalloon linear forwards;
+            transform: translateZ(0);
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+        }
         
-        @keyframes floatBalloon { 
-            0% { 
-                transform: translateY(0) translateX(0) rotate(0deg); 
-            } 
-            25% { 
-                transform: translateY(-30vh) translateX(10vw) rotate(15deg); 
-            } 
-            50% { 
-                transform: translateY(-60vh) translateX(-10vw) rotate(-15deg); 
-            } 
-            75% { 
-                transform: translateY(-90vh) translateX(5vw) rotate(10deg); 
-            } 
-            100% { 
-                transform: translateY(-130vh) translateX(-5vw) rotate(-10deg); 
-                opacity: 0; 
-            } 
-        } 
+        .balloon-body {
+            position: relative;
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), var(--color) 70%);
+        }
+        
+        .balloon-highlight {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 15%;
+            height: 15%;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+        }
+        
+        .balloon-string {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 30px;
+            width: 2px;
+            background: rgba(255,255,255,0.8);
+        }
+        
+        .balloon-knot {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+        }
+        
+        @keyframes floatBalloon {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translateY(-30vh) translateX(5vw) rotate(5deg);
+            }
+            50% {
+                transform: translateY(-60vh) translateX(-5vw) rotate(-5deg);
+            }
+            75% {
+                transform: translateY(-90vh) translateX(3vw) rotate(3deg);
+            }
+            100% {
+                transform: translateY(-130vh) translateX(-3vw) rotate(-3deg);
+                opacity: 0;
+            }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--color);
+            border-radius: 50%;
+            animation: fall linear forwards;
+            z-index: 0;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
         
         .feedback-modal, 
         .gift-modal { 
@@ -588,6 +682,27 @@
             .login-box { padding: 25px; }
             .login-box h1 { font-size: 28px; }
             .gift-card { padding: 20px; }
+            
+            .login-icon {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .login-icon i {
+                font-size: 36px;
+            }
+            
+            .candle {
+                top: -8px;
+                width: 6px;
+                height: 12px;
+            }
+            
+            .flame {
+                top: -18px;
+                width: 10px;
+                height: 16px;
+            }
         }
     </style>
 </head>
@@ -598,7 +713,9 @@
             <div class="glow-effect"></div>
             <div class="login-header">
                 <div class="login-icon">
-                    <i class="fas fa-lock-open"></i>
+                    <i class="fas fa-birthday-cake"></i>
+                    <div class="candle"></div>
+                    <div class="flame"></div>
                 </div>
                 <h1>Login Kejutan</h1>
             </div>
@@ -681,10 +798,12 @@
     </div>
     
     <script>
+        // Mengambil data dari localStorage yang diatur oleh admin
         const GUEST_USER = localStorage.getItem("guestUser") || "user";
         const GUEST_PASS = localStorage.getItem("guestPass") || "user";
         const BIRTHDAY_NAME = localStorage.getItem("birthdayName") || "Mayfa";
         const BIRTH_DATE = localStorage.getItem("birthDate") || "2005-09-28";
+        const QR_IMAGE_URL = localStorage.getItem("qrImageUrl") || "";
         
         const loginContainer = document.getElementById("loginContainer");
         const loginBox = document.getElementById("loginBox");
@@ -822,25 +941,122 @@
         }
         
         function createBalloons(count) {
+            const colors = [
+                '#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', 
+                '#2575FC', '#FFD166', '#EF476F', '#118AB2'
+            ];
+            
             for (let i = 0; i < count; i++) {
-                const balloon = document.createElement("div");
-                balloon.classList.add("balloon");
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
                 
-                const size = Math.random() * 60 + 30;
+                // Random size between 60px and 100px
+                const size = Math.random() * 40 + 60;
                 balloon.style.width = `${size}px`;
-                balloon.style.height = `${size * 1.2}px`;
+                balloon.style.height = `${size * 1.1}px`;
                 balloon.style.left = `${Math.random() * 100}%`;
-                balloon.style.background = `radial-gradient(circle at 30% 30%, white, ${
-                    ["#ff6b6b", "#ff8e53", "#6a11cb", "#2575fc", "#4ecdc4", "#ffd166"][Math.floor(Math.random() * 6)]
-                } 60%)`;
-                balloon.style.animationDuration = `${Math.random() * 8 + 12}s`;
-                balloon.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // Random color
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.setProperty('--color', color);
+                
+                // Random animation duration
+                const duration = Math.random() * 15 + 20;
+                balloon.style.animationDuration = `${duration}s`;
+                balloon.style.animationDelay = `${Math.random() * 2}s`;
+                
+                // Create balloon body
+                const balloonBody = document.createElement('div');
+                balloonBody.classList.add('balloon-body');
+                
+                // Create highlight
+                const highlight = document.createElement('div');
+                highlight.classList.add('balloon-highlight');
+                
+                // Create string
+                const string = document.createElement('div');
+                string.classList.add('balloon-string');
+                
+                // Create knot
+                const knot = document.createElement('div');
+                knot.classList.add('balloon-knot');
+                
+                // Assemble balloon
+                balloonBody.appendChild(highlight);
+                balloon.appendChild(balloonBody);
+                balloon.appendChild(string);
+                balloon.appendChild(knot);
                 
                 document.body.appendChild(balloon);
                 
+                // Create confetti when balloon pops
                 setTimeout(() => {
+                    createConfetti(balloon.offsetLeft + size/2, balloon.offsetTop + size/2, color);
                     balloon.remove();
-                }, 20000);
+                }, duration * 1000);
+            }
+            
+            // Create floating confetti
+            createConfettiFall();
+        }
+        
+        // Create confetti explosion
+        function createConfetti(x, y, color) {
+            for (let i = 0; i < 25; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.setProperty('--color', color);
+                confetti.style.left = `${x}px`;
+                confetti.style.top = `${y}px`;
+                
+                // Random size
+                const size = Math.random() * 8 + 4;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                // Random animation
+                const duration = Math.random() * 2 + 1;
+                confetti.style.animationDuration = `${duration}s`;
+                
+                // Random direction
+                confetti.style.setProperty('--x', (Math.random() - 0.5) * 200);
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, duration * 1000);
+            }
+        }
+        
+        // Create falling confetti
+        function createConfettiFall() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.setProperty('--color', [
+                        '#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', 
+                        '#2575FC', '#FFD166', '#EF476F', '#118AB2'
+                    ][Math.floor(Math.random() * 8)]);
+                    confetti.style.left = `${Math.random() * 100}%`;
+                    
+                    // Random size
+                    const size = Math.random() * 10 + 5;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    
+                    // Random animation
+                    const duration = Math.random() * 5 + 5;
+                    confetti.style.animationDuration = `${duration}s`;
+                    confetti.style.opacity = Math.random() * 0.5 + 0.5;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, duration * 1000);
+                }, i * 200);
             }
         }
         
@@ -927,19 +1143,15 @@
             document.getElementById("giftCardName").textContent = BIRTHDAY_NAME;
             
             const qrImg = document.getElementById("qrCodeImg");
-            const qrImage = localStorage.getItem('qrImage');
             
-            // Perubahan utama: gunakan gambar yang diunggah jika tersedia
-            if (qrImage) {
-                qrImg.src = qrImage;
+            // Menggunakan QR code dari URL yang disimpan di admin panel
+            if (QR_IMAGE_URL) {
+                qrImg.src = QR_IMAGE_URL;
                 qrImg.style.border = "10px solid white";
                 qrImg.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
             } else {
                 // Fallback ke QR code generator jika tidak ada gambar yang diunggah
-                let qrData = localStorage.getItem("qrLink");
-                if (!qrData || qrData.trim() === "") {
-                    qrData = `Selamat Ulang Tahun ${BIRTHDAY_NAME}!`;
-                }
+                let qrData = `Selamat Ulang Tahun ${BIRTHDAY_NAME}!`;
                 const encodedData = encodeURIComponent(qrData);
                 qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedData}`;
             }
