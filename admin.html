@@ -336,58 +336,21 @@
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
         }
         
-        /* Gaya khusus untuk upload QR Code */
-        .qr-upload-container {
+        /* Gaya khusus untuk QR Code URL */
+        .qr-url-container {
             background: rgba(255, 255, 255, 0.08);
-            border: 2px dashed rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
             margin-bottom: 20px;
-        }
-        
-        .qr-upload-container:hover {
-            border-color: #4facfe;
-            background: rgba(79, 172, 254, 0.1);
-        }
-        
-        .qr-upload-container.drag-over {
-            border-color: #00f2fe;
-            background: rgba(0, 242, 254, 0.15);
-        }
-        
-        .qr-upload-label {
-            display: block;
-            cursor: pointer;
-            padding: 15px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-        
-        .qr-upload-label:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .qr-upload-label i {
-            font-size: 2.5rem;
-            color: #4facfe;
-            margin-bottom: 15px;
-        }
-        
-        .qr-upload-text {
-            margin-bottom: 15px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .qr-upload-input {
-            display: none;
         }
         
         .qr-preview-container {
             display: none;
             margin-top: 20px;
             text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
         }
         
         .qr-preview-title {
@@ -402,6 +365,23 @@
             border-radius: 10px;
             border: 2px solid rgba(255, 255, 255, 0.1);
             margin: 0 auto;
+        }
+        
+        .url-instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .url-instructions ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        
+        .url-instructions li {
+            margin-bottom: 8px;
         }
         
         .btn-save {
@@ -599,10 +579,6 @@
             .section-title {
                 font-size: 1.1rem;
             }
-            
-            .qr-upload-container {
-                padding: 15px;
-            }
         }
     </style>
 </head>
@@ -679,18 +655,20 @@
                             <span>QR Code Hadiah</span>
                         </div>
                         
-                        <div class="qr-upload-container" id="qrUploadContainer">
-                            <label class="qr-upload-label" for="qrImageInput">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <div class="qr-upload-text">Klik untuk mengunggah gambar QR Code</div>
-                                <div class="qr-upload-text" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.6);">
-                                    (atau tarik dan lepas gambar di sini)
-                                </div>
-                                <div class="qr-upload-text" style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.5);">
-                                    Format: JPG, PNG (max 1MB)
-                                </div>
-                            </label>
-                            <input type="file" id="qrImageInput" accept="image/*" class="qr-upload-input">
+                        <div class="qr-url-container">
+                            <div class="input-group-panel">
+                                <i class="fas fa-link"></i>
+                                <input type="url" id="qrImageUrlInput" class="input-field-panel" placeholder="https://i.ibb.co/.../qr-code.png" required>
+                            </div>
+                            
+                            <div class="url-instructions">
+                                <p><strong>Cara mendapatkan URL gambar:</strong></p>
+                                <ol>
+                                    <li>Unggah gambar QR Code ke layanan hosting seperti <a href="https://imgbb.com" target="_blank" style="color: #4facfe;">ImgBB</a></li>
+                                    <li>Salin URL gambar langsung (direct link)</li>
+                                    <li>Tempel URL tersebut di input di atas</li>
+                                </ol>
+                            </div>
                         </div>
                         
                         <div class="qr-preview-container" id="qrPreviewContainer">
@@ -754,10 +732,9 @@
         const failureIcon = document.getElementById('failureIcon');
         const togglePasswordBtn = document.getElementById('togglePassword');
         const adminPassInput = document.getElementById('adminPass');
-        const qrUploadContainer = document.getElementById('qrUploadContainer');
+        const qrImageUrlInput = document.getElementById('qrImageUrlInput');
         const qrPreviewContainer = document.getElementById('qrPreviewContainer');
         const qrPreviewImage = document.getElementById('qrPreviewImage');
-        const qrImageInput = document.getElementById('qrImageInput');
         
         // Floating particles effect
         function createParticles() {
@@ -877,14 +854,22 @@
         function loadDataToForm() {
             document.getElementById('birthdayNameInput').value = localStorage.getItem('birthdayName') || 'Mayfa';
             document.getElementById('birthDateInput').value = localStorage.getItem('birthDate') || '2005-09-28';
+            document.getElementById('qrImageUrlInput').value = localStorage.getItem('qrImageUrl') || '';
             document.getElementById('guestUserInput').value = localStorage.getItem('guestUser') || 'user';
             document.getElementById('guestPassInput').value = localStorage.getItem('guestPass') || 'user';
             
-            // Load QR image if available
-            const qrImage = localStorage.getItem('qrImage');
-            if (qrImage) {
-                qrPreviewImage.src = qrImage;
+            // Load QR preview if URL exists
+            updateQrPreview();
+        }
+        
+        // Update QR preview image
+        function updateQrPreview() {
+            const qrImageUrl = qrImageUrlInput.value;
+            if (qrImageUrl) {
+                qrPreviewImage.src = qrImageUrl;
                 qrPreviewContainer.style.display = 'block';
+            } else {
+                qrPreviewContainer.style.display = 'none';
             }
         }
         
@@ -892,6 +877,7 @@
         function saveData() {
             localStorage.setItem('birthdayName', document.getElementById('birthdayNameInput').value);
             localStorage.setItem('birthDate', document.getElementById('birthDateInput').value);
+            localStorage.setItem('qrImageUrl', document.getElementById('qrImageUrlInput').value);
             localStorage.setItem('guestUser', document.getElementById('guestUserInput').value);
             localStorage.setItem('guestPass', document.getElementById('guestPassInput').value);
             
@@ -912,38 +898,6 @@
             }, 1500);
         }
         
-        // QR Code Upload Handling
-        function handleFileUpload(file) {
-            if (!file.type.match('image.*')) {
-                showFeedback('failure', 'Format Tidak Didukung', 'Harap pilih file gambar (JPG, PNG)');
-                setTimeout(hideFeedback, 2500);
-                return;
-            }
-            
-            if (file.size > 1048576) { // 1MB
-                showFeedback('failure', 'File Terlalu Besar', 'Ukuran file maksimal 1MB');
-                setTimeout(hideFeedback, 2500);
-                return;
-            }
-            
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                // Save to localStorage
-                localStorage.setItem('qrImage', e.target.result);
-                
-                // Show preview
-                qrPreviewImage.src = e.target.result;
-                qrPreviewContainer.style.display = 'block';
-                
-                // Show success message
-                showFeedback('success', 'QR Code Diunggah!', 'Gambar QR Code berhasil disimpan');
-                setTimeout(hideFeedback, 2000);
-            };
-            
-            reader.readAsDataURL(file);
-        }
-        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             authContainer.classList.remove('is-active');
@@ -961,36 +915,8 @@
                 }
             `, styleSheet.cssRules.length);
             
-            // QR Image Upload Handling
-            qrImageInput.addEventListener('change', function(e) {
-                if (e.target.files && e.target.files[0]) {
-                    handleFileUpload(e.target.files[0]);
-                }
-            });
-            
-            // Drag and drop for QR upload
-            qrUploadContainer.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('drag-over');
-            });
-            
-            qrUploadContainer.addEventListener('dragleave', function() {
-                this.classList.remove('drag-over');
-            });
-            
-            qrUploadContainer.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('drag-over');
-                
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    handleFileUpload(e.dataTransfer.files[0]);
-                }
-            });
-            
-            // Click on container triggers file input
-            qrUploadContainer.addEventListener('click', function() {
-                qrImageInput.click();
-            });
+            // Update QR preview when URL changes
+            qrImageUrlInput.addEventListener('input', updateQrPreview);
         });
     </script>
 </body>
