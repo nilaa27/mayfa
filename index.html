@@ -55,11 +55,9 @@
         .age-display { font-family: 'Pacifico', cursive; font-size: 28px; color: #e85a5a; margin-bottom: 25px; opacity: 0; animation: fadeInUp 1s ease-out 1.5s forwards; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
         @keyframes shine { 0%, 100% { text-shadow: 0 0 10px rgba(255, 107, 107, 0.7); } 50% { text-shadow: 0 0 30px rgba(255, 107, 107, 0.9), 0 0 40px rgba(106, 17, 203, 0.7); } }
         
-        /* --- Style untuk Animasi Ketik --- */
         .birthday-message { font-size: 22px; line-height: 1.6; color: #444; margin: 30px 0; min-height: 100px; }
         .birthday-message .char { opacity: 0; transition: opacity 0.3s ease; }
         .birthday-message .char.visible { opacity: 1; }
-
         .gift-btn { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); border: none; border-radius: 50px; padding: 15px 40px; font-size: 20px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4); opacity: 0; animation: fadeInUp 1s ease-out 4.5s forwards; }
         .gift-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 20px rgba(255, 107, 107, 0.6); }
 
@@ -68,25 +66,40 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* --- Animasi Balon (BUG Diperbaiki) --- */
-        .balloon { position: absolute; bottom: -200px; border-radius: 50%; opacity: 0.7; z-index: 1; animation: floatBalloon 15s linear forwards; }
-        @keyframes floatBalloon {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); }
-            25% { transform: translateY(-30vh) translateX(50px) rotate(15deg); }
-            50% { transform: translateY(-60vh) translateX(-50px) rotate(-15deg); }
-            75% { transform: translateY(-90vh) translateX(30px) rotate(10deg); }
-            100% { transform: translateY(-130vh) translateX(-30px) rotate(360deg); opacity: 0; }
-        }
+        /* Animasi Balon (Mobile Friendly) */
+        .balloon { position: absolute; bottom: -200px; border-radius: 50%; opacity: 0.7; z-index: 1; animation: floatBalloon 15s linear forwards; transform: translateZ(0); }
+        @keyframes floatBalloon { 0% { transform: translateY(0) translateX(0) rotate(0deg); } 25% { transform: translateY(-30vh) translateX(10vw) rotate(15deg); } 50% { transform: translateY(-60vh) translateX(-10vw) rotate(-15deg); } 75% { transform: translateY(-90vh) translateX(5vw) rotate(10deg); } 100% { transform: translateY(-130vh) translateX(-5vw) rotate(-10deg); opacity: 0; } }
 
         /* Modal & Kado */
         .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
         .gift-box { position: relative; width: 250px; height: 250px; cursor: pointer; animation: wobble-gift 2s ease-in-out infinite; }
         @keyframes wobble-gift { 0%, 100% { transform: rotate(-3deg) scale(1); } 50% { transform: rotate(3deg) scale(1.05); } }
         .gift-card { display: none; background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); width: 100%; max-width: 320px; z-index: 1001; animation: fadeInCard 0.5s ease-out; }
-        @keyframes fadeInCard { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        .gift-card h2 { color: #ff6b6b; margin-bottom: 20px; }
         .qrcode { width: 180px; height: 180px; margin: 20px auto; }
         .particle { position: fixed; background: #fff; border-radius: 50%; z-index: 1002; opacity: 0; }
+        @keyframes fadeInCard { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        /* --- Style untuk Modal Feedback Login --- */
+        .feedback-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .feedback-content { background: white; border-radius: 15px; padding: 30px 40px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 90%; max-width: 350px; animation: fadeInCard 0.4s ease-out; display: flex; flex-direction: column; align-items: center; }
+        .feedback-content .icon-container { width: 60px; height: 60px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center; }
+        .feedback-content .icon { font-size: 60px; }
+        .feedback-content h2 { font-size: 24px; color: #333; margin-bottom: 10px; }
+        .feedback-content p { font-size: 16px; color: #666; }
+        .feedback-content button { padding: 12px 30px; border: none; border-radius: 8px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s, background-color 0.2s; background-color: #ff6b6b; margin-top: 25px; }
+        .feedback-content button:hover { transform: scale(1.05); background-color: #e95a5a; }
+        
+        /* Animasi Ikon & Loader */
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); } 20%, 40%, 60%, 80% { transform: translateX(8px); } }
+        .feedback-content .icon.failure { color: #dc3545; animation: shake 0.6s ease-in-out infinite; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader { border: 6px solid #f3f3f3; border-top: 6px solid #2575fc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+        .feedback-content .icon.success { color: #28a745; animation: popIn 0.5s ease-out forwards; }
+        
+        .hidden { display: none; }
 
         /* Responsiveness */
         @media (max-width: 768px) { .login-container, .birthday-container { padding: 30px 20px; } .birthday-title { font-size: 40px; } .birthday-name { font-size: 55px; } .age-display { font-size: 24px; } .birthday-message { font-size: 18px; min-height: 80px;} }
@@ -96,7 +109,7 @@
 <body>
     
     <audio id="background-music" loop>
-        <source src="/mayfa.mp3">
+        <source src="mayfa.mp3">
     </audio>
 
     <div class="login-container" id="loginPage">
@@ -134,6 +147,29 @@
         </div>
     </div>
     
+    <div class="feedback-modal" id="successModal">
+        <div class="feedback-content">
+            <div class="icon-container">
+                <div class="loader"></div>
+                <i class="fas fa-check-circle icon success hidden"></i>
+            </div>
+            <h2 id="success-title">Login Berhasil!</h2>
+            <p id="success-message">Mempersiapkan kejutan untukmu...</p>
+        </div>
+    </div>
+
+    <div class="feedback-modal" id="failureModal">
+        <div class="feedback-content">
+            <div class="icon-container">
+                <div class="loader"></div>
+                <i class="fas fa-times-circle icon failure hidden"></i>
+            </div>
+            <h2 id="failure-title">Login Gagal!</h2>
+            <p id="failure-message">Coba cek lagi username sama passwordnya ya :)</p>
+            <button id="failure-button" class="hidden" onclick="closeFailureModal()">Coba Lagi</button>
+        </div>
+    </div>
+
     <script>
         // --- Variabel Global ---
         const loginPage = document.getElementById('loginPage');
@@ -143,8 +179,22 @@
         const giftCard = document.getElementById('giftCard');
         const backgroundMusic = document.getElementById('background-music');
         let fireworksInterval;
+        
+        // --- Variabel Modal Sukses ---
+        const successModal = document.getElementById('successModal');
+        const successLoader = successModal.querySelector('.loader');
+        const successIcon = successModal.querySelector('.icon.success');
+        const successTitle = successModal.querySelector('#success-title');
+        const successMessage = successModal.querySelector('#success-message');
+        
+        // --- Variabel Modal Gagal ---
+        const failureModal = document.getElementById('failureModal');
+        const failureLoader = failureModal.querySelector('.loader');
+        const failureIcon = failureModal.querySelector('.icon.failure');
+        const failureTitle = failureModal.querySelector('#failure-title');
+        const failureMessage = failureModal.querySelector('#failure-message');
+        const failureButton = failureModal.querySelector('#failure-button');
 
-        // --- Fungsi Kalkulasi & Animasi ---
         function calculateAndDisplayAge(birthDateString) {
             const birthDate = new Date(birthDateString);
             const today = new Date();
@@ -156,12 +206,10 @@
             document.getElementById('ageDisplay').innerText = `Hari ini kamu berumur ${age} tahun! ✨`;
         }
 
-        // --- FUNGSI BARU: Animasi Ketik ---
         function animateTyping() {
             const messageElement = document.getElementById('birthdayMessage');
-            const text = "Semoga di hari spesial ini, kamu dikelilingi oleh kebahagiaan, cinta, dan semua hal indah yang kamu impikan.";
-            messageElement.innerHTML = ""; // Kosongkan pesan
-            
+            const text = "Sudah berapa lama kamu bertahan? Semoga di hari spesial ini, kamu dikelilingi oleh kebahagiaan, cinta, dan semua hal indah yang kamu impikan.";
+            messageElement.innerHTML = "";
             const chars = text.split('');
             let i = 0;
             const interval = setInterval(() => {
@@ -170,65 +218,94 @@
                     charSpan.className = 'char';
                     charSpan.textContent = chars[i];
                     messageElement.appendChild(charSpan);
-                    // Tambahkan sedikit delay sebelum membuat karakter terlihat
-                    setTimeout(() => {
-                        charSpan.classList.add('visible');
-                    }, 10);
+                    setTimeout(() => charSpan.classList.add('visible'), 10);
                     i++;
                 } else {
                     clearInterval(interval);
                 }
-            }, 50); // Kecepatan ketik (ms)
+            }, 50);
         }
 
-        // --- Fungsi Utama ---
         function login() {
             if (document.getElementById('username').value === 'user' && document.getElementById('password').value === 'user') {
-                loginPage.classList.add('hidden');
-                setTimeout(() => {
-                    loginPage.style.display = 'none';
-                    birthdayPage.style.display = 'block';
-                    
-                    backgroundMusic.play();
-                    
-                    calculateAndDisplayAge('2005-05-20'); 
-                    
-                    // Panggil animasi ketik setelah animasi lain dimulai
-                    setTimeout(animateTyping, 2000);
+                // --- ALUR SUKSES ---
+                // 1. Reset state & siapkan teks
+                successLoader.classList.remove('hidden');
+                successIcon.classList.add('hidden');
+                successTitle.textContent = "Login Berhasil!";
+                successMessage.textContent = "Mempersiapkan kejutan untukmu...";
+                
+                // 2. Tampilkan modal dengan loader
+                successModal.style.display = 'flex';
 
-                    createBalloons(15);
-                }, 500);
+                // 3. Setelah 1.5 detik, ganti loader dengan ikon centang
+                setTimeout(() => {
+                    successLoader.classList.add('hidden');
+                    successIcon.classList.remove('hidden');
+
+                    // 4. Setelah 1 detik ikon tampil, lanjutkan ke halaman ultah
+                    setTimeout(() => {
+                        successModal.style.display = 'none';
+                        loginPage.classList.add('hidden');
+
+                        setTimeout(() => {
+                            loginPage.style.display = 'none';
+                            birthdayPage.style.display = 'block';
+                            backgroundMusic.play().catch(e => console.log("Autoplay gagal: ", e));
+                            calculateAndDisplayAge('2005-09-28');
+                            setTimeout(animateTyping, 2000);
+                            createBalloons(15);
+                        }, 500);
+
+                    }, 1000);
+
+                }, 1500);
+
             } else {
-                alert('Username atau password salah!');
+                // --- ALUR GAGAL ---
+                // 1. Reset state & siapkan teks
+                failureLoader.classList.remove('hidden');
+                failureIcon.classList.add('hidden');
+                failureButton.classList.add('hidden');
+                failureTitle.textContent = "Mengecek...";
+                failureMessage.textContent = "Memverifikasi username & password.";
+
+                // 2. Tampilkan modal dengan loader
+                failureModal.style.display = 'flex';
+
+                // 3. Setelah 1 detik, ganti loader dengan ikon gagal
+                setTimeout(() => {
+                    failureLoader.classList.add('hidden');
+                    failureIcon.classList.remove('hidden');
+                    failureButton.classList.remove('hidden');
+                    failureTitle.textContent = "Login Gagal!";
+                    failureMessage.textContent = "Coba cek lagi username sama passwordnya ya :)";
+                }, 1000);
             }
         }
+        
+        function closeFailureModal() {
+            failureModal.style.display = 'none';
+        }
 
-        // --- FUNGSI BALON (BUG Diperbaiki) ---
         function createBalloons(count) {
             const colors = ['#ff6b6b', '#ff8e53', '#6a11cb', '#2575fc', '#4ecdc4', '#ffd166'];
             for (let i = 0; i < count; i++) {
                 const balloon = document.createElement('div');
                 balloon.classList.add('balloon');
                 const size = Math.random() * 60 + 30;
-                const duration = Math.random() * 8 + 12; // Durasi antara 12 dan 20 detik
-                
+                const duration = Math.random() * 8 + 12; 
                 balloon.style.width = `${size}px`;
                 balloon.style.height = `${size * 1.2}px`;
                 balloon.style.left = `${Math.random() * 100}%`;
                 balloon.style.background = `radial-gradient(circle at 30% 30%, white, ${colors[Math.floor(Math.random() * colors.length)]} 60%)`;
                 balloon.style.animationDuration = `${duration}s`;
                 balloon.style.animationDelay = `${Math.random() * 5}s`;
-                
                 document.body.appendChild(balloon);
-
-                // Hapus balon dari DOM setelah animasi selesai untuk optimasi
-                setTimeout(() => {
-                    balloon.remove();
-                }, (duration + 5) * 1000);
+                setTimeout(() => balloon.remove(), (duration + 5) * 1000);
             }
         }
         
-        // --- Fungsi Lainnya ---
         function openGift() { giftModal.style.display = 'flex'; }
         function openCard() { giftBox.style.display = 'none'; giftCard.style.display = 'block'; startFireworks(); }
         function closeGiftModal() { giftModal.style.display = 'none'; giftCard.style.display = 'none'; giftBox.style.display = 'block'; stopFireworks(); }
@@ -237,7 +314,18 @@
         function createFireworkExplosion() { const x = Math.random() * window.innerWidth; const y = Math.random() * window.innerHeight; const particleCount = 30; for (let i = 0; i < particleCount; i++) { createParticle(x, y); } }
         function createParticle(x, y) { const colors = ['#ff6b6b', '#ff8e53', '#6a11cb', '#2575fc', '#4ecdc4', '#ffd166']; const particle = document.createElement('div'); particle.classList.add('particle'); document.body.appendChild(particle); const size = Math.floor(Math.random() * 7 + 3); particle.style.width = `${size}px`; particle.style.height = `${size}px`; particle.style.background = colors[Math.floor(Math.random() * colors.length)]; const destinationX = (Math.random() - 0.5) * 300; const destinationY = (Math.random() - 0.5) * 300; const duration = Math.random() * 500 + 500; particle.style.left = `${x}px`; particle.style.top = `${y}px`; const animation = particle.animate([{ transform: 'translate(0, 0)', opacity: 1 }, { transform: `translate(${destinationX}px, ${destinationY}px)`, opacity: 0 }], { duration: duration, easing: 'cubic-bezier(0.1, 0.7, 1.0, 0.1)' }); animation.onfinish = () => { particle.remove(); }; }
         giftModal.addEventListener('click', (e) => { if (e.target === giftModal) { closeGiftModal(); } });
-        document.addEventListener('DOMContentLoaded', () => { birthdayPage.style.display = 'none'; giftModal.style.display = 'none'; });
+        document.addEventListener('DOMContentLoaded', () => { 
+            birthdayPage.style.display = 'none'; 
+            giftModal.style.display = 'none'; 
+            
+            function playMusicOnFirstInteraction() {
+                backgroundMusic.play().catch(e => console.log("Gagal memutar musik:", e));
+                document.body.removeEventListener('click', playMusicOnFirstInteraction);
+                document.body.removeEventListener('touchstart', playMusicOnFirstInteraction);
+            }
+            document.body.addEventListener('click', playMusicOnFirstInteraction);
+            document.body.addEventListener('touchstart', playMusicOnFirstInteraction);
+        });
     </script>
 </body>
 </html>
