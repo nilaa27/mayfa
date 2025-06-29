@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Mayfa!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .login-container, .birthday-container {
+            width: 90%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        /* Tema Login */
+        .login-container { max-width: 400px; transform: scale(1); transition: transform 0.5s ease, opacity 0.5s ease; }
+        .login-container.hidden { transform: scale(0.8); opacity: 0; display: none; }
+        .login-container h1 { background: linear-gradient(45deg, #ff6b6b, #f7b733, #2575fc); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 30px; font-size: 32px; }
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
+        .input-group input { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; }
+        .input-group input:focus { border-color: #ff6b6b; outline: none; }
+        .login-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); border: none; border-radius: 8px; color: white; font-size: 18px; font-weight: 600; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .login-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 15px rgba(255, 107, 107, 0.5); }
+
+        /* Halaman Ulang Tahun */
+        .birthday-container { display: none; animation: fadeInBirthday 1s ease-out forwards; }
+        @keyframes fadeInBirthday { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .birthday-title { font-size: 50px; color: #ff6b6b; animation: slideDown 1s ease-out 0.5s forwards; opacity: 0; }
+        .birthday-name { font-size: 70px; background: linear-gradient(45deg, #ff6b6b, #6a11cb, #2575fc); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 800; margin: 20px 0 10px 0; animation: shine 3s infinite, slideUp 1s ease-out 1s forwards; opacity: 0; }
+        .age-display { font-family: 'Pacifico', cursive; font-size: 28px; color: #e85a5a; margin-bottom: 25px; opacity: 0; animation: fadeInUp 1s ease-out 1.5s forwards; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
+        @keyframes shine { 0%, 100% { text-shadow: 0 0 10px rgba(255, 107, 107, 0.7); } 50% { text-shadow: 0 0 30px rgba(255, 107, 107, 0.9), 0 0 40px rgba(106, 17, 203, 0.7); } }
+        
+        /* --- Style untuk Animasi Ketik --- */
+        .birthday-message { font-size: 22px; line-height: 1.6; color: #444; margin: 30px 0; min-height: 100px; }
+        .birthday-message .char { opacity: 0; transition: opacity 0.3s ease; }
+        .birthday-message .char.visible { opacity: 1; }
+
+        .gift-btn { background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); border: none; border-radius: 50px; padding: 15px 40px; font-size: 20px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4); opacity: 0; animation: fadeInUp 1s ease-out 4.5s forwards; }
+        .gift-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 20px rgba(255, 107, 107, 0.6); }
+
+        /* Animasi Teks */
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* --- Animasi Balon (BUG Diperbaiki) --- */
+        .balloon { position: absolute; bottom: -200px; border-radius: 50%; opacity: 0.7; z-index: 1; animation: floatBalloon 15s linear forwards; }
+        @keyframes floatBalloon {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); }
+            25% { transform: translateY(-30vh) translateX(50px) rotate(15deg); }
+            50% { transform: translateY(-60vh) translateX(-50px) rotate(-15deg); }
+            75% { transform: translateY(-90vh) translateX(30px) rotate(10deg); }
+            100% { transform: translateY(-130vh) translateX(-30px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Modal & Kado */
+        .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
+        .gift-box { position: relative; width: 250px; height: 250px; cursor: pointer; animation: wobble-gift 2s ease-in-out infinite; }
+        @keyframes wobble-gift { 0%, 100% { transform: rotate(-3deg) scale(1); } 50% { transform: rotate(3deg) scale(1.05); } }
+        .gift-card { display: none; background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); width: 100%; max-width: 320px; z-index: 1001; animation: fadeInCard 0.5s ease-out; }
+        @keyframes fadeInCard { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .gift-card h2 { color: #ff6b6b; margin-bottom: 20px; }
+        .qrcode { width: 180px; height: 180px; margin: 20px auto; }
+        .particle { position: fixed; background: #fff; border-radius: 50%; z-index: 1002; opacity: 0; }
+
+        /* Responsiveness */
+        @media (max-width: 768px) { .login-container, .birthday-container { padding: 30px 20px; } .birthday-title { font-size: 40px; } .birthday-name { font-size: 55px; } .age-display { font-size: 24px; } .birthday-message { font-size: 18px; min-height: 80px;} }
+        @media (max-width: 480px) { .login-container h1 { font-size: 28px; } .birthday-title { font-size: 32px; } .birthday-name { font-size: 40px; } .age-display { font-size: 22px; } .birthday-message { font-size: 16px; } .gift-btn { padding: 12px 30px; font-size: 16px; } .gift-box { width: 200px; height: 200px; } .gift-card { padding: 20px; } .gift-card h2 { font-size: 20px; } .qrcode { width: 150px; height: 150px; } }
+    </style>
+</head>
+<body>
+    
+    <audio id="background-music" loop>
+        <source src="https://raw.githubusercontent.com/nilaa27/mayfa/main/selamat.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="login-container" id="loginPage">
+        <h1><i class="fas fa-birthday-cake"></i> Special Invitation</h1>
+        <div class="input-group">
+            <label for="username"><i class="fas fa-user"></i> Username</label>
+            <input type="text" id="username" placeholder="Masukkan username">
+        </div>
+        <div class="input-group">
+            <label for="password"><i class="fas fa-key"></i> Password</label>
+            <input type="password" id="password" placeholder="Masukkan password">
+        </div>
+        <button class="login-btn" onclick="login()">Masuk <i class="fas fa-arrow-right"></i></button>
+    </div>
+    
+    <div class="birthday-container" id="birthdayPage">
+        <h1 class="birthday-title">Happy Birthday!</h1>
+        <div class="birthday-name">Mayfa</div>
+        <p class="age-display" id="ageDisplay"></p>
+        <p class="birthday-message" id="birthdayMessage"></p>
+        <button class="gift-btn" onclick="openGift()"><i class="fas fa-gift"></i> Buka Hadiah Spesialmu</button>
+    </div>
+
+    <div class="gift-modal" id="giftModal">
+        <div class="gift-box" onclick="openCard()">
+            <img src="https://i.ibb.co/dJ2nC1b/gift-box-animation.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;">
+        </div>
+        <div class="gift-card" id="giftCard">
+            <h2>Hadiah Spesial untuk Mayfa!</h2>
+            <p>Scan QR code di bawah untuk mendapatkan hadiahmu</p>
+            <div class="qrcode">
+                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Selamat%20Ulang%20Tahun%20Mayfa!" alt="QR Code Hadiah" style="width: 100%; height: 100%; border-radius: 10px;">
+            </div>
+            <p>Selamat ulang tahun! Semoga harimu menyenangkan!</p>
+        </div>
+    </div>
+    
+    <script>
+        // --- Variabel Global ---
+        const loginPage = document.getElementById('loginPage');
+        const birthdayPage = document.getElementById('birthdayPage');
+        const giftModal = document.getElementById('giftModal');
+        const giftBox = document.querySelector('.gift-box');
+        const giftCard = document.getElementById('giftCard');
+        const backgroundMusic = document.getElementById('background-music');
+        let fireworksInterval;
+
+        // --- Fungsi Kalkulasi & Animasi ---
+        function calculateAndDisplayAge(birthDateString) {
+            const birthDate = new Date(birthDateString);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDifference = today.getMonth() - birthDate.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.getElementById('ageDisplay').innerText = `Hari ini kamu berumur ${age} tahun! ✨`;
+        }
+
+        // --- FUNGSI BARU: Animasi Ketik ---
+        function animateTyping() {
+            const messageElement = document.getElementById('birthdayMessage');
+            const text = "Semoga di hari spesial ini, kamu dikelilingi oleh kebahagiaan, cinta, dan semua hal indah yang kamu impikan.";
+            messageElement.innerHTML = ""; // Kosongkan pesan
+            
+            const chars = text.split('');
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < chars.length) {
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'char';
+                    charSpan.textContent = chars[i];
+                    messageElement.appendChild(charSpan);
+                    // Tambahkan sedikit delay sebelum membuat karakter terlihat
+                    setTimeout(() => {
+                        charSpan.classList.add('visible');
+                    }, 10);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 50); // Kecepatan ketik (ms)
+        }
+
+        // --- Fungsi Utama ---
+        function login() {
+            if (document.getElementById('username').value === 'user' && document.getElementById('password').value === 'user') {
+                loginPage.classList.add('hidden');
+                setTimeout(() => {
+                    loginPage.style.display = 'none';
+                    birthdayPage.style.display = 'block';
+                    
+                    backgroundMusic.play();
+                    
+                    calculateAndDisplayAge('2005-05-20'); 
+                    
+                    // Panggil animasi ketik setelah animasi lain dimulai
+                    setTimeout(animateTyping, 2000);
+
+                    createBalloons(15);
+                }, 500);
+            } else {
+                alert('Username atau password salah!');
+            }
+        }
+
+        // --- FUNGSI BALON (BUG Diperbaiki) ---
+        function createBalloons(count) {
+            const colors = ['#ff6b6b', '#ff8e53', '#6a11cb', '#2575fc', '#4ecdc4', '#ffd166'];
+            for (let i = 0; i < count; i++) {
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                const size = Math.random() * 60 + 30;
+                const duration = Math.random() * 8 + 12; // Durasi antara 12 dan 20 detik
+                
+                balloon.style.width = `${size}px`;
+                balloon.style.height = `${size * 1.2}px`;
+                balloon.style.left = `${Math.random() * 100}%`;
+                balloon.style.background = `radial-gradient(circle at 30% 30%, white, ${colors[Math.floor(Math.random() * colors.length)]} 60%)`;
+                balloon.style.animationDuration = `${duration}s`;
+                balloon.style.animationDelay = `${Math.random() * 5}s`;
+                
+                document.body.appendChild(balloon);
+
+                // Hapus balon dari DOM setelah animasi selesai untuk optimasi
+                setTimeout(() => {
+                    balloon.remove();
+                }, (duration + 5) * 1000);
+            }
+        }
+        
+        // --- Fungsi Lainnya ---
+        function openGift() { giftModal.style.display = 'flex'; }
+        function openCard() { giftBox.style.display = 'none'; giftCard.style.display = 'block'; startFireworks(); }
+        function closeGiftModal() { giftModal.style.display = 'none'; giftCard.style.display = 'none'; giftBox.style.display = 'block'; stopFireworks(); }
+        function startFireworks() { if (fireworksInterval) clearInterval(fireworksInterval); fireworksInterval = setInterval(createFireworkExplosion, 500); }
+        function stopFireworks() { clearInterval(fireworksInterval); }
+        function createFireworkExplosion() { const x = Math.random() * window.innerWidth; const y = Math.random() * window.innerHeight; const particleCount = 30; for (let i = 0; i < particleCount; i++) { createParticle(x, y); } }
+        function createParticle(x, y) { const colors = ['#ff6b6b', '#ff8e53', '#6a11cb', '#2575fc', '#4ecdc4', '#ffd166']; const particle = document.createElement('div'); particle.classList.add('particle'); document.body.appendChild(particle); const size = Math.floor(Math.random() * 7 + 3); particle.style.width = `${size}px`; particle.style.height = `${size}px`; particle.style.background = colors[Math.floor(Math.random() * colors.length)]; const destinationX = (Math.random() - 0.5) * 300; const destinationY = (Math.random() - 0.5) * 300; const duration = Math.random() * 500 + 500; particle.style.left = `${x}px`; particle.style.top = `${y}px`; const animation = particle.animate([{ transform: 'translate(0, 0)', opacity: 1 }, { transform: `translate(${destinationX}px, ${destinationY}px)`, opacity: 0 }], { duration: duration, easing: 'cubic-bezier(0.1, 0.7, 1.0, 0.1)' }); animation.onfinish = () => { particle.remove(); }; }
+        giftModal.addEventListener('click', (e) => { if (e.target === giftModal) { closeGiftModal(); } });
+        document.addEventListener('DOMContentLoaded', () => { birthdayPage.style.display = 'none'; giftModal.style.display = 'none'; });
+    </script>
+</body>
+</html>
