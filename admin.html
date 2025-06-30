@@ -625,7 +625,7 @@
             <!-- Admin Panel Box -->
             <div class="box" id="adminPanelBox">
                 <div class="box-header">
-                    <h1><i class="fas fa-cogs"></i> Pengaturan Ulang Tahun</h1>
+                    <h1><i class="fas fa-cogs"></i> panel admin</h1>
                     <button class="logout-btn" onclick="logout()" title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
@@ -664,7 +664,7 @@
                             <div class="url-instructions">
                                 <p><strong>Cara mendapatkan URL gambar:</strong></p>
                                 <ol>
-                                    <li>Unggah gambar QR Code ke layanan hosting seperti <a href="https://imgbb.com" target="_blank" style="color: #4facfe;">ImgBB</a></li>
+                                    <li>Unggah gambar QR Code ke layanan hosting seperti <a href="https://postimages.org" target="_blank" style="color: #4facfe;">postimages</a></li>
                                     <li>Salin URL gambar langsung (direct link)</li>
                                     <li>Tempel URL tersebut di input di atas</li>
                                 </ol>
@@ -691,6 +691,24 @@
                         <div class="input-group-panel">
                             <i class="fas fa-lock"></i>
                             <input type="text" id="guestPassInput" class="input-field-panel" placeholder="Password tamu" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Section baru untuk pengaturan login admin -->
+                    <div class="panel-section">
+                        <div class="section-title">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Login Admin</span>
+                        </div>
+                        
+                        <div class="input-group-panel">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="adminUserInput" class="input-field-panel" placeholder="Username admin" required>
+                        </div>
+                        
+                        <div class="input-group-panel">
+                            <i class="fas fa-lock"></i>
+                            <input type="text" id="adminPassInput" class="input-field-panel" placeholder="Password admin" required>
                         </div>
                     </div>
                     
@@ -721,8 +739,8 @@
 
     <script>
         // Variabel global
-        const ADMIN_USER = 'admin';
-        const ADMIN_PASS = 'admin123';
+        const DEFAULT_ADMIN_USER = 'admin';
+        const DEFAULT_ADMIN_PASS = 'admin123';
         const authContainer = document.getElementById('auth-container');
         const feedbackModal = document.getElementById('feedbackModal');
         const feedbackTitle = document.getElementById('feedbackTitle');
@@ -812,7 +830,11 @@
             showFeedback('loading', 'Mengecek...');
             
             setTimeout(() => {
-                if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                // Mengambil data login admin dari localStorage (jika sudah disimpan)
+                const storedAdminUser = localStorage.getItem('adminUser') || DEFAULT_ADMIN_USER;
+                const storedAdminPass = localStorage.getItem('adminPass') || DEFAULT_ADMIN_PASS;
+                
+                if (user === storedAdminUser && pass === storedAdminPass) {
                     showFeedback('success', 'Login Berhasil!', 'Mengalihkan ke panel admin...');
                     
                     setTimeout(() => {
@@ -852,11 +874,18 @@
         
         // Load data from localStorage to form
         function loadDataToForm() {
+            // Data ulang tahun
             document.getElementById('birthdayNameInput').value = localStorage.getItem('birthdayName') || 'Mayfa';
             document.getElementById('birthDateInput').value = localStorage.getItem('birthDate') || '2005-09-28';
             document.getElementById('qrImageUrlInput').value = localStorage.getItem('qrImageUrl') || '';
+            
+            // Data login tamu
             document.getElementById('guestUserInput').value = localStorage.getItem('guestUser') || 'user';
             document.getElementById('guestPassInput').value = localStorage.getItem('guestPass') || 'user';
+            
+            // Data login admin
+            document.getElementById('adminUserInput').value = localStorage.getItem('adminUser') || DEFAULT_ADMIN_USER;
+            document.getElementById('adminPassInput').value = localStorage.getItem('adminPass') || DEFAULT_ADMIN_PASS;
             
             // Load QR preview if URL exists
             updateQrPreview();
@@ -875,11 +904,18 @@
         
         // Save data to localStorage
         function saveData() {
+            // Simpan data ulang tahun
             localStorage.setItem('birthdayName', document.getElementById('birthdayNameInput').value);
             localStorage.setItem('birthDate', document.getElementById('birthDateInput').value);
             localStorage.setItem('qrImageUrl', document.getElementById('qrImageUrlInput').value);
+            
+            // Simpan data login tamu
             localStorage.setItem('guestUser', document.getElementById('guestUserInput').value);
             localStorage.setItem('guestPass', document.getElementById('guestPassInput').value);
+            
+            // Simpan data login admin
+            localStorage.setItem('adminUser', document.getElementById('adminUserInput').value);
+            localStorage.setItem('adminPass', document.getElementById('adminPassInput').value);
             
             showFeedback('success', 'Tersimpan!', 'Data telah berhasil diperbarui.');
             
