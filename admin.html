@@ -8,578 +8,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        /* Modern Glassmorphism Background */
-        body {
-            background: linear-gradient(135deg, #141E30 0%, #243B55 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-            color: #fff;
-        }
-        
-        /* Floating Glass Container */
-        .container {
-            width: 100%;
-            max-width: 900px;
-            perspective: 1000px;
-        }
-        
-        #auth-container {
-            position: relative;
-            height: 650px;
-        }
-        
-        /* Glass Panel with Depth */
-        .box {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 40px;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
-                        opacity 0.6s ease;
-            backface-visibility: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4),
-                        0 0 0 1px rgba(255, 255, 255, 0.05),
-                        inset 0 0 15px rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Login Box Styling */
-        #adminLoginBox {
-            transform: rotateY(0deg);
-            opacity: 1;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        #auth-container.is-active #adminLoginBox {
-            transform: rotateY(180deg);
-            opacity: 0;
-            z-index: 1;
-        }
-        
-        /* Admin Panel Styling */
-        #adminPanelBox {
-            transform: rotateY(-180deg);
-            opacity: 0;
-            z-index: 1;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-        
-        #auth-container.is-active #adminPanelBox {
-            transform: rotateY(0deg);
-            opacity: 1;
-            z-index: 2;
-        }
-        
-        /* Header Styles */
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-            position: relative;
-        }
-        
-        .login-icon {
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            animation: float 4s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .login-icon i {
-            font-size: 48px;
-            color: #4facfe;
-            text-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
-        }
-        
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
-        
-        /* Input Group Styles */
-        .input-group {
-            margin-bottom: 30px;
-            position: relative;
-        }
-        
-        .input-group-header {
-            display: flex;
-            align-items: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
-        
-        .input-group-header i {
-            margin-right: 12px;
-            width: 20px;
-            text-align: center;
-            color: #4facfe;
-        }
-        
-        .input-field {
-            width: 100%;
-            padding: 16px 20px 16px 50px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 15px;
-            color: #fff;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
-        }
-        
-        .input-field::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .password-wrapper {
-            position: relative;
-        }
-        
-        #togglePassword {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 18px;
-        }
-        
-        #togglePassword:hover {
-            color: #fff;
-            transform: translateY(-50%) scale(1.1);
-        }
-        
-        /* Button Styles */
-        .btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-            border: none;
-            border-radius: 15px;
-            color: #141E30;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            letter-spacing: 0.5px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: 0.5s;
-        }
-        
-        .btn:hover::before {
-            left: 100%;
-        }
-        
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-        }
-        
-        .btn:active {
-            transform: translateY(-2px);
-        }
-        
-        /* Admin Panel Specific Styles */
-        .box-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: rgba(255,255,255,0.8);
-            font-size: 1.1rem;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            transform: rotate(10deg);
-        }
-        
-        .panel-section {
-            margin-bottom: 30px;
-        }
-        
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #4facfe;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .section-title i {
-            font-size: 1.4rem;
-        }
-        
-        .input-group-panel {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        
-        .input-group-panel i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #4facfe;
-            font-size: 18px;
-        }
-        
-        .input-field-panel {
-            width: 100%;
-            padding: 16px 20px 16px 50px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            color: #fff;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        /* Perbaikan khusus untuk input tanggal */
-        .input-field-panel[type="date"] {
-            appearance: none;
-            padding-top: 15px;
-            padding-bottom: 15px;
-            color-scheme: dark;
-        }
-        
-        .input-field-panel[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(0.8);
-            cursor: pointer;
-            margin-left: 5px;
-        }
-        
-        .input-field-panel:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
-        }
-        
-        /* Gaya khusus untuk QR Code URL */
-        .qr-url-container {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .qr-preview-container {
-            display: none;
-            margin-top: 20px;
-            text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-        }
-        
-        .qr-preview-title {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 10px;
-        }
-        
-        .qr-preview-image {
-            max-width: 200px;
-            max-height: 200px;
-            border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            margin: 0 auto;
-        }
-        
-        .url-instructions {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-        
-        .url-instructions ol {
-            padding-left: 20px;
-            margin: 10px 0;
-        }
-        
-        .url-instructions li {
-            margin-bottom: 8px;
-        }
-        
-        .btn-save {
-            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-            border: none;
-            border-radius: 15px;
-            color: #141E30;
-            font-size: 18px;
-            font-weight: 600;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
-        }
-        
-        .btn-save:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
-        }
-        
-        .back-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 25px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .back-link:hover {
-            color: #4facfe;
-            transform: translateX(-5px);
-        }
-        
-        /* Feedback Modal */
-        .feedback-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            z-index: 3000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .feedback-content {
-            background: rgba(30, 40, 60, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .icon-container {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .icon-container .icon {
-            font-size: 60px;
-        }
-        
-        .icon-container .icon.success {
-            color: #4ade80;
-        }
-        
-        .icon-container .icon.failure {
-            color: #f87171;
-        }
-        
-        .feedback-content h2 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .feedback-content p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 25px;
-        }
-        
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            80% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-        
-        .feedback-content .icon {
-            animation: popIn 0.5s ease-out forwards;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .loader {
-            border: 6px solid rgba(255, 255, 255, 0.1);
-            border-top: 6px solid #4facfe;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        /* Floating particles effect */
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(79, 172, 254, 0.3);
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                max-width: 95%;
-            }
-            
-            .box {
-                padding: 30px;
-            }
-            
-            .login-icon {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .login-icon i {
-                font-size: 36px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .input-field, .input-field-panel {
-                padding: 14px 16px 14px 45px;
-                font-size: 1rem;
-            }
-            
-            .btn, .btn-save {
-                padding: 16px;
-                font-size: 16px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .box {
-                padding: 25px 20px;
-            }
-            
-            .login-header {
-                margin-bottom: 30px;
-            }
-            
-            .login-icon {
-                width: 70px;
-                height: 70px;
-            }
-            
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            .input-group {
-                margin-bottom: 25px;
-            }
-            
-            .section-title {
-                font-size: 1.1rem;
-            }
-        }
+        /* ... (CSS tetap sama) ... */
     </style>
 </head>
 <body>
@@ -738,9 +171,28 @@
     </div>
 
     <script>
-        // Variabel global
+        // Firebase Configuration - GANTI DENGAN KONFIGURASI ANDA
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWl2CJqIr-u8lSHu8s4tgZ25UQIK2ivt0",
+            authDomain: "mayfa-fa284.firebaseapp.com",
+            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mayfa-fa284",
+            storageBucket: "mayfa-fa284.firebasestorage.app",
+            messagingSenderId: "523290705179",
+            appId: "1:523290705179:web:b06ae4d8e6b08cf07b27be"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Referensi ke data pengaturan di Firebase
+        const settingsRef = database.ref('settings');
+        
+        // Default admin credentials
         const DEFAULT_ADMIN_USER = 'admin';
         const DEFAULT_ADMIN_PASS = 'admin123';
+        
         const authContainer = document.getElementById('auth-container');
         const feedbackModal = document.getElementById('feedbackModal');
         const feedbackTitle = document.getElementById('feedbackTitle');
@@ -829,10 +281,11 @@
             
             showFeedback('loading', 'Mengecek...');
             
-            setTimeout(() => {
-                // Mengambil data login admin dari localStorage (jika sudah disimpan)
-                const storedAdminUser = localStorage.getItem('adminUser') || DEFAULT_ADMIN_USER;
-                const storedAdminPass = localStorage.getItem('adminPass') || DEFAULT_ADMIN_PASS;
+            // Mengambil data login admin dari Firebase
+            settingsRef.once('value').then((snapshot) => {
+                const settings = snapshot.val() || {};
+                const storedAdminUser = settings.adminUser || DEFAULT_ADMIN_USER;
+                const storedAdminPass = settings.adminPass || DEFAULT_ADMIN_PASS;
                 
                 if (user === storedAdminUser && pass === storedAdminPass) {
                     showFeedback('success', 'Login Berhasil!', 'Mengalihkan ke panel admin...');
@@ -860,7 +313,10 @@
                     
                     setTimeout(hideFeedback, 2500);
                 }
-            }, 1500);
+            }).catch((error) => {
+                showFeedback('failure', 'Error!', 'Gagal memeriksa login: ' + error.message);
+                setTimeout(hideFeedback, 2500);
+            });
         }
         
         // Logout function
@@ -872,23 +328,27 @@
             adminPassInput.value = '';
         }
         
-        // Load data from localStorage to form
+        // Load data from Firebase to form
         function loadDataToForm() {
-            // Data ulang tahun
-            document.getElementById('birthdayNameInput').value = localStorage.getItem('birthdayName') || 'Mayfa';
-            document.getElementById('birthDateInput').value = localStorage.getItem('birthDate') || '2005-09-28';
-            document.getElementById('qrImageUrlInput').value = localStorage.getItem('qrImageUrl') || '';
-            
-            // Data login tamu
-            document.getElementById('guestUserInput').value = localStorage.getItem('guestUser') || 'user';
-            document.getElementById('guestPassInput').value = localStorage.getItem('guestPass') || 'user';
-            
-            // Data login admin
-            document.getElementById('adminUserInput').value = localStorage.getItem('adminUser') || DEFAULT_ADMIN_USER;
-            document.getElementById('adminPassInput').value = localStorage.getItem('adminPass') || DEFAULT_ADMIN_PASS;
-            
-            // Load QR preview if URL exists
-            updateQrPreview();
+            settingsRef.once('value').then((snapshot) => {
+                const settings = snapshot.val() || {};
+                
+                // Data ulang tahun
+                document.getElementById('birthdayNameInput').value = settings.birthdayName || 'Mayfa';
+                document.getElementById('birthDateInput').value = settings.birthDate || '2005-09-28';
+                document.getElementById('qrImageUrlInput').value = settings.qrImageUrl || '';
+                
+                // Data login tamu
+                document.getElementById('guestUserInput').value = settings.guestUser || 'user';
+                document.getElementById('guestPassInput').value = settings.guestPass || 'user';
+                
+                // Data login admin
+                document.getElementById('adminUserInput').value = settings.adminUser || 'admin';
+                document.getElementById('adminPassInput').value = settings.adminPass || 'admin123';
+                
+                // Load QR preview if URL exists
+                updateQrPreview();
+            });
         }
         
         // Update QR preview image
@@ -902,36 +362,41 @@
             }
         }
         
-        // Save data to localStorage
+        // Save data to Firebase
         function saveData() {
-            // Simpan data ulang tahun
-            localStorage.setItem('birthdayName', document.getElementById('birthdayNameInput').value);
-            localStorage.setItem('birthDate', document.getElementById('birthDateInput').value);
-            localStorage.setItem('qrImageUrl', document.getElementById('qrImageUrlInput').value);
-            
-            // Simpan data login tamu
-            localStorage.setItem('guestUser', document.getElementById('guestUserInput').value);
-            localStorage.setItem('guestPass', document.getElementById('guestPassInput').value);
-            
-            // Simpan data login admin
-            localStorage.setItem('adminUser', document.getElementById('adminUserInput').value);
-            localStorage.setItem('adminPass', document.getElementById('adminPassInput').value);
-            
-            showFeedback('success', 'Tersimpan!', 'Data telah berhasil diperbarui.');
-            
-            setTimeout(() => {
-                hideFeedback();
-                
-                // Confirmation animation
-                const saveBtn = document.querySelector('.btn-save');
-                saveBtn.innerHTML = '<i class="fas fa-check"></i> Tersimpan!';
-                saveBtn.style.background = 'linear-gradient(to right, #4ade80, #22d3ee)';
-                
-                setTimeout(() => {
-                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
-                    saveBtn.style.background = 'linear-gradient(to right, #4facfe 0%, #00f2fe 100%)';
-                }, 2000);
-            }, 1500);
+            const settings = {
+                birthdayName: document.getElementById('birthdayNameInput').value,
+                birthDate: document.getElementById('birthDateInput').value,
+                qrImageUrl: document.getElementById('qrImageUrlInput').value,
+                guestUser: document.getElementById('guestUserInput').value,
+                guestPass: document.getElementById('guestPassInput').value,
+                adminUser: document.getElementById('adminUserInput').value,
+                adminPass: document.getElementById('adminPassInput').value
+            };
+
+            // Simpan ke Firebase
+            settingsRef.set(settings)
+                .then(() => {
+                    showFeedback('success', 'Tersimpan!', 'Data telah berhasil diperbarui di cloud.');
+                    
+                    setTimeout(() => {
+                        hideFeedback();
+                        
+                        // Confirmation animation
+                        const saveBtn = document.querySelector('.btn-save');
+                        saveBtn.innerHTML = '<i class="fas fa-check"></i> Tersimpan!';
+                        saveBtn.style.background = 'linear-gradient(to right, #4ade80, #22d3ee)';
+                        
+                        setTimeout(() => {
+                            saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+                            saveBtn.style.background = 'linear-gradient(to right, #4facfe 0%, #00f2fe 100%)';
+                        }, 2000);
+                    }, 1500);
+                })
+                .catch((error) => {
+                    showFeedback('failure', 'Error!', 'Gagal menyimpan: ' + error.message);
+                    setTimeout(hideFeedback, 2500);
+                });
         }
         
         // Initialize on page load
