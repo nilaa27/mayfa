@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
@@ -24,7 +23,7 @@
         } 
         
         body { 
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            background: #3c3163; 
             min-height: 100vh; 
             transition: background 0.5s ease; 
             display: flex;
@@ -37,20 +36,18 @@
         /* MODERN LOGIN STYLES */
         .login-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 400px;
             perspective: 1000px;
         }
         
         .login-box {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), 
-                        0 8px 20px rgba(0, 0, 0, 0.15),
-                        inset 0 0 12px rgba(255, 255, 255, 0.15);
+            background: #483D71;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             border-radius: 24px;
-            padding: 50px 40px;
+            padding: 40px;
             text-align: center;
             transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
                         opacity 0.5s ease, 
@@ -67,9 +64,9 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
             transform: rotate(30deg);
-            z-index: -1;
+            z-index: 0;
             pointer-events: none;
         }
         
@@ -80,22 +77,22 @@
         } 
         
         .login-header {
-            margin-bottom: 40px;
+            margin-bottom: 35px;
             position: relative;
         }
         
         .login-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            border: 2px solid rgba(255,255,255,0.25);
+            margin: 0 auto 25px;
+            border: 1px solid rgba(255,255,255,0.15);
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            animation: float 4s ease-in-out infinite;
+            animation: float 4s ease-in-out infinite; /* Re-added float animation for cake */
             position: relative;
         }
         
@@ -105,14 +102,14 @@
         }
         
         .login-icon i {
-            font-size: 48px;
-            color: #ffd166;
+            font-size: 38px;
+            color: #ffd166; /* Cake color set back to yellow */
             text-shadow: 0 0 15px rgba(255, 209, 102, 0.5);
             position: relative;
             z-index: 2;
         }
         
-        /* Lilin dan Api */
+        /* Re-added Candle and Flame styles for the cake */
         .candle {
             position: absolute;
             top: -10px;
@@ -147,15 +144,22 @@
         
         .login-box h1 { 
             color: #fff; 
-            font-size: 32px; 
-            font-weight: 600;
+            font-size: 34px;
+            font-weight: 700;
             letter-spacing: 0.5px;
             text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            margin-bottom: 8px;
         } 
+        
+        .login-box p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            font-weight: 400;
+        }
         
         .input-group { 
             position: relative; 
-            margin-bottom: 30px; 
+            margin-bottom: 25px;
         } 
         
         .input-group .icon { 
@@ -163,38 +167,35 @@
             left: 20px; 
             top: 50%; 
             transform: translateY(-50%); 
-            color: rgba(255, 255, 255, 0.8); 
+            color: rgba(255, 255, 255, 0.6); 
             transition: all 0.3s ease; 
             font-size: 18px;
         } 
         
         .input-group input { 
             width: 100%; 
-            padding: 18px 20px 18px 60px; 
-            background: rgba(255, 255, 255, 0.1); 
-            border: 2px solid rgba(255, 255, 255, 0.2); 
+            padding: 16px 20px 16px 55px;
+            background: #3E3465; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
             color: #fff; 
             font-size: 16px; 
             transition: all 0.3s; 
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
         } 
         
         .input-group input:focus { 
             outline: none; 
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+            border-color: rgba(90, 200, 250, 0.5);
+            background: #43396d;
+            box-shadow: 0 0 0 3px rgba(90, 200, 250, 0.1);
         } 
         
         .input-group input::placeholder { 
-            color: rgba(255, 255, 255, 0.65); 
+            color: rgba(255, 255, 255, 0.6); 
         } 
         
         .input-group:focus-within .icon { 
             color: #ffffff; 
-            transform: translateY(-50%) scale(1.1);
         } 
         
         #togglePassword { 
@@ -203,94 +204,70 @@
             top: 50%; 
             transform: translateY(-50%); 
             cursor: pointer; 
-            color: rgba(255, 255, 255, 0.8); 
+            color: rgba(255, 255, 255, 0.7); 
             font-size: 18px;
             transition: all 0.3s ease;
         } 
         
         #togglePassword:hover {
             color: #ffffff;
-            transform: translateY(-50%) scale(1.1);
         }
         
-        .login-options { 
-            text-align: right; 
-            margin-top: -10px; 
-            margin-bottom: 30px; 
-        } 
+        .login-btn {
+    width: 100%;
+    padding: 16px;
+    /* Updated background gradient to be more similar to the image */
+    background: linear-gradient(90deg, #377DFF 0%, #5AC8FA 100%);
+    border: none;
+    border-radius: 12px; /* Slightly more rounded corners to match the image */
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content horizontally */
+    gap: 8px; /* Space between icon and text */
+}
+
+.login-btn:hover {
+    transform: translateY(-4px); /* Subtle lift on hover */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+}
         
-        .admin-link { 
-            color: rgba(255, 255, 255, 0.8); 
-            text-decoration: none; 
-            font-size: 14px; 
-            font-weight: 400; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 6px; 
-            transition: all 0.3s ease; 
-        } 
-        
-        .admin-link:hover { 
-            color: #fff; 
-        } 
-        
-        .admin-link i { 
-            font-size: 16px; 
-            transition: transform 0.4s ease; 
-        } 
-        
-        .admin-link:hover i { 
-            transform: rotate(60deg); 
-        } 
-        
-        .login-btn { 
-            width: 100%; 
-            padding: 18px; 
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(245,245,245,0.95) 100%);
-            border: none; 
-            border-radius: 15px; 
-            color: #2575fc; 
-            font-size: 18px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            letter-spacing: 0.5px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-            position: relative;
-            overflow: hidden;
-        } 
-        
-        .login-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+        .admin-btn {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: 0.5s;
+            padding: 16px;
+            background: #3E3465;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+
+        }
+
+        .admin-btn:hover {
+            background: #4a4075;
+            color: #fff;
+        }
+
+        .admin-btn i {
+            transition: transform 0.4s ease;
         }
         
-        .login-btn:hover::before {
-            left: 100%;
-        }
-        
-        .login-btn:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-            background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 100%);
-        } 
-        
-        .login-btn:active {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .login-footer {
-            margin-top: 30px;
-            color: rgba(255,255,255,0.7);
-            font-size: 14px;
-            text-align: center;
+        .admin-btn:hover i {
+            transform: rotate(60deg);
         }
         
         .glow-effect {
@@ -300,7 +277,7 @@
             width: 100%;
             height: 100%;
             border-radius: 24px;
-            box-shadow: inset 0 0 50px rgba(255,255,255,0.1),
+            box-shadow: inset 0 0 50px rgba(255,255,255,0.05),
                         0 0 80px rgba(106, 17, 203, 0.3);
             pointer-events: none;
             z-index: -1;
@@ -692,31 +669,11 @@
         }
         
         @media (max-width: 480px) {
-            .login-box { padding: 25px; }
+            .login-box { padding: 30px 25px; }
             .login-box h1 { font-size: 28px; }
             .gift-card { padding: 20px; }
-            
-            .login-icon {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .login-icon i {
-                font-size: 36px;
-            }
-            
-            .candle {
-                top: -8px;
-                width: 6px;
-                height: 12px;
-            }
-            
-            .flame {
-                top: -18px;
-                width: 10px;
-                height: 16px;
-            }
         }
+
     </style>
 </head>
 <body>
@@ -730,7 +687,8 @@
                     <div class="candle"></div>
                     <div class="flame"></div>
                 </div>
-                <h1> Login Dulu Ya✨</h1>
+                <h1>Hi, There ✨</h1>
+                <p> please login, to using web</p>
             </div>
             <div class="input-group">
                 <i class="fas fa-user icon"></i>
@@ -741,15 +699,18 @@
                 <input type="password" id="password" placeholder="Password">
                 <i class="fas fa-eye" id="togglePassword"></i>
             </div>
-            <div class="login-options">
-                <a href="admin.html" class="admin-link" title="Pengaturan Admin"><i class="fas fa-cog"></i> Admin</a>
-            </div>
-            <button class="login-btn" onclick="login()">Login</button>
-            <div class="login-footer">
-                Masukkan kredensial untuk melihat kejutan spesial
-            </div>
+            
+            <button class="login-btn" onclick="login()">
+    <i class="fas fa-right-to-bracket"></i> Login
+</button>
+
+            
+            <button class="admin-btn" onclick="window.location.href='admin.html'">
+                <i class="fas fa-cog"></i> Admin Panel
+            </button>
         </div>
     </div>
+
     <div class="birthday-page-container" id="birthdayPage">
         <div class="birthday-content">
             <h1 class="main-title">Happy Birthday, <span id="birthdayName">Mayfa!</span></h1>
@@ -843,7 +804,6 @@
                 BIRTH_DATE = settings.birthDate || "2005-09-28";
                 QR_IMAGE_URL = settings.qrImageUrl || "";
                 
-                // Update UI if birthday page is visible
                 if (document.getElementById('birthdayName')) {
                     document.getElementById('birthdayName').textContent = BIRTHDAY_NAME + "!";
                     calculateAndDisplayAge(BIRTH_DATE);
@@ -871,14 +831,12 @@
         
         let fireworksInterval, driftingConfettiInterval;
         
-        // Modern login animation
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 loginBox.style.transform = 'scale(1)';
                 loginBox.style.opacity = '1';
             }, 100);
             
-            // Floating particles for login background
             setInterval(() => {
                 createDriftingParticle();
             }, 300);
@@ -914,7 +872,6 @@
             const password = document.getElementById("password").value;
             
             if (username === GUEST_USER && password === GUEST_PASS) {
-                // Login success animation
                 loginBox.style.transform = 'translateY(-20px) rotateY(20deg)';
                 loginBox.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.3)';
                 
@@ -940,9 +897,7 @@
                                 document.body.classList.remove("no-scroll");
                                 
                                 try {
-                                    backgroundMusic.play().catch(e => {
-                                        console.log("Autoplay gagal: ", e);
-                                    });
+                                    backgroundMusic.play().catch(e => console.log("Autoplay gagal: ", e));
                                 } catch (e) {
                                     console.log("Autoplay error: ", e);
                                 }
@@ -956,7 +911,6 @@
                     }, 1500);
                 }, 300);
             } else {
-                // Login failure animation
                 loginBox.animate([
                     { transform: 'translateX(0px)', easing: 'ease-in' },
                     { transform: 'translateX(-15px)', easing: 'ease-out' },
@@ -987,66 +941,40 @@
         }
         
         function createBalloons(count) {
-            const colors = [
-                '#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', 
-                '#2575FC', '#FFD166', '#EF476F', '#118AB2'
-            ];
-            
+            const colors = ['#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', '#2575FC', '#FFD166', '#EF476F', '#118AB2'];
             for (let i = 0; i < count; i++) {
                 const balloon = document.createElement('div');
                 balloon.classList.add('balloon');
-                
-                // Random size between 60px and 100px
                 const size = Math.random() * 40 + 60;
                 balloon.style.width = `${size}px`;
                 balloon.style.height = `${size * 1.1}px`;
                 balloon.style.left = `${Math.random() * 100}%`;
-                
-                // Random color
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 balloon.style.setProperty('--color', color);
-                
-                // Random animation duration
                 const duration = Math.random() * 15 + 20;
                 balloon.style.animationDuration = `${duration}s`;
                 balloon.style.animationDelay = `${Math.random() * 2}s`;
-                
-                // Create balloon body
                 const balloonBody = document.createElement('div');
                 balloonBody.classList.add('balloon-body');
-                
-                // Create highlight
                 const highlight = document.createElement('div');
                 highlight.classList.add('balloon-highlight');
-                
-                // Create string
                 const string = document.createElement('div');
                 string.classList.add('balloon-string');
-                
-                // Create knot
                 const knot = document.createElement('div');
                 knot.classList.add('balloon-knot');
-                
-                // Assemble balloon
                 balloonBody.appendChild(highlight);
                 balloon.appendChild(balloonBody);
                 balloon.appendChild(string);
                 balloon.appendChild(knot);
-                
                 document.body.appendChild(balloon);
-                
-                // Create confetti when balloon pops
                 setTimeout(() => {
-                    createConfetti(balloon.offsetLeft + size/2, balloon.offsetTop + size/2, color);
+                    createConfetti(balloon.offsetLeft + size / 2, balloon.offsetTop + size / 2, color);
                     balloon.remove();
                 }, duration * 1000);
             }
-            
-            // Create floating confetti
             createConfettiFall();
         }
         
-        // Create confetti explosion
         function createConfetti(x, y, color) {
             for (let i = 0; i < 25; i++) {
                 const confetti = document.createElement('div');
@@ -1054,54 +982,32 @@
                 confetti.style.setProperty('--color', color);
                 confetti.style.left = `${x}px`;
                 confetti.style.top = `${y}px`;
-                
-                // Random size
                 const size = Math.random() * 8 + 4;
                 confetti.style.width = `${size}px`;
                 confetti.style.height = `${size}px`;
-                
-                // Random animation
                 const duration = Math.random() * 2 + 1;
                 confetti.style.animationDuration = `${duration}s`;
-                
-                // Random direction
                 confetti.style.setProperty('--x', (Math.random() - 0.5) * 200);
-                
                 document.body.appendChild(confetti);
-                
-                setTimeout(() => {
-                    confetti.remove();
-                }, duration * 1000);
+                setTimeout(() => confetti.remove(), duration * 1000);
             }
         }
         
-        // Create falling confetti
         function createConfettiFall() {
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     const confetti = document.createElement('div');
                     confetti.classList.add('confetti');
-                    confetti.style.setProperty('--color', [
-                        '#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', 
-                        '#2575FC', '#FFD166', '#EF476F', '#118AB2'
-                    ][Math.floor(Math.random() * 8)]);
+                    confetti.style.setProperty('--color', ['#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', '#2575FC', '#FFD166', '#EF476F', '#118AB2'][Math.floor(Math.random() * 8)]);
                     confetti.style.left = `${Math.random() * 100}%`;
-                    
-                    // Random size
                     const size = Math.random() * 10 + 5;
                     confetti.style.width = `${size}px`;
                     confetti.style.height = `${size}px`;
-                    
-                    // Random animation
                     const duration = Math.random() * 5 + 5;
                     confetti.style.animationDuration = `${duration}s`;
                     confetti.style.opacity = Math.random() * 0.5 + 0.5;
-                    
                     document.body.appendChild(confetti);
-                    
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, duration * 1000);
+                    setTimeout(() => confetti.remove(), duration * 1000);
                 }, i * 200);
             }
         }
@@ -1110,24 +1016,15 @@
             const particle = document.createElement("div");
             particle.className = "drifting-particle";
             document.body.appendChild(particle);
-            
             const size = Math.random() * 5 + 3;
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
             particle.style.background = ["#ff6b6b", "#ffd166", "#4ecdc4", "#ffffff"][Math.floor(Math.random() * 4)];
             particle.style.left = Math.random() * 100 + "vw";
-            
             const duration = Math.random() * 5000 + 5000;
             const xOffset = 200 * (Math.random() - 0.5);
             const rotation = 720 * Math.random();
-            
-            particle.animate([
-                { transform: "translate(0, 0) rotate(0deg)", opacity: 1 },
-                { transform: `translate(${xOffset}px, 105vh) rotate(${rotation}deg)`, opacity: 0 }
-            ], {
-                duration: duration,
-                easing: "linear"
-            }).onfinish = () => particle.remove();
+            particle.animate([{ transform: "translate(0, 0) rotate(0deg)", opacity: 1 }, { transform: `translate(${xOffset}px, 105vh) rotate(${rotation}deg)`, opacity: 0 }], { duration: duration, easing: "linear" }).onfinish = () => particle.remove();
         }
         
         function startDriftingConfetti() {
@@ -1139,35 +1036,22 @@
             const particle = document.createElement("div");
             particle.classList.add("particle");
             document.body.appendChild(particle);
-            
             const size = Math.floor(Math.random() * 7 + 5);
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
             particle.style.background = ["#ff6b6b", "#ff8e53", "#6a11cb", "#2575fc", "#4ecdc4", "#ffd166", "#fff"][Math.floor(Math.random() * 7)];
-            
             const xOffset = 400 * (Math.random() - 0.5);
             const yOffset = 400 * (Math.random() - 0.5);
             const duration = Math.random() * 800 + 700;
-            
             particle.style.left = `${x}px`;
             particle.style.top = `${y}px`;
-            
-            particle.animate([
-                { transform: "translate(0, 0)", opacity: 1 },
-                { transform: `translate(${xOffset}px, ${yOffset}px)`, opacity: 0 }
-            ], {
-                duration: duration,
-                easing: "cubic-bezier(0.1, 0.7, 1.0, 0.1)"
-            }).onfinish = () => particle.remove();
+            particle.animate([{ transform: "translate(0, 0)", opacity: 1 }, { transform: `translate(${xOffset}px, ${yOffset}px)`, opacity: 0 }], { duration: duration, easing: "cubic-bezier(0.1, 0.7, 1.0, 0.1)" }).onfinish = () => particle.remove();
         }
         
         function createFireworkExplosion() {
             const x = window.innerWidth * 0.6 * (0.2 + Math.random());
             const y = window.innerHeight * 0.6 * (0.2 + Math.random());
-            
-            for (let i = 0; i < 30; i++) {
-                createParticle(x, y);
-            }
+            for (let i = 0; i < 30; i++) createParticle(x, y);
         }
         
         function startFireworks() {
@@ -1187,21 +1071,16 @@
             giftBox.style.display = "none";
             giftCard.style.display = "block";
             document.getElementById("giftCardName").textContent = BIRTHDAY_NAME;
-            
             const qrImg = document.getElementById("qrCodeImg");
-            
-            // Menggunakan QR code dari URL yang disimpan di Firebase
             if (QR_IMAGE_URL) {
                 qrImg.src = QR_IMAGE_URL;
                 qrImg.style.border = "10px solid white";
                 qrImg.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
             } else {
-                // Fallback ke QR code generator jika tidak ada gambar yang diunggah
                 let qrData = `Selamat Ulang Tahun ${BIRTHDAY_NAME}!`;
                 const encodedData = encodeURIComponent(qrData);
                 qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedData}`;
             }
-            
             startFireworks();
         }
         
@@ -1213,24 +1092,16 @@
         }
         
         giftModal.addEventListener("click", e => {
-            if (e.target === giftModal) {
-                closeGiftModal();
-            }
+            if (e.target === giftModal) closeGiftModal();
         });
         
-        // Initialize
         document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.add("no-scroll");
             birthdayPage.style.display = "none";
             giftModal.style.display = "none";
-            
-            // Initial login box state for animation
             loginBox.style.transform = 'scale(0.9) rotateY(30deg)';
             loginBox.style.opacity = '0';
-            
-            document.body.addEventListener("click", () => {
-                backgroundMusic.play();
-            }, { once: true });
+            document.body.addEventListener("click", () => backgroundMusic.play(), { once: true });
         });
     </script>
 </body>
