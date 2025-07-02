@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday Mayfa!</title>
+    <title>Happy Birthday For U!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -326,6 +326,8 @@ gap: 8px;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
             gap: 20px; 
             margin-top: 40px; 
+            perspective: 1000px;
+            transform-style: preserve-3d;
         } 
         
         .message-card { 
@@ -338,7 +340,17 @@ gap: 8px;
             color: white; 
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); 
             opacity: 0; 
-            animation: revealCard 0.8s ease-out forwards; 
+            animation: revealCard 0.8s ease-out forwards;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        opacity 0.8s ease,
+                        filter 0.8s ease,
+                        box-shadow 0.8s ease;
+            transform-origin: center;
+            transform: translateZ(0) rotateY(0deg);
+            opacity: 1;
+            filter: blur(0);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transform-style: preserve-3d;
         } 
         
         .message-card:nth-child(1) { 
@@ -674,6 +686,46 @@ gap: 8px;
             .gift-card { padding: 20px; }
         }
 
+        /* EFEK SCROLL BARU */
+        .message-card:not(.active) {
+            transform: translateZ(-100px) rotateY(15deg) scale(0.9);
+            opacity: 0.7;
+            filter: blur(2px);
+        }
+
+        .message-card.left {
+            transform: translateZ(-80px) rotateY(-15deg) scale(0.95);
+            opacity: 0.8;
+            filter: blur(1px);
+        }
+
+        .message-card.active {
+            transform: translateZ(0) rotateY(0deg) scale(1);
+            opacity: 1;
+            filter: blur(0);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .message-card:hover {
+            transform: translateZ(30px) rotateY(0deg) scale(1.03) !important;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            filter: blur(0) !important;
+            z-index: 10;
+        }
+
+        /* Responsif untuk mobile */
+        @media (max-width: 768px) {
+            .message-card:not(.active) {
+                transform: translateZ(-50px) scale(0.95);
+                opacity: 0.8;
+                filter: blur(1px);
+            }
+            
+            .message-card.left {
+                transform: translateZ(-40px) scale(0.97);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -723,18 +775,18 @@ gap: 8px;
                 <div class="message-card">
                     <i class="fas fa-star card-icon"></i>
                     <h2 class="card-title">Harapan Terbaik</h2>
-                    <p class="card-text">Semoga di hari spesial ini, kamu dikelilingi oleh kebahagiaan, cinta, dan semua hal indah yang kamu impikan.</p>
+                    <p class="card-text">semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar</p>
                 </div>
                 <div class="message-card">
                     <i class="fas fa-heart card-icon"></i>
-                    <h2 class="card-title">Tetap Kuat</h2>
-                    <p class="card-text">"Sudah berapa lama kamu bertahan?" Apapun yang terjadi, kamu hebat. Teruslah melangkah!</p>
+                    <h2 class="card-title">Jadilah Kuat</h2>
+                    <p class="card-text">"untuk segala hal yang membuat mu patah. it's okay, just say: Allah itu baik"</p>
                 </div>
             </div>
             <div class="message-card" style="margin-top: 20px; animation-delay: 1.4s;">
                 <h2 class="card-title">Ada Sesuatu Untukmu...</h2>
                 <button class="gift-btn-modern" onclick="openGift()">
-                    <i class="fas fa-gift"></i> Buka Hadiah Spesial
+                    <i class="fas fa-gift"></i> Claim Ur Gift
                 </button>
             </div>
         </div>
@@ -744,10 +796,10 @@ gap: 8px;
             <img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         <div class="gift-card" id="giftCard">
-            <h2 style="font-weight: 600;">Hadiah Spesial untuk <span id="giftCardName"></span>!</h2>
-            <p>Scan QR code di bawah ini</p>
+            <h2 style="font-weight: 600;">Hi, <span id="giftCardName"></span>!</h2>
+            <p>Scan To Claim Gift</p>
             <img id="qrCodeImg" alt="QR Code Hadiah" style="width: 180px; height: 180px; margin: 15px auto; border-radius: 10px; border: 10px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-            <p>Semoga harimu menyenangkan!</p>
+            <p>"mungkin hadiahku ga seberapa semoga bermanfaat, dan selamat bertambah usia, dilancarkan disemua hal, dan menjadi pribadi yang lebih baik dari sebelum nya ✨"</p>
         </div>
     </div>
     <div class="feedback-modal" id="successModal">
@@ -757,7 +809,7 @@ gap: 8px;
                 <i class="fas fa-check-circle icon success hidden"></i>
             </div>
             <h2>Login Berhasil!</h2>
-            <p>Mempersiapkan kejutan...</p>
+            <p>Memuat Laman...</p>
         </div>
     </div>
     <div class="feedback-modal" id="failureModal">
@@ -906,6 +958,7 @@ gap: 8px;
                                 calculateAndDisplayAge(BIRTH_DATE);
                                 startDriftingConfetti();
                                 createBalloons(15);
+                                setupScrollEffects(); // Aktifkan efek scroll baru
                             }, 500);
                         }, 1000);
                     }, 1500);
@@ -1103,6 +1156,43 @@ gap: 8px;
             loginBox.style.opacity = '0';
             document.body.addEventListener("click", () => backgroundMusic.play(), { once: true });
         });
+        
+        // FUNGSI BARU UNTUK EFEK SCROLL
+        function setupScrollEffects() {
+            const cards = document.querySelectorAll('.message-card');
+            const cardContainer = document.querySelector('.card-grid');
+            
+            function updateCardPositions() {
+                const containerRect = cardContainer.getBoundingClientRect();
+                const containerCenter = containerRect.top + containerRect.height / 2;
+                
+                cards.forEach(card => {
+                    card.classList.remove('active', 'left');
+                    
+                    const cardRect = card.getBoundingClientRect();
+                    const cardCenter = cardRect.top + cardRect.height / 2;
+                    const distanceFromCenter = Math.abs(cardCenter - containerCenter);
+                    
+                    // Jika kartu dekat dengan pusat
+                    if (distanceFromCenter < window.innerHeight * 0.3) {
+                        card.classList.add('active');
+                    } 
+                    // Jika kartu di sisi kiri pusat
+                    else if (cardCenter < containerCenter) {
+                        card.classList.add('left');
+                    }
+                });
+            }
+            
+            // Inisialisasi pertama
+            updateCardPositions();
+            
+            // Update saat scroll
+            window.addEventListener('scroll', updateCardPositions);
+            
+            // Update saat resize
+            window.addEventListener('resize', updateCardPositions);
+        }
     </script>
 </body>
 </html>
