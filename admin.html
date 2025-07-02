@@ -2,13 +2,12 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Admin Panel - Happy Birthday</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
@@ -37,7 +36,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            /* MODIFIED: Menghapus padding untuk memastikan centering sempurna */
             overflow-x: hidden;
             color: #fff;
             position: relative;
@@ -47,6 +46,7 @@
         .container {
             width: 100%;
             max-width: 900px;
+            padding: 20px; /* Padding dipindahkan ke sini untuk spacing internal */
             perspective: 1000px;
             z-index: 10;
         }
@@ -54,6 +54,7 @@
         #auth-container {
             position: relative;
             height: 650px;
+            max-height: 100vh;
         }
         
         /* Glass Panel with Depth */
@@ -741,10 +742,8 @@
     </style>
 </head>
 <body>
-    <!-- Floating particles for background effect -->
     <div id="particles"></div>
     
-    <!-- Floating decorative shapes -->
     <div class="floating-shape shape-circle" style="width: 200px; height: 200px; top: 10%; left: 5%; animation-delay: 0s;"></div>
     <div class="floating-shape shape-triangle" style="width: 150px; height: 150px; top: 70%; left: 80%; animation-delay: 3s;"></div>
     <div class="floating-shape shape-circle" style="width: 120px; height: 120px; top: 20%; left: 85%; animation-delay: 5s;"></div>
@@ -752,7 +751,6 @@
     
     <div class="container">
         <div id="auth-container">
-            <!-- Login Box -->
             <div class="box" id="adminLoginBox">
                 <div class="login-header">
                     <div class="login-icon">
@@ -786,7 +784,6 @@
                 </button>
             </div>
             
-            <!-- Admin Panel Box -->
             <div class="box" id="adminPanelBox">
                 <div class="box-header">
                     <h1><i class="fas fa-cogs"></i> Panel Admin</h1>
@@ -891,7 +888,6 @@
         </div>
     </div>
     
-    <!-- Feedback Modal -->
     <div class="feedback-modal" id="feedbackModal">
         <div class="feedback-content">
             <div class="icon-container">
