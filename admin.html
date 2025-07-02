@@ -36,36 +36,32 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px; /* Added padding for spacing on all screens */
+            padding: 20px;
             overflow-x: hidden;
             color: #fff;
             position: relative;
         }
         
-        /* Floating Glass Container */
         .container {
             width: 100%;
-            /* MODIFIED: Set a max-width to keep the mobile-like view on desktop */
             max-width: 500px; 
             perspective: 1000px;
             z-index: 10;
+            transition: max-width 0.5s ease;
         }
         
         #auth-container {
             position: relative;
-            /* MODIFIED: Adjusted height to better fit content */
             min-height: 650px;
             max-height: 90vh;
         }
         
-        /* Glass Panel with Depth */
         .box {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            /* MODIFIED: Unified padding to match mobile view */
             padding: 30px 20px;
             width: 100%;
             position: absolute;
@@ -92,7 +88,6 @@
             animation: rotate 15s linear infinite;
         }
         
-        /* Login Box Styling */
         #adminLoginBox {
             transform: rotateY(0deg);
             opacity: 1;
@@ -108,7 +103,6 @@
             z-index: 1;
         }
         
-        /* Admin Panel Styling */
         #adminPanelBox {
             transform: rotateY(-180deg);
             opacity: 0;
@@ -125,7 +119,6 @@
             z-index: 2;
         }
         
-        /* Header Styles */
         .login-header {
             text-align: center;
             margin-bottom: 30px;
@@ -133,7 +126,6 @@
         }
         
         .login-icon {
-            /* MODIFIED: Unified icon size */
             width: 80px;
             height: 80px;
             background: rgba(255, 255, 255, 0.1);
@@ -177,7 +169,6 @@
         }
         
         .login-icon i {
-            /* MODIFIED: Unified font size for icon */
             font-size: 36px;
             color: var(--primary);
             text-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
@@ -185,7 +176,6 @@
         }
         
         h1 {
-            /* MODIFIED: Unified font size for heading */
             font-size: 1.8rem;
             font-weight: 600;
             background: linear-gradient(45deg, var(--primary), var(--secondary));
@@ -195,7 +185,6 @@
             margin-bottom: 10px;
         }
         
-        /* Input Group Styles */
         .input-group {
             margin-bottom: 25px;
             position: relative;
@@ -218,7 +207,6 @@
         
         .input-field {
             width: 100%;
-            /* MODIFIED: Unified padding and font size for input fields */
             padding: 14px 16px 14px 45px;
             font-size: 1rem;
             background: rgba(255, 255, 255, 0.1);
@@ -260,10 +248,8 @@
             transform: translateY(-50%) scale(1.1);
         }
         
-        /* Button Styles */
         .btn {
             width: 100%;
-            /* MODIFIED: Unified padding and font size for buttons */
             padding: 16px;
             font-size: 16px;
             background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
@@ -307,7 +293,6 @@
             transform: translateY(-2px);
         }
         
-        /* Admin Panel Specific Styles */
         .box-header {
             display: flex;
             justify-content: space-between;
@@ -356,8 +341,7 @@
         
         .panel-grid {
             display: grid;
-            /* MODIFIED: Force single column layout */
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr; /* Default to 1 column */
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -369,6 +353,8 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         
         .panel-section:hover {
@@ -418,7 +404,6 @@
         
         .input-field-panel {
             width: 100%;
-            /* MODIFIED: Unified padding and font size for panel inputs */
             padding: 14px 16px 14px 45px;
             font-size: 1rem;
             background: rgba(255, 255, 255, 0.08);
@@ -452,6 +437,9 @@
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .qr-preview-container {
@@ -490,6 +478,7 @@
             padding: 15px;
             margin-top: 15px;
             font-size: 0.9rem;
+            margin-top: auto;
         }
         
         .url-instructions ol {
@@ -506,7 +495,6 @@
             border: none;
             border-radius: 15px;
             color: var(--dark);
-            /* MODIFIED: Unified font size and padding */
             font-size: 16px;
             padding: 16px;
             font-weight: 600;
@@ -652,7 +640,6 @@
             display: none;
         }
         
-        /* Floating particles effect */
         .particle {
             position: absolute;
             border-radius: 50%;
@@ -661,7 +648,6 @@
             z-index: 1;
         }
         
-        /* Floating Shapes */
         .floating-shape {
             position: absolute;
             z-index: 0;
@@ -678,8 +664,22 @@
             clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             background: linear-gradient(45deg, var(--primary), var(--secondary));
         }
-        
-        /* MODIFIED: Responsive media queries removed to enforce a single, consistent mobile-like layout */
+
+        /* MODIFIED: Added responsive layout for desktop */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1050px; /* Increase container width for desktop */
+            }
+
+            #adminPanelBox {
+                padding: 40px;
+            }
+
+            .panel-grid {
+                grid-template-columns: repeat(2, 1fr); /* Create 2 columns */
+                gap: 30px; /* Increase gap between sections */
+            }
+        }
     </style>
 </head>
 <body>
@@ -779,9 +779,7 @@
                                 <img id="qrPreviewImage" class="qr-preview-image" src="" alt="Preview QR Code">
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="panel-grid">
+                        
                         <div class="panel-section">
                             <div class="section-title">
                                 <i class="fas fa-users"></i>
@@ -876,6 +874,7 @@
         // Floating particles effect
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
+            if(!particlesContainer) return;
             const particleCount = 30;
             
             for (let i = 0; i < particleCount; i++) {
