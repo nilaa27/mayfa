@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Panel - Happy Birthday</title>
+    <title>Admin Panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* MODIFIED: Menghapus padding untuk memastikan centering sempurna */
+            padding: 20px; /* Added padding for spacing on all screens */
             overflow-x: hidden;
             color: #fff;
             position: relative;
@@ -45,16 +45,17 @@
         /* Floating Glass Container */
         .container {
             width: 100%;
-            max-width: 900px;
-            padding: 20px; /* Padding dipindahkan ke sini untuk spacing internal */
+            /* MODIFIED: Set a max-width to keep the mobile-like view on desktop */
+            max-width: 500px; 
             perspective: 1000px;
             z-index: 10;
         }
         
         #auth-container {
             position: relative;
-            height: 650px;
-            max-height: 100vh;
+            /* MODIFIED: Adjusted height to better fit content */
+            min-height: 650px;
+            max-height: 90vh;
         }
         
         /* Glass Panel with Depth */
@@ -64,7 +65,8 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 40px;
+            /* MODIFIED: Unified padding to match mobile view */
+            padding: 30px 20px;
             width: 100%;
             position: absolute;
             top: 0;
@@ -126,13 +128,14 @@
         /* Header Styles */
         .login-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             position: relative;
         }
         
         .login-icon {
-            width: 100px;
-            height: 100px;
+            /* MODIFIED: Unified icon size */
+            width: 80px;
+            height: 80px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
@@ -174,14 +177,16 @@
         }
         
         .login-icon i {
-            font-size: 48px;
+            /* MODIFIED: Unified font size for icon */
+            font-size: 36px;
             color: var(--primary);
             text-shadow: 0 0 15px rgba(79, 172, 254, 0.5);
             z-index: 1;
         }
         
         h1 {
-            font-size: 2.2rem;
+            /* MODIFIED: Unified font size for heading */
+            font-size: 1.8rem;
             font-weight: 600;
             background: linear-gradient(45deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
@@ -192,7 +197,7 @@
         
         /* Input Group Styles */
         .input-group {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             position: relative;
         }
         
@@ -213,12 +218,13 @@
         
         .input-field {
             width: 100%;
-            padding: 16px 20px 16px 50px;
+            /* MODIFIED: Unified padding and font size for input fields */
+            padding: 14px 16px 14px 45px;
+            font-size: 1rem;
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.15);
             border-radius: 15px;
             color: #fff;
-            font-size: 1.1rem;
             transition: var(--transition);
             backdrop-filter: blur(5px);
         }
@@ -257,12 +263,13 @@
         /* Button Styles */
         .btn {
             width: 100%;
-            padding: 18px;
+            /* MODIFIED: Unified padding and font size for buttons */
+            padding: 16px;
+            font-size: 16px;
             background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%);
             border: none;
             border-radius: 15px;
             color: var(--dark);
-            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
@@ -349,7 +356,8 @@
         
         .panel-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            /* MODIFIED: Force single column layout */
+            grid-template-columns: 1fr;
             gap: 25px;
             margin-bottom: 30px;
         }
@@ -382,7 +390,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 500;
             color: var(--primary);
             margin-bottom: 20px;
@@ -410,12 +418,13 @@
         
         .input-field-panel {
             width: 100%;
-            padding: 16px 20px 16px 50px;
+            /* MODIFIED: Unified padding and font size for panel inputs */
+            padding: 14px 16px 14px 45px;
+            font-size: 1rem;
             background: rgba(255, 255, 255, 0.08);
             border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             color: #fff;
-            font-size: 1rem;
             transition: var(--transition);
         }
         
@@ -425,7 +434,6 @@
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
         }
         
-        /* Perbaikan khusus untuk input tanggal */
         .input-field-panel[type="date"] {
             appearance: none;
             padding-top: 15px;
@@ -439,7 +447,6 @@
             margin-left: 5px;
         }
         
-        /* Gaya khusus untuk QR Code URL */
         .qr-url-container {
             background: rgba(255, 255, 255, 0.08);
             border-radius: 15px;
@@ -499,9 +506,10 @@
             border: none;
             border-radius: 15px;
             color: var(--dark);
-            font-size: 18px;
-            font-weight: 600;
+            /* MODIFIED: Unified font size and padding */
+            font-size: 16px;
             padding: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             width: 100%;
@@ -560,7 +568,7 @@
         .feedback-content {
             background: rgba(30, 40, 60, 0.95);
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px 20px;
             text-align: center;
             width: 90%;
             max-width: 400px;
@@ -671,74 +679,7 @@
             background: linear-gradient(45deg, var(--primary), var(--secondary));
         }
         
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                max-width: 95%;
-            }
-            
-            .box {
-                padding: 30px 20px;
-            }
-            
-            .login-icon {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .login-icon i {
-                font-size: 36px;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .input-field, .input-field-panel {
-                padding: 14px 16px 14px 45px;
-                font-size: 1rem;
-            }
-            
-            .btn, .btn-save {
-                padding: 16px;
-                font-size: 16px;
-            }
-            
-            .panel-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .box {
-                padding: 25px 15px;
-            }
-            
-            .login-header {
-                margin-bottom: 30px;
-            }
-            
-            .login-icon {
-                width: 70px;
-                height: 70px;
-            }
-            
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            .input-group {
-                margin-bottom: 25px;
-            }
-            
-            .section-title {
-                font-size: 1.1rem;
-            }
-            
-            .feedback-content {
-                padding: 30px 20px;
-            }
-        }
+        /* MODIFIED: Responsive media queries removed to enforce a single, consistent mobile-like layout */
     </style>
 </head>
 <body>
@@ -941,7 +882,6 @@
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
                 
-                // Random size and position
                 const size = Math.random() * 10 + 5;
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100;
@@ -962,7 +902,6 @@
             }
         }
         
-        // Add keyframes for particle animation
         function addParticleAnimation() {
             const styleSheet = document.styleSheets[0];
             styleSheet.insertRule(`
@@ -976,33 +915,27 @@
             `, styleSheet.cssRules.length);
         }
         
-        // Toggle password visibility
         togglePasswordBtn.addEventListener('click', function() {
             const type = adminPassInput.getAttribute('type') === 'password' ? 'text' : 'password';
             adminPassInput.setAttribute('type', type);
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
             
-            // Animation effect
             this.style.transform = 'translateY(-50%) scale(1.2)';
             setTimeout(() => {
                 this.style.transform = 'translateY(-50%) scale(1)';
             }, 300);
         });
         
-        // Show feedback modal
         function showFeedback(state, title, message = '') {
-            // Reset icons
             feedbackLoader.classList.add('hidden');
             successIcon.classList.add('hidden');
             failureIcon.classList.add('hidden');
             
-            // Show modal
             feedbackModal.style.display = 'flex';
             feedbackTitle.textContent = title;
             feedbackMessage.textContent = message;
             
-            // Set state
             if (state === 'loading') {
                 feedbackLoader.classList.remove('hidden');
             } else if (state === 'success') {
@@ -1012,12 +945,10 @@
             }
         }
         
-        // Hide feedback modal
         function hideFeedback() {
             feedbackModal.style.display = 'none';
         }
         
-        // Admin login function
         function adminLogin() {
             const user = document.getElementById('adminUser').value;
             const pass = adminPassInput.value;
@@ -1041,7 +972,6 @@
                 } else {
                     showFeedback('failure', 'Login Gagal!', 'Username atau Password salah.');
                     
-                    // Shake animation for login failure
                     authContainer.animate([
                         { transform: 'translateX(0)' },
                         { transform: 'translateX(-15px)' },
@@ -1062,16 +992,13 @@
             });
         }
         
-        // Logout function
         function logout() {
             authContainer.classList.remove('is-active');
             
-            // Reset form
             document.getElementById('adminUser').value = '';
             adminPassInput.value = '';
         }
         
-        // Load data from Firebase to form
         function loadDataToForm() {
             showFeedback('loading', 'Memuat data...');
             
@@ -1080,20 +1007,14 @@
                 const settings = snapshot.val();
                 
                 if (settings) {
-                    // Data ulang tahun
                     document.getElementById('birthdayNameInput').value = settings.birthdayName || 'Mayfa';
                     document.getElementById('birthDateInput').value = settings.birthDate || '2005-09-28';
                     document.getElementById('qrImageUrlInput').value = settings.qrImageUrl || '';
-                    
-                    // Data login tamu
                     document.getElementById('guestUserInput').value = settings.guestUser || 'user';
                     document.getElementById('guestPassInput').value = settings.guestPass || 'user';
-                    
-                    // Data login admin
                     document.getElementById('adminUserInput').value = settings.adminUser || DEFAULT_ADMIN_USER;
                     document.getElementById('adminPassInput').value = settings.adminPass || DEFAULT_ADMIN_PASS;
                     
-                    // Load QR preview if URL exists
                     updateQrPreview();
                 }
                 
@@ -1104,14 +1025,12 @@
             });
         }
         
-        // Update QR preview image
         function updateQrPreview() {
             const qrImageUrl = qrImageUrlInput.value;
             if (qrImageUrl) {
                 qrPreviewImage.src = qrImageUrl;
                 qrPreviewContainer.style.display = 'block';
                 
-                // Add fade-in effect
                 qrPreviewContainer.style.opacity = '0';
                 setTimeout(() => {
                     qrPreviewContainer.style.transition = 'opacity 0.5s ease';
@@ -1122,7 +1041,6 @@
             }
         }
         
-        // Save data to Firebase
         function saveData() {
             showFeedback('loading', 'Menyimpan data...');
             
@@ -1143,7 +1061,6 @@
                     setTimeout(() => {
                         hideFeedback();
                         
-                        // Confirmation animation
                         const saveBtn = document.querySelector('.btn-save');
                         saveBtn.innerHTML = '<i class="fas fa-check"></i> Tersimpan!';
                         saveBtn.style.background = 'linear-gradient(to right, #4ade80, #22d3ee)';
@@ -1160,16 +1077,13 @@
                 });
         }
         
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             authContainer.classList.remove('is-active');
             createParticles();
             addParticleAnimation();
             
-            // Update QR preview when URL changes
             qrImageUrlInput.addEventListener('input', updateQrPreview);
             
-            // Add floating animation to decorative shapes
             const shapes = document.querySelectorAll('.floating-shape');
             shapes.forEach((shape, index) => {
                 shape.style.animationDuration = `${15 + index * 2}s`;
