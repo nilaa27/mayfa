@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday For U!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,725 +11,72 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        } 
-        
-        body.no-scroll { 
-            overflow: hidden; 
-        } 
-        
-        body { 
-            background: #3c3163; 
-            min-height: 100vh; 
-            transition: background 0.5s ease; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-        } 
-        
-        /* MODERN LOGIN STYLES */
-        .login-container {
-            width: 100%;
-            max-width: 400px;
-            perspective: 1000px;
+        :root {
+            --primary: #ff7e5f; --secondary: #feb47b; --accent1: #ffc371; --accent2: #ff5f6d;
+            --dark: #1a1a2e; --darker: #16213e; --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15); --success: #30cfd0; --error: #f87171;
+            --light-text: rgba(255, 255, 255, 0.9); --transition-fast: all 0.3s ease;
         }
-        
-        .login-box {
-            background: #483D71;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-                        opacity 0.5s ease, 
-                        box-shadow 0.3s ease;
-            transform-style: preserve-3d;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .login-box::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
-            transform: rotate(30deg);
-            z-index: 0;
-            pointer-events: none;
-        }
-        
-        .login-box.hidden { 
-            transform: rotateY(90deg) scale(0.8); 
-            opacity: 0; 
-            display: none; 
-        } 
-        
-        .login-header {
-            margin-bottom: 35px;
-            position: relative;
-        }
-        
-        .login-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            animation: float 4s ease-in-out infinite; /* Re-added float animation for cake */
-            position: relative;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .login-icon i {
-            font-size: 38px;
-            color: #ffd166; /* Cake color set back to yellow */
-            text-shadow: 0 0 15px rgba(255, 209, 102, 0.5);
-            position: relative;
-            z-index: 2;
-        }
-        
-        /* Re-added Candle and Flame styles for the cake */
-        .candle {
-            position: absolute;
-            top: -10px;
-            width: 8px;
-            height: 15px;
-            background: linear-gradient(to bottom, #fff, #ffd166);
-            border-radius: 4px 4px 0 0;
-            z-index: 1;
-        }
-        
-        .flame {
-            position: absolute;
-            top: -22px;
-            width: 12px;
-            height: 20px;
-            background: linear-gradient(to bottom, #ffd166, #ff6b6b);
-            border-radius: 50% 50% 20% 20%;
-            animation: flicker 1.5s infinite alternate;
-            box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
-        }
-        
-        @keyframes flicker {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.9;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 1;
-            }
-        }
-        
-        .login-box h1 { 
-            color: #fff; 
-            font-size: 34px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            margin-bottom: 8px;
-        } 
-        
-        .login-box p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-            font-weight: 400;
-        }
-        
-        .input-group { 
-            position: relative; 
-            margin-bottom: 25px;
-        } 
-        
-        .input-group .icon { 
-            position: absolute; 
-            left: 20px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            color: rgba(255, 255, 255, 0.6); 
-            transition: all 0.3s ease; 
-            font-size: 18px;
-        } 
-        
-        .input-group input { 
-            width: 100%; 
-            padding: 16px 20px 16px 55px;
-            background: #3E3465; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            color: #fff; 
-            font-size: 16px; 
-            transition: all 0.3s; 
-            border-radius: 12px;
-        } 
-        
-        .input-group input:focus { 
-            outline: none; 
-            border-color: rgba(90, 200, 250, 0.5);
-            background: #43396d;
-            box-shadow: 0 0 0 3px rgba(90, 200, 250, 0.1);
-        } 
-        
-        .input-group input::placeholder { 
-            color: rgba(255, 255, 255, 0.6); 
-        } 
-        
-        .input-group:focus-within .icon { 
-            color: #ffffff; 
-        } 
-        
-        #togglePassword { 
-            position: absolute; 
-            right: 20px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            cursor: pointer; 
-            color: rgba(255, 255, 255, 0.7); 
-            font-size: 18px;
-            transition: all 0.3s ease;
-        } 
-        
-        #togglePassword:hover {
-            color: #ffffff;
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(90deg, #377DFF 0%, #5AC8FA 100%);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .admin-btn {
-            width: 100%;
-            padding: 16px;
-            background: #3E3465;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .admin-btn:hover {
-            background: #4a4075;
-            color: #fff;
-        }
-
-        .admin-btn i {
-            transition: transform 0.4s ease;
-        }
-        
-        .admin-btn:hover i {
-            transform: rotate(60deg);
-        }
-        
-        .glow-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 24px;
-            box-shadow: inset 0 0 50px rgba(255,255,255,0.05),
-                        0 0 80px rgba(106, 17, 203, 0.3);
-            pointer-events: none;
-            z-index: -1;
-            animation: glow-pulse 4s ease-in-out infinite;
-        }
-        
-        @keyframes glow-pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-        
-        /* Birthday Page Styles */
-        .birthday-page-container { 
-            display: none; 
-            align-items: flex-start; 
-            padding-top: 8vh; 
-            padding-bottom: 8vh; 
-            width: 100%;
-            max-width: 1000px;
-        } 
-        
-        .birthday-content { 
-            width: 100%; 
-            text-align: center; 
-            z-index: 10; 
-        } 
-        
-        .main-title { 
-            font-family: 'Pacifico', cursive; 
-            font-size: clamp(3rem, 10vw, 6rem); 
-            line-height: 1.2; 
-            color: #fff; 
-            text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 25px rgba(255,255,255,0.5); 
-            animation: fadeInDown 1s ease-out forwards; 
-        } 
-        
-        .main-title span { 
-            background: linear-gradient(45deg, #ffd166, #ff6b6b); 
-            -webkit-background-clip: text; 
-            background-clip: text; 
-            color: transparent; 
-        } 
-        
-        .card-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 20px; 
-            margin-top: 40px; 
-        } 
-        
-        .message-card { 
-            background: rgba(255, 255, 255, 0.15); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px); 
-            border-radius: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            padding: 30px; 
-            color: white; 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); 
-            
-            /* --- ANIMASI BARU (Kondisi Awal) --- */
-            opacity: 0;
-            filter: blur(5px);
-            transform: perspective(800px) rotateY(var(--initial-rotation, -20deg)) scale(0.9);
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        filter 0.8s ease-out,
-                        opacity 0.6s ease-out;
-        }
-
-        /* --- ANIMASI BARU (Kondisi Akhir Saat Terlihat) --- */
-        .message-card.is-visible {
-            opacity: 1;
-            filter: blur(0);
-            transform: perspective(800px) rotateY(0) scale(1);
-        }
-        
-        .card-icon { 
-            font-size: 2.5rem; 
-            margin-bottom: 15px; 
-            color: #ffd166; 
-        } 
-        
-        .card-title { 
-            font-size: 1.5rem; 
-            font-weight: 600; 
-            margin-bottom: 10px; 
-        } 
-        
-        .card-text { 
-            font-size: 1rem; 
-            line-height: 1.6; 
-            font-weight: 300; 
-        } 
-        
-        #ageDisplay { 
-            font-size: 1.2rem; 
-            font-weight: 400; 
-        } 
-        
-        .gift-btn-modern { 
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%); 
-            border: none; 
-            border-radius: 50px; 
-            padding: 15px 40px; 
-            font-size: 1.2rem; 
-            color: white; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4); 
-            margin-top: 20px; 
-        } 
-        
-        .gift-btn-modern:hover { 
-            transform: translateY(-5px) scale(1.05); 
-            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.6); 
-        } 
-        
-        @keyframes fadeInDown { 
-            from { 
-                opacity: 0; 
-                transform: translateY(-50px); 
-            } 
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            } 
-        } 
-        
-        .particle { 
-            position: fixed; 
-            border-radius: 50%; 
-            z-index: 3000; 
-            opacity: 0; 
-            pointer-events: none; 
-        } 
-        
-        .drifting-particle { 
-            position: fixed; 
-            top: -20px; 
-            border-radius: 50%; 
-            opacity: 0.8; 
-            pointer-events: none; 
-            z-index: 1; 
-        } 
-        
-        /* Modern Balloon Styles */
-        .balloon {
-            position: absolute;
-            bottom: -100px;
-            z-index: 1;
-            animation: floatBalloon linear forwards;
-            transform: translateZ(0);
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
-        }
-        
-        .balloon-body {
-            position: relative;
-            border-radius: 50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), var(--color) 70%);
-        }
-        
-        .balloon-highlight {
-            position: absolute;
-            top: 20%;
-            left: 20%;
-            width: 15%;
-            height: 15%;
-            background: rgba(255,255,255,0.6);
-            border-radius: 50%;
-        }
-        
-        .balloon-string {
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            height: 30px;
-            width: 2px;
-            background: rgba(255,255,255,0.8);
-        }
-        
-        .balloon-knot {
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 50%;
-        }
-        
-        @keyframes floatBalloon {
-            0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
-                opacity: 0.8;
-            }
-            25% {
-                transform: translateY(-30vh) translateX(5vw) rotate(5deg);
-            }
-            50% {
-                transform: translateY(-60vh) translateX(-5vw) rotate(-5deg);
-            }
-            75% {
-                transform: translateY(-90vh) translateX(3vw) rotate(3deg);
-            }
-            100% {
-                transform: translateY(-130vh) translateX(-3vw) rotate(-3deg);
-                opacity: 0;
-            }
-        }
-        
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--color);
-            border-radius: 50%;
-            animation: fall linear forwards;
-            z-index: 0;
-        }
-        
-        @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        .feedback-modal, 
-        .gift-modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background-color: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(4px); 
-            z-index: 2000; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 15px; 
-        } 
-        
-        .feedback-content { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 30px 40px; 
-            text-align: center; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            width: 90%; 
-            max-width: 350px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        } 
-        
-        .feedback-content .icon-container { 
-            width: 60px; 
-            height: 60px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-        } 
-        
-        .feedback-content .icon { 
-            font-size: 60px; 
-        } 
-        
-        .feedback-content .icon.success { 
-            color: #28a745; 
-        } 
-        
-        .feedback-content .icon.failure { 
-            color: #dc3545; 
-        } 
-        
-        .feedback-content h2 { 
-            font-size: 24px; 
-            color: #333; 
-            margin-bottom: 10px; 
-            font-weight: 600; 
-        } 
-        
-        @keyframes popIn { 
-            0% { 
-                transform: scale(0.7); 
-                opacity: 0; 
-            } 
-            80% { 
-                transform: scale(1.1); 
-                opacity: 1; 
-            } 
-            100% { 
-                transform: scale(1); 
-            } 
-        } 
-        
-        .feedback-content .icon { 
-            animation: popIn 0.5s ease-out forwards; 
-        } 
-        
-        @keyframes spin { 
-            0% { 
-                transform: rotate(0deg); 
-            } 
-            100% { 
-                transform: rotate(360deg); 
-            } 
-        } 
-        
-        .loader { 
-            border: 6px solid #f3f3f3; 
-            border-top: 6px solid #2575fc; 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
-            animation: spin 1s linear infinite; 
-        } 
-        
-        .hidden { 
-            display: none; 
-        } 
-        
-        .gift-box { 
-            position: relative; 
-            width: 250px; 
-            height: 250px; 
-            cursor: pointer; 
-            animation: wobble-gift 2s ease-in-out infinite; 
-        } 
-        
-        @keyframes wobble-gift { 
-            0%, 100% { 
-                transform: rotate(-3deg) scale(1); 
-            } 
-            50% { 
-                transform: rotate(3deg) scale(1.05); 
-            } 
-        } 
-        
-        .gift-card { 
-            display: none; 
-            background: white; 
-            border-radius: 15px; 
-            padding: 30px; 
-            text-align: center; 
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); 
-            width: 100%; 
-            max-width: 320px; 
-            z-index: 1001; 
-            animation: fadeInCard 0.5s ease-out; 
-        } 
-        
-        @keyframes fadeInCard { 
-            from { 
-                opacity: 0; 
-                transform: scale(0.8); 
-            } 
-            to { 
-                opacity: 1; 
-                transform: scale(1); 
-            } 
-        }
-        
-        .firebase-config {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 500px;
-            margin: 20px auto;
-            font-size: 14px;
-        }
-        
-        @media (max-width: 480px) {
-            .login-box { padding: 30px 25px; }
-            .login-box h1 { font-size: 28px; }
-            .gift-card { padding: 20px; }
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body.no-scroll { overflow: hidden; }
+        body { background: var(--darker); min-height: 100vh; transition: background 0.5s ease; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; position: relative; }
+        body::before, body::after { content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%); border-radius: 50%; transform: translate(-50%, -50%); animation: move-aurora 20s linear infinite; filter: blur(100px); opacity: 0.5; z-index: -1; }
+        body::after { background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%); animation-name: move-aurora-2; animation-delay: -10s; }
+        @keyframes move-aurora { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); } 50% { transform: translate(-45%, -55%) rotate(180deg) scale(1.2); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
+        @keyframes move-aurora-2 { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); } 50% { transform: translate(-55%, -45%) rotate(-180deg) scale(0.9); } 100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1.1); } }
+        .login-container { width: 100%; max-width: 400px; perspective: 1000px; }
+        .login-box { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border-radius: 24px; padding: 40px; text-align: center; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, box-shadow 0.3s ease; transform-style: preserve-3d; position: relative; overflow: hidden; }
+        .login-header { margin-bottom: 35px; position: relative; }
+        .login-icon { width: 80px; height: 80px; background: linear-gradient(45deg, var(--accent2), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; border: 1px solid var(--glass-border); box-shadow: 0 8px 30px rgba(255, 95, 109, 0.4); animation: float 4s ease-in-out infinite; position: relative; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .login-box h1 { background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 34px; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.2); margin-bottom: 8px; }
+        .input-group { position: relative; margin-bottom: 25px; }
+        .input-group .icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--primary); transition: all 0.3s ease; font-size: 18px; }
+        .input-group input { width: 100%; padding: 16px 20px 16px 55px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: #fff; font-size: 16px; transition: all 0.3s; border-radius: 12px; }
+        .login-btn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--accent2) 0%, var(--primary) 100%); border: none; border-radius: 12px; color: #fff; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .birthday-page-container { display: none; align-items: flex-start; padding-top: 8vh; padding-bottom: 8vh; width: 100%; max-width: 1000px; }
+        .main-title { font-family: 'Pacifico', cursive; font-size: clamp(3rem, 10vw, 6rem); line-height: 1.2; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 25px rgba(255,255,255,0.5); animation: fadeInDown 1s ease-out forwards; }
+        .main-title span { background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .message-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 30px; color: white; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); opacity: 0; filter: blur(5px); transform: perspective(800px) rotateY(var(--initial-rotation, -20deg)) scale(0.9); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s ease-out, opacity 0.6s ease-out; }
+        .message-card.is-visible { opacity: 1; filter: blur(0); transform: perspective(800px) rotateY(0) scale(1); }
+        .gift-card { display: none; background: linear-gradient(135deg, #FFFDE7, #FFE2E6); color: #4A4A4A; border-radius: 15px; padding: 30px; text-align: center; width: 100%; max-width: 320px; z-index: 1001; position: relative; overflow: hidden; animation: fadeInCard 0.5s ease-out forwards, subtle-glow 3s ease-in-out infinite alternate; }
+        .gift-card h2 { color: #333; }
+        @keyframes fadeInCard { from { opacity: 0; transform: scale(0.8) rotateZ(-5deg); } to { opacity: 1; transform: scale(1) rotateZ(0deg); } }
+        @keyframes subtle-glow { from { box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px rgba(255, 239, 186, 0.4); } to { box-shadow: 0 15px 35px rgba(0,0,0,0.3), 0 0 30px rgba(255, 239, 186, 0.8); } }
+        .feedback-modal, .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 3000; justify-content: center; align-items: center; padding: 15px; }
+        .feedback-content { background: rgba(30, 40, 60, 0.95); border-radius: 20px; padding: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; align-items: center; }
+        .loader { margin: 0 auto; border: 6px solid rgba(255, 255, 255, 0.1); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <audio id="background-music" loop><source src="mayfa.mp3"></audio>
-    <div class="login-container" id="loginContainer">
-        <div class="login-box" id="loginBox">
-            <div class="glow-effect"></div>
-            <div class="login-header">
-                <div class="login-icon">
-                    <i class="fas fa-birthday-cake"></i>
-                    <div class="candle"></div>
-                    <div class="flame"></div>
+    <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
+    <div id="app-container">
+        <div class="login-container" id="loginContainer">
+             <div class="login-box" id="loginBox">
+                <div class="login-header">
+                    <div class="login-icon"><i class="fas fa-birthday-cake"></i></div>
+                    <h1>Hi, There ✨</h1>
                 </div>
-                <h1>Hi, There ✨</h1>
-                <p> please login, to using web</p>
+                <div class="input-group"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Username"></div>
+                <div class="input-group"><i class="fas fa-lock icon"></i><input type="password" id="password" placeholder="Password"></div>
+                <button class="login-btn" onclick="login()"><i class="fas fa-right-to-bracket"></i> Login</button>
             </div>
-            <div class="input-group">
-                <i class="fas fa-user icon"></i>
-                <input type="text" id="username" placeholder="Username">
-            </div>
-            <div class="input-group">
-                <i class="fas fa-lock icon"></i>
-                <input type="password" id="password" placeholder="Password">
-                <i class="fas fa-eye" id="togglePassword"></i>
-            </div>
-            
-            <button class="login-btn" onclick="login()">
-                <i class="fas fa-right-to-bracket"></i> Login
-            </button>
-            
-            <button class="admin-btn" onclick="window.location.href='admin.html'">
-                <i class="fas fa-cog"></i> Admin Panel
-            </button>
         </div>
-    </div>
-
-    <div class="birthday-page-container" id="birthdayPage">
-        <div class="birthday-content">
-            <h1 class="main-title">Happy Birthday, <span id="birthdayName">Mayfa!</span></h1>
-            <div class="card-grid">
-                <div class="message-card">
-                    <i class="fas fa-calendar-check card-icon"></i>
-                    <h2 class="card-title">Spesial Untukmu</h2>
-                    <p class="card-text" id="ageDisplay"></p>
+        <div class="birthday-page-container" id="birthdayPage">
+            <div class="birthday-content">
+                <h1 class="main-title">Happy Birthday, <span id="birthdayName"></span></h1>
+                <div class="card-grid">
+                    <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">Spesial Untukmu</h2><p class="card-text" id="ageDisplay"></p></div>
+                    <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text">semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar</p></div>
+                    <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Jadilah Kuat</h2><p class="card-text">"untuk segala hal yang membuat mu patah. it's okay, just say: Allah itu baik"</p></div>
                 </div>
-                <div class="message-card">
-                    <i class="fas fa-star card-icon"></i>
-                    <h2 class="card-title">Harapan Terbaik</h2>
-                    <p class="card-text">semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar</p>
-                </div>
-                <div class="message-card">
-                    <i class="fas fa-heart card-icon"></i>
-                    <h2 class="card-title">Jadilah Kuat</h2>
-                    <p class="card-text">"untuk segala hal yang membuat mu patah. it's okay, just say: Allah itu baik"</p>
-                </div>
-            </div>
-            <div class="message-card" style="margin-top: 20px;">
-                <h2 class="card-title">Ada Sesuatu Untukmu...</h2>
-                <button class="gift-btn-modern" onclick="openGift()">
-                    <i class="fas fa-gift"></i> Claim Ur Gift
-                </button>
+                <div class="message-card" style="margin-top: 20px;"><h2 class="card-title">Ada Sesuatu Untukmu...</h2><button class="gift-btn-modern" onclick="openGift()"><i class="fas fa-gift"></i> Claim Ur Gift</button></div>
             </div>
         </div>
     </div>
     <div class="gift-modal" id="giftModal">
-        <div class="gift-box" onclick="openCard()">
-            <img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
+        <div class="gift-box" onclick="openCard()"><img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
         <div class="gift-card" id="giftCard">
             <h2 style="font-weight: 600;">Hi, <span id="giftCardName"></span>!</h2>
             <p>Scan To Claim Gift</p>
@@ -737,389 +84,81 @@
             <p>"mungkin hadiahku ga seberapa semoga bermanfaat, dan selamat bertambah usia, dilancarkan disemua hal, dan menjadi pribadi yang lebih baik dari sebelum nya ✨"</p>
         </div>
     </div>
-    <div class="feedback-modal" id="successModal">
+    <div class="feedback-modal" id="feedbackModal">
         <div class="feedback-content">
-            <div class="icon-container">
-                <div class="loader"></div>
-                <i class="fas fa-check-circle icon success hidden"></i>
-            </div>
-            <h2>Login Berhasil!</h2>
-            <p>Memuat Laman...</p>
+            <div class="icon-container"><div class="loader" id="feedbackLoader"></div><i class="fas fa-check-circle icon success hidden" id="successIcon"></i><i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i></div>
+            <h2 id="feedbackTitle"></h2><p id="feedbackMessage"></p>
         </div>
     </div>
-    <div class="feedback-modal" id="failureModal">
-        <div class="feedback-content">
-            <div class="icon-container">
-                <div class="loader"></div>
-                <i class="fas fa-times-circle icon failure hidden"></i>
-            </div>
-            <h2 id="failure-title">Login Gagal!</h2>
-            <p id="failure-message">Coba cek lagi...</p>
-        </div>
-    </div>
-    
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCWl2CJqIr-u8lSHu8s4tgZ25UQIK2ivt0",
-            authDomain: "mayfa-fa284.firebaseapp.com",
-            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "mayfa-fa284",
-            storageBucket: "mayfa-fa284.appspot.com",
-            messagingSenderId: "523290705179",
-            appId: "1:523290705179:web:b06ae4d8e6b08cf07b27be"
-        };
-
-        // Initialize Firebase
+        const firebaseConfig = { apiKey: "GANTI_DENGAN_API_KEY_ANDA", authDomain: "mayfa-fa284.firebaseapp.com", databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
-        // Global variables
-        let GUEST_USER = "user";
-        let GUEST_PASS = "user";
-        let BIRTHDAY_NAME = "Mayfa";
-        let BIRTH_DATE = "2005-09-28";
-        let QR_IMAGE_URL = "";
-
-        // Load settings from Firebase
-        database.ref('settings').on('value', (snapshot) => {
-            const settings = snapshot.val();
-            if (settings) {
-                GUEST_USER = settings.guestUser || "user";
-                GUEST_PASS = settings.guestPass || "user";
-                BIRTHDAY_NAME = settings.birthdayName || "Mayfa";
-                BIRTH_DATE = settings.birthDate || "2005-09-28";
-                QR_IMAGE_URL = settings.qrImageUrl || "";
-                
-                if (document.getElementById('birthdayName')) {
-                    document.getElementById('birthdayName').textContent = BIRTHDAY_NAME + "!";
-                    calculateAndDisplayAge(BIRTH_DATE);
-                }
-            }
-        });
-
-        const loginContainer = document.getElementById("loginContainer");
-        const loginBox = document.getElementById("loginBox");
-        const birthdayPage = document.getElementById("birthdayPage");
-        const giftModal = document.getElementById("giftModal");
-        const giftBox = document.querySelector(".gift-box");
-        const giftCard = document.getElementById("giftCard");
-        const backgroundMusic = document.getElementById("background-music");
-        const togglePassword = document.getElementById("togglePassword");
-        const passwordInput = document.getElementById("password");
-        const successModal = document.getElementById("successModal");
-        const successLoader = successModal.querySelector(".loader");
-        const successIcon = successModal.querySelector(".icon.success");
-        const failureModal = document.getElementById("failureModal");
-        const failureLoader = failureModal.querySelector(".loader");
-        const failureIcon = failureModal.querySelector(".icon.failure");
-        const failureTitle = failureModal.querySelector("#failure-title");
-        const failureMessage = failureModal.querySelector("#failure-message");
+        let pageData = {};
+        const loginContainer = document.getElementById("loginContainer"), birthdayPage = document.getElementById("birthdayPage"), appContainer = document.getElementById("app-container"), giftModal = document.getElementById("giftModal"), giftBox = document.querySelector(".gift-box"), giftCard = document.getElementById("giftCard"), backgroundMusic = document.getElementById("background-music");
         
-        let fireworksInterval, driftingConfettiInterval;
-        
+        // --- LOGIKA UTAMA ---
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                loginBox.style.transform = 'scale(1)';
-                loginBox.style.opacity = '1';
-            }, 100);
-            
-            setInterval(() => {
-                createDriftingParticle();
-            }, 300);
-
-            // --- KODE JAVASCRIPT BARU UNTUK ANIMASI SCROLL ---
-            const cards = document.querySelectorAll('.message-card');
-            
-            const observerOptions = {
-                root: null, // Menggunakan viewport sebagai root
-                rootMargin: '0px',
-                threshold: 0.25 // Memicu animasi saat 25% kartu terlihat
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    } else {
-                        // Hapus class jika ingin animasi berulang saat scroll ke atas
-                         entry.target.classList.remove('is-visible');
-                    }
-                });
-            }, observerOptions);
-
-            cards.forEach((card, index) => {
-                // Membuat efek bergantian dari kiri dan kanan
-                const rotation = index % 2 === 0 ? '-20deg' : '20deg';
-                card.style.setProperty('--initial-rotation', rotation);
-                // Menambahkan delay transisi agar muncul satu per satu
-                card.style.transitionDelay = `${index * 150}ms`;
-                observer.observe(card);
-            });
-            // --- AKHIR KODE JAVASCRIPT BARU ---
-        });
-        
-        togglePassword.addEventListener("click", function() {
-            this.classList.add("icon-toggle-animation");
-            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-            passwordInput.setAttribute("type", type);
-            this.classList.toggle("fa-eye");
-            this.classList.toggle("fa-eye-slash");
-            
-            this.addEventListener("animationend", () => {
-                this.classList.remove("icon-toggle-animation");
-            }, { once: true });
-        });
-        
-        function calculateAndDisplayAge(birthDate) {
-            const birthDateObj = new Date(birthDate);
-            const today = new Date();
-            let age = today.getFullYear() - birthDateObj.getFullYear();
-            const monthDiff = today.getMonth() - birthDateObj.getMonth();
-            
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
-                age--;
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageId = urlParams.get('id');
+            if (!pageId) {
+                appContainer.innerHTML = '<h1>Halaman tidak ditemukan atau link tidak valid.</h1>';
+                return;
             }
-            
-            document.getElementById("ageDisplay").innerText = `Hari ini usiamu genap ${age} tahun. Selamat!`;
-        }
-        
+            // Muat data spesifik berdasarkan pageId
+            database.ref('birthday_pages/' + pageId).on('value', (snapshot) => {
+                if (!snapshot.exists()) {
+                    appContainer.innerHTML = '<h1>Konten untuk halaman ini belum dibuat.</h1>';
+                    return;
+                }
+                pageData = snapshot.val();
+                document.getElementById('birthdayName').textContent = pageData.birthdayName || "Someone";
+                document.getElementById('giftCardName').textContent = pageData.birthdayName || "Someone";
+                document.getElementById('qrCodeImg').src = pageData.qrImageUrl || '';
+                calculateAndDisplayAge(pageData.birthDate);
+            });
+        });
+
         function login() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            
-            if (username === GUEST_USER && password === GUEST_PASS) {
-                loginBox.style.transform = 'translateY(-20px) rotateY(20deg)';
-                loginBox.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.3)';
-                
-                successLoader.classList.remove("hidden");
-                successIcon.classList.add("hidden");
-                successModal.style.display = "flex";
-                
+            if (username === pageData.guestUser && password === pageData.guestPass) {
+                showFeedback('loading', 'Login Berhasil!', 'Mempersiapkan keajaiban...');
                 setTimeout(() => {
-                    loginBox.style.transform = 'translateY(40px) rotateY(-90deg) scale(0.8)';
-                    loginBox.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        successLoader.classList.add("hidden");
-                        successIcon.classList.remove("hidden");
-                        
-                        setTimeout(() => {
-                            successModal.style.display = "none";
-                            loginBox.classList.add("hidden");
-                            
-                            setTimeout(() => {
-                                loginContainer.style.display = "none";
-                                birthdayPage.style.display = "flex";
-                                document.body.classList.remove("no-scroll");
-                                
-                                try {
-                                    backgroundMusic.play().catch(e => console.log("Autoplay gagal: ", e));
-                                } catch (e) {
-                                    console.log("Autoplay error: ", e);
-                                }
-                                
-                                document.getElementById("birthdayName").textContent = BIRTHDAY_NAME + "!";
-                                calculateAndDisplayAge(BIRTH_DATE);
-                                startDriftingConfetti();
-                                createBalloons(15);
-                            }, 500);
-                        }, 1000);
-                    }, 1500);
-                }, 300);
-            } else {
-                loginBox.animate([
-                    { transform: 'translateX(0px)', easing: 'ease-in' },
-                    { transform: 'translateX(-15px)', easing: 'ease-out' },
-                    { transform: 'translateX(15px)', easing: 'ease-in' },
-                    { transform: 'translateX(0px)', easing: 'ease-out' }
-                ], {
-                    duration: 600,
-                    iterations: 1
-                });
-                
-                failureLoader.classList.remove("hidden");
-                failureIcon.classList.add("hidden");
-                failureTitle.textContent = "Mengecek...";
-                failureMessage.textContent = "Memverifikasi username & password.";
-                failureModal.style.display = "flex";
-                
-                setTimeout(() => {
-                    failureLoader.classList.add("hidden");
-                    failureIcon.classList.remove("hidden");
-                    failureTitle.textContent = "Login Gagal!";
-                    failureMessage.textContent = "Silakan coba lagi.";
-                    
-                    setTimeout(() => {
-                        failureModal.style.display = "none";
-                    }, 1500);
+                    loginContainer.style.display = "none";
+                    birthdayPage.style.display = "flex";
+                    try { backgroundMusic.play().catch(e => {}); } catch (e) {}
+                    hideFeedback();
                 }, 1500);
-            }
-        }
-        
-        function createBalloons(count) {
-            const colors = ['#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', '#2575FC', '#FFD166', '#EF476F', '#118AB2'];
-            for (let i = 0; i < count; i++) {
-                const balloon = document.createElement('div');
-                balloon.classList.add('balloon');
-                const size = Math.random() * 40 + 60;
-                balloon.style.width = `${size}px`;
-                balloon.style.height = `${size * 1.1}px`;
-                balloon.style.left = `${Math.random() * 100}%`;
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                balloon.style.setProperty('--color', color);
-                const duration = Math.random() * 15 + 20;
-                balloon.style.animationDuration = `${duration}s`;
-                balloon.style.animationDelay = `${Math.random() * 2}s`;
-                const balloonBody = document.createElement('div');
-                balloonBody.classList.add('balloon-body');
-                const highlight = document.createElement('div');
-                highlight.classList.add('balloon-highlight');
-                const string = document.createElement('div');
-                string.classList.add('balloon-string');
-                const knot = document.createElement('div');
-                knot.classList.add('balloon-knot');
-                balloonBody.appendChild(highlight);
-                balloon.appendChild(balloonBody);
-                balloon.appendChild(string);
-                balloon.appendChild(knot);
-                document.body.appendChild(balloon);
-                setTimeout(() => {
-                    createConfetti(balloon.offsetLeft + size / 2, balloon.offsetTop + size / 2, color);
-                    balloon.remove();
-                }, duration * 1000);
-            }
-            createConfettiFall();
-        }
-        
-        function createConfetti(x, y, color) {
-            for (let i = 0; i < 25; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                confetti.style.setProperty('--color', color);
-                confetti.style.left = `${x}px`;
-                confetti.style.top = `${y}px`;
-                const size = Math.random() * 8 + 4;
-                confetti.style.width = `${size}px`;
-                confetti.style.height = `${size}px`;
-                const duration = Math.random() * 2 + 1;
-                confetti.style.animationDuration = `${duration}s`;
-                confetti.style.setProperty('--x', (Math.random() - 0.5) * 200);
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), duration * 1000);
-            }
-        }
-        
-        function createConfettiFall() {
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.classList.add('confetti');
-                    confetti.style.setProperty('--color', ['#FF6B6B', '#FF8E53', '#4ECDC4', '#6A11CB', '#2575FC', '#FFD166', '#EF476F', '#118AB2'][Math.floor(Math.random() * 8)]);
-                    confetti.style.left = `${Math.random() * 100}%`;
-                    const size = Math.random() * 10 + 5;
-                    confetti.style.width = `${size}px`;
-                    confetti.style.height = `${size}px`;
-                    const duration = Math.random() * 5 + 5;
-                    confetti.style.animationDuration = `${duration}s`;
-                    confetti.style.opacity = Math.random() * 0.5 + 0.5;
-                    document.body.appendChild(confetti);
-                    setTimeout(() => confetti.remove(), duration * 1000);
-                }, i * 200);
-            }
-        }
-        
-        function createDriftingParticle() {
-            const particle = document.createElement("div");
-            particle.className = "drifting-particle";
-            document.body.appendChild(particle);
-            const size = Math.random() * 5 + 3;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.background = ["#ff6b6b", "#ffd166", "#4ecdc4", "#ffffff"][Math.floor(Math.random() * 4)];
-            particle.style.left = Math.random() * 100 + "vw";
-            const duration = Math.random() * 5000 + 5000;
-            const xOffset = 200 * (Math.random() - 0.5);
-            const rotation = 720 * Math.random();
-            particle.animate([{ transform: "translate(0, 0) rotate(0deg)", opacity: 1 }, { transform: `translate(${xOffset}px, 105vh) rotate(${rotation}deg)`, opacity: 0 }], { duration: duration, easing: "linear" }).onfinish = () => particle.remove();
-        }
-        
-        function startDriftingConfetti() {
-            if (driftingConfettiInterval) clearInterval(driftingConfettiInterval);
-            driftingConfettiInterval = setInterval(createDriftingParticle, 200);
-        }
-        
-        function createParticle(x, y) {
-            const particle = document.createElement("div");
-            particle.classList.add("particle");
-            document.body.appendChild(particle);
-            const size = Math.floor(Math.random() * 7 + 5);
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.background = ["#ff6b6b", "#ff8e53", "#6a11cb", "#2575fc", "#4ecdc4", "#ffd166", "#fff"][Math.floor(Math.random() * 7)];
-            const xOffset = 400 * (Math.random() - 0.5);
-            const yOffset = 400 * (Math.random() - 0.5);
-            const duration = Math.random() * 800 + 700;
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            particle.animate([{ transform: "translate(0, 0)", opacity: 1 }, { transform: `translate(${xOffset}px, ${yOffset}px)`, opacity: 0 }], { duration: duration, easing: "cubic-bezier(0.1, 0.7, 1.0, 0.1)" }).onfinish = () => particle.remove();
-        }
-        
-        function createFireworkExplosion() {
-            const x = window.innerWidth * 0.6 * (0.2 + Math.random());
-            const y = window.innerHeight * 0.6 * (0.2 + Math.random());
-            for (let i = 0; i < 30; i++) createParticle(x, y);
-        }
-        
-        function startFireworks() {
-            if (fireworksInterval) clearInterval(fireworksInterval);
-            fireworksInterval = setInterval(createFireworkExplosion, 400);
-        }
-        
-        function stopFireworks() {
-            clearInterval(fireworksInterval);
-        }
-        
-        function openGift() {
-            giftModal.style.display = "flex";
-        }
-        
-        function openCard() {
-            giftBox.style.display = "none";
-            giftCard.style.display = "block";
-            document.getElementById("giftCardName").textContent = BIRTHDAY_NAME;
-            const qrImg = document.getElementById("qrCodeImg");
-            if (QR_IMAGE_URL) {
-                qrImg.src = QR_IMAGE_URL;
-                qrImg.style.border = "10px solid white";
-                qrImg.style.boxShadow = "0 5px 15px rgba(0,0,0,0.2)";
             } else {
-                let qrData = `Selamat Ulang Tahun ${BIRTHDAY_NAME}!`;
-                const encodedData = encodeURIComponent(qrData);
-                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedData}`;
+                showFeedback('failure', 'Login Gagal', 'Username atau password salah.');
+                setTimeout(hideFeedback, 2500);
             }
-            startFireworks();
         }
         
-        function closeGiftModal() {
-            giftModal.style.display = "none";
-            giftCard.style.display = "none";
-            giftBox.style.display = "block";
-            stopFireworks();
+        function calculateAndDisplayAge(birthDate) {
+            const birthDateObj = new Date(birthDate), today = new Date();
+            let age = today.getFullYear() - birthDateObj.getFullYear();
+            const monthDiff = today.getMonth() - birthDateObj.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) { age--; }
+            document.getElementById("ageDisplay").innerText = `Hari ini usiamu genap ${age} tahun. Selamat!`;
         }
+
+        function showFeedback(state, title, message = '') {
+            const feedbackModal = document.getElementById('feedbackModal'), feedbackTitle = document.getElementById('feedbackTitle'), feedbackMessage = document.getElementById('feedbackMessage'), loader = document.getElementById('feedbackLoader'), successIcon = document.getElementById('successIcon'), failureIcon = document.getElementById('failureIcon');
+            loader.classList.add('hidden'); successIcon.classList.add('hidden'); failureIcon.classList.add('hidden');
+            feedbackModal.style.display = 'flex';
+            feedbackTitle.textContent = title; feedbackMessage.textContent = message;
+            if (state === 'loading') loader.classList.remove('hidden');
+            else if (state === 'success') successIcon.classList.remove('hidden');
+            else if (state === 'failure') failureIcon.classList.remove('hidden');
+        }
+        function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
         
-        giftModal.addEventListener("click", e => {
-            if (e.target === giftModal) closeGiftModal();
-        });
-        
-        document.addEventListener("DOMContentLoaded", () => {
-            document.body.classList.add("no-scroll");
-            birthdayPage.style.display = "none";
-            giftModal.style.display = "none";
-            loginBox.style.transform = 'scale(0.9) rotateY(30deg)';
-            loginBox.style.opacity = '0';
-            document.body.addEventListener("click", () => backgroundMusic.play(), { once: true });
-        });
+        function openGift() { giftModal.style.display = "flex"; }
+        function openCard() { giftBox.style.display = "none"; giftCard.style.display = "block"; }
+        function closeGiftModal() { giftModal.style.display = "none"; giftCard.style.display = "none"; giftBox.style.display = "block"; }
+        giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
     </script>
 </body>
 </html>
