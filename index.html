@@ -19,13 +19,63 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body.no-scroll { overflow: hidden; }
-        body { background: var(--darker); min-height: 100vh; transition: background 0.5s ease; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; position: relative; }
-        body::before, body::after { content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%); border-radius: 50%; transform: translate(-50%, -50%); animation: move-aurora 20s linear infinite; filter: blur(100px); opacity: 0.5; z-index: -1; }
-        body::after { background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%); animation-name: move-aurora-2; animation-delay: -10s; }
+        body {
+            background: var(--darker); min-height: 100vh; transition: background 0.5s ease; display: flex;
+            justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; position: relative;
+        }
+        body::before, body::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
+            background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%);
+            border-radius: 50%; transform: translate(-50%, -50%); animation: move-aurora 20s linear infinite;
+            filter: blur(100px); opacity: 0.5; z-index: -1;
+        }
+        body::after {
+            background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%);
+            animation-name: move-aurora-2; animation-delay: -10s;
+        }
         @keyframes move-aurora { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); } 50% { transform: translate(-45%, -55%) rotate(180deg) scale(1.2); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
         @keyframes move-aurora-2 { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); } 50% { transform: translate(-55%, -45%) rotate(-180deg) scale(0.9); } 100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1.1); } }
-        .login-container { width: 100%; max-width: 400px; perspective: 1000px; }
-        .login-box { background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); border-radius: 24px; padding: 40px; text-align: center; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, box-shadow 0.3s ease; transform-style: preserve-3d; position: relative; overflow: hidden; }
+        
+        /* --- STYLING UNTUK KONTEN UTAMA & ERROR PAGE --- */
+        .login-container, .error-page {
+            width: 100%;
+            max-width: 400px;
+            perspective: 1000px;
+            z-index: 10;
+        }
+        .error-page {
+            display: none; /* Sembunyi secara default */
+            text-align: center;
+            color: var(--light-text);
+            animation: fadeIn 0.5s ease-out;
+        }
+        .error-page .error-icon {
+            font-size: 5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--primary);
+        }
+        .error-page h1 {
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .error-page p {
+            font-size: 1.1rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* --- AKHIR STYLING ERROR PAGE --- */
+
+        .login-box {
+            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-radius: 24px; padding: 40px; text-align: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d; position: relative; overflow: hidden;
+        }
         .login-header { margin-bottom: 35px; position: relative; }
         .login-icon { width: 80px; height: 80px; background: linear-gradient(45deg, var(--accent2), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; border: 1px solid var(--glass-border); box-shadow: 0 8px 30px rgba(255, 95, 109, 0.4); animation: float 4s ease-in-out infinite; position: relative; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -51,30 +101,39 @@
 </head>
 <body>
     <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
-    <div id="app-container">
-        <div class="login-container" id="loginContainer">
-             <div class="login-box" id="loginBox">
-                <div class="login-header">
-                    <div class="login-icon"><i class="fas fa-birthday-cake"></i></div>
-                    <h1>Hi, There ✨</h1>
-                </div>
-                <div class="input-group"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Username"></div>
-                <div class="input-group"><i class="fas fa-lock icon"></i><input type="password" id="password" placeholder="Password"></div>
-                <button class="login-btn" onclick="login()"><i class="fas fa-right-to-bracket"></i> Login</button>
+    
+    <div class="login-container" id="loginContainer">
+         <div class="login-box" id="loginBox">
+            <div class="login-header">
+                <div class="login-icon"><i class="fas fa-birthday-cake"></i></div>
+                <h1>Hi, There ✨</h1>
             </div>
-        </div>
-        <div class="birthday-page-container" id="birthdayPage">
-            <div class="birthday-content">
-                <h1 class="main-title">Happy Birthday, <span id="birthdayName"></span></h1>
-                <div class="card-grid">
-                    <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">Spesial Untukmu</h2><p class="card-text" id="ageDisplay"></p></div>
-                    <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text">semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar</p></div>
-                    <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Jadilah Kuat</h2><p class="card-text">"untuk segala hal yang membuat mu patah. it's okay, just say: Allah itu baik"</p></div>
-                </div>
-                <div class="message-card" style="margin-top: 20px;"><h2 class="card-title">Ada Sesuatu Untukmu...</h2><button class="gift-btn-modern" onclick="openGift()"><i class="fas fa-gift"></i> Claim Ur Gift</button></div>
-            </div>
+            <div class="input-group"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Username"></div>
+            <div class="input-group"><i class="fas fa-lock icon"></i><input type="password" id="password" placeholder="Password"></div>
+            <button class="login-btn" onclick="login()"><i class="fas fa-right-to-bracket"></i> Login</button>
         </div>
     </div>
+    
+    <div class="birthday-page-container" id="birthdayPage">
+        <div class="birthday-content">
+            <h1 class="main-title">Happy Birthday, <span id="birthdayName"></span></h1>
+            <div class="card-grid">
+                <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">Spesial Untukmu</h2><p class="card-text" id="ageDisplay"></p></div>
+                <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text">semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar</p></div>
+                <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Jadilah Kuat</h2><p class="card-text">"untuk segala hal yang membuat mu patah. it's okay, just say: Allah itu baik"</p></div>
+            </div>
+            <div class="message-card" style="margin-top: 20px;"><h2 class="card-title">Ada Sesuatu Untukmu...</h2><button class="gift-btn-modern" onclick="openGift()"><i class="fas fa-gift"></i> Claim Ur Gift</button></div>
+        </div>
+    </div>
+
+    <div class="error-page" id="errorPage">
+        <div class="error-icon">
+            <i class="fas fa-link-slash"></i>
+        </div>
+        <h1 id="errorTitle">Halaman Tidak Ditemukan</h1>
+        <p id="errorMessage">Pastikan link yang Anda masukkan sudah benar dan lengkap.</p>
+    </div>
+
     <div class="gift-modal" id="giftModal">
         <div class="gift-box" onclick="openCard()"><img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
         <div class="gift-card" id="giftCard">
@@ -95,29 +154,48 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         let pageData = {};
-        const loginContainer = document.getElementById("loginContainer"), birthdayPage = document.getElementById("birthdayPage"), appContainer = document.getElementById("app-container"), giftModal = document.getElementById("giftModal"), giftBox = document.querySelector(".gift-box"), giftCard = document.getElementById("giftCard"), backgroundMusic = document.getElementById("background-music");
+        const loginContainer = document.getElementById("loginContainer"), birthdayPage = document.getElementById("birthdayPage"), errorPage = document.getElementById("errorPage"), giftModal = document.getElementById("giftModal"), giftBox = document.querySelector(".gift-box"), giftCard = document.getElementById("giftCard"), backgroundMusic = document.getElementById("background-music");
         
-        // --- LOGIKA UTAMA ---
+        // --- LOGIKA UTAMA YANG DIPERBARUI ---
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
+
+            // Tampilkan halaman error jika ID tidak ada di URL
             if (!pageId) {
-                appContainer.innerHTML = '<h1>Halaman tidak ditemukan atau link tidak valid.</h1>';
+                showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap.");
                 return;
             }
+
             // Muat data spesifik berdasarkan pageId
             database.ref('birthday_pages/' + pageId).on('value', (snapshot) => {
+                // Tampilkan halaman error jika ID salah atau data tidak ada
                 if (!snapshot.exists()) {
-                    appContainer.innerHTML = '<h1>Konten untuk halaman ini belum dibuat.</h1>';
+                    showErrorPage("Konten Tidak Tersedia", "Halaman ini ada, namun kontennya belum diatur oleh pemilik.");
                     return;
                 }
+                
+                // Jika data ada, lanjutkan seperti biasa
                 pageData = snapshot.val();
+                loginContainer.style.display = 'block'; // Pastikan form login terlihat
                 document.getElementById('birthdayName').textContent = pageData.birthdayName || "Someone";
                 document.getElementById('giftCardName').textContent = pageData.birthdayName || "Someone";
                 document.getElementById('qrCodeImg').src = pageData.qrImageUrl || '';
                 calculateAndDisplayAge(pageData.birthDate);
+            }, (error) => {
+                // Handle error koneksi firebase
+                showErrorPage("Gagal Terhubung", "Tidak dapat memuat data. Periksa koneksi internet Anda.");
             });
         });
+
+        // --- FUNGSI BARU UNTUK MENAMPILKAN HALAMAN ERROR ---
+        function showErrorPage(title, message) {
+            loginContainer.style.display = 'none';
+            birthdayPage.style.display = 'none';
+            document.getElementById('errorTitle').textContent = title;
+            document.getElementById('errorMessage').textContent = message;
+            errorPage.style.display = 'block';
+        }
 
         function login() {
             const username = document.getElementById("username").value;
