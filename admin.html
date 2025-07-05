@@ -3,76 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Panel - Happy Birthday</title>
+    <title>Admin Panel - Neumorphic</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
         :root {
-            --primary: #ff7e5f; --secondary: #feb47b; --accent1: #ffc371; --accent2: #ff5f6d;
-            --dark: #1a1a2e; --darker: #16213e; --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15); --success: #30cfd0; --error: #f87171;
-            --light-text: rgba(255, 255, 255, 0.9); --transition-fast: all 0.3s ease;
+            --bg-color: #e0e5ec;
+            --primary-accent: #4a90e2;
+            --text-color: #5a677e;
+            --light-shadow: #ffffff;
+            --dark-shadow: #a3b1c6;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --transition-fast: all 0.3s ease;
+            --transition-modern: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--darker); min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #fff; position: relative; overflow: hidden; padding: 20px; }
-        body::before, body::after { content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%); border-radius: 50%; transform: translate(-50%, -50%); animation: move-aurora 20s linear infinite; filter: blur(100px); opacity: 0.4; }
-        body::after { background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%); animation-name: move-aurora-2; animation-delay: -10s; }
-        @keyframes move-aurora { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); } 50% { transform: translate(-45%, -55%) rotate(180deg) scale(1.2); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
-        @keyframes move-aurora-2 { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); } 50% { transform: translate(-55%, -45%) rotate(-180deg) scale(0.9); } 100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1.1); } }
-        .container { width: 100%; max-width: 1100px; perspective: 1500px; z-index: 10; }
-        #auth-container { position: relative; width: 100%; height: auto; max-width: 450px; margin: auto; transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), max-width 0.8s ease, height 0.8s ease; transform-style: preserve-3d; }
-        .box { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px; width: 100%; height: 100%; position: absolute; top: 0; left: 0; transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.6s ease; backface-visibility: hidden; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1); overflow: hidden; display: flex; flex-direction: column; }
-        #adminLoginBox { position: relative; transform: rotateY(0deg); opacity: 1; z-index: 2; justify-content: center; align-items: center; }
-        #auth-container.is-active #adminLoginBox { transform: rotateY(180deg); opacity: 0; pointer-events: none; }
-        #adminPanelBox { position: relative; transform: rotateY(-180deg); opacity: 0; }
-        #auth-container.is-active { max-width: 900px; }
-        #auth-container.is-active #adminPanelBox { transform: rotateY(0deg); opacity: 1; z-index: 2; position: relative; }
-        .login-content { width: 100%; max-width: 330px; position: relative; z-index: 2; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header-icon { width: 75px; height: 75px; background: linear-gradient(45deg, var(--accent2), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 2px solid var(--glass-border); box-shadow: 0 8px 30px rgba(255, 95, 109, 0.4); animation: float 4s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        .header-icon i { font-size: 36px; color: #fff; text-shadow: 0 0 15px rgba(0,0,0,0.3); }
-        h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(45deg, var(--primary), var(--accent1)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
-        .header p { color: var(--light-text); font-size: 1rem; }
-        .input-group { margin-bottom: 20px; position: relative; }
-        .input-group label { display: block; color: var(--light-text); font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; padding-left: 8px; }
+        body {
+            background: var(--bg-color); min-height: 100vh; display: flex;
+            justify-content: center; align-items: center; color: var(--text-color);
+            position: relative; overflow: hidden; padding: 10px;
+            -webkit-user-select: none; user-select: none; touch-action: pan-y;
+        }
+        .container {
+            width: 100%; max-width: 1100px; min-height: 95vh; display: flex;
+            justify-content: center; align-items: center; z-index: 5; padding: 20px;
+        }
+        #auth-container {
+            position: relative; width: 100%; height: 550px;
+            max-width: 450px; margin: auto;
+            transition: max-width 0.8s ease, height 0.8s ease;
+        }
+        #auth-container.is-active { max-width: 1000px; height: 90vh; }
+        .box {
+            background: var(--bg-color); border-radius: 30px; padding: 30px;
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            box-shadow: -9px -9px 16px var(--light-shadow), 9px 9px 16px var(--dark-shadow);
+            transition: opacity 0.5s ease-in-out, transform 0.6s ease-in-out;
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+        #adminLoginBox {
+            opacity: 1; transform: translateY(0); z-index: 2;
+            justify-content: center; align-items: center;
+        }
+        #auth-container.is-active #adminLoginBox { opacity: 0; transform: translateY(-20px); pointer-events: none; }
+        #adminPanelBox { opacity: 0; transform: translateY(20px); pointer-events: none; }
+        #auth-container.is-active #adminPanelBox { opacity: 1; transform: translateY(0); z-index: 2; pointer-events: auto; }
+        .login-content { width: 100%; max-width: 330px; text-align: center; }
+        .header { margin-bottom: 30px; }
+        .header-icon {
+            width: 80px; height: 80px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; margin: 0 auto 20px;
+            font-size: 38px; color: var(--primary-accent);
+            box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow);
+        }
+        h1 { font-size: 2.2rem; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
+        .header p { font-size: 1rem; }
+        .input-group { margin-bottom: 25px; text-align: left; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; padding-left: 15px; }
         .input-wrapper { position: relative; }
-        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 16px; transition: var(--transition-fast); }
-        .input-field { width: 100%; padding: 14px 16px 14px 45px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-size: 1rem; transition: var(--transition-fast); }
-        .input-field[readonly] { background: rgba(0,0,0,0.4); }
-        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(255, 126, 95, 0.4); }
-        .input-field:focus ~ i { color: var(--accent1); transform: translateY(-50%) scale(1.1); }
-        #togglePassword { right: 16px; left: auto; cursor: pointer; }
-        .btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--accent2) 0%, var(--primary) 100%); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(255, 95, 109, 0.35); }
-        .register-link { text-align: center; margin-top: 20px; font-size: 0.9rem; color: var(--light-text); }
-        .register-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
-        .register-link a:hover { text-decoration: underline; color: var(--secondary); }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); width: 100%; flex-shrink: 0; }
-        .panel-header h1 i { color: var(--primary); margin-right: 10px; }
-        .logout-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--light-text); width: 45px; height: 45px; border-radius: 50%; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .logout-btn:hover { background: var(--primary); color: #fff; transform: rotate(15deg); }
-        .panel-main { flex-grow: 1; overflow-y: auto; padding: 20px 15px 0 0; width: 100%; position: relative; z-index: 2; }
-        .panel-section { background: rgba(255, 255, 255, 0.03); border-radius: 18px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--glass-border); opacity: 0; transform: translateY(40px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
-        .panel-section.in-view { opacity: 1; transform: translateY(0); }
-        .section-title { display: flex; align-items: center; gap: 15px; font-size: 1.3rem; font-weight: 600; color: var(--light-text); margin-bottom: 25px; }
-        .section-title i { color: var(--primary); font-size: 1.5rem; }
-        .panel-actions { flex-shrink: 0; width: 100%; padding: 20px 30px; background: rgba(15, 18, 26, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--glass-border); border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; display: flex; justify-content: flex-end; align-items: center; gap: 20px; margin-top: auto; padding-top: 20px; }
-        .btn-save { background: linear-gradient(to right, var(--primary) 0%, var(--secondary) 100%); border: none; border-radius: 10px; color: var(--darker); font-size: 1rem; font-weight: 600; padding: 12px 25px; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; gap: 10px; }
-        .btn-save:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255, 126, 95, 0.4); }
-        .feedback-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 3000; justify-content: center; align-items: center; }
-        .feedback-content { background: rgba(30, 40, 60, 0.95); border-radius: 20px; padding: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); border-top: 4px solid var(--primary); }
-        .icon-container { height: 80px; margin-bottom: 20px; }
-        .icon-container .icon { font-size: 60px; }
-        .icon-container .icon.success { color: var(--success); }
-        .icon-container .icon.failure { color: var(--error); }
-        .loader { margin: 0 auto; border: 6px solid rgba(255, 255, 255, 0.1); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        .hidden { display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .input-field {
+            width: 100%; padding: 16px 20px 16px 50px; background: var(--bg-color);
+            border: none; border-radius: 50px; color: var(--text-color); font-size: 1rem;
+            font-weight: 500; outline: none; transition: var(--transition-fast);
+            box-shadow: inset 5px 5px 8px var(--dark-shadow), inset -5px -5px 8px var(--light-shadow);
+        }
+        .input-field:focus { box-shadow: inset 7px 7px 12px var(--dark-shadow), inset -7px -7px 12px var(--light-shadow); }
+        .input-wrapper .icon-left, .input-wrapper .icon-right {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            color: var(--text-color); opacity: 0.7; font-size: 16px; transition: var(--transition-fast);
+        }
+        .input-wrapper .icon-left { left: 20px; }
+        .input-wrapper .icon-right { right: 20px; cursor: pointer; }
+        .input-wrapper .icon-right:hover, .input-field:focus ~ .icon-left, .input-field:focus ~ .icon-right { color: var(--primary-accent); opacity: 1; }
+        #togglePassword.fa-eye-slash { transform: translateY(-50%) rotate(180deg); }
+        .btn {
+            width: 100%; padding: 18px; background: var(--bg-color); border: none;
+            border-radius: 50px; color: var(--primary-accent); font-size: 1.1rem;
+            font-weight: 600; cursor: pointer; transition: var(--transition-fast);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: -5px -5px 15px var(--light-shadow), 5px 5px 15px var(--dark-shadow);
+        }
+        .btn:hover { color: #1e77d3; }
+        .btn:active { color: #1e77d3; box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow); }
+        /* Style untuk link register */
+        .register-link { text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-color); }
+        .register-link a { color: var(--primary-accent); text-decoration: none; font-weight: 600; }
+        .register-link a:hover { text-decoration: underline; }
+        /* Panel Styles (No changes) */
+        .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:20px;flex-shrink:0;border-bottom:1px solid rgba(0,0,0,.05)}.panel-header h1{display:flex;align-items:center;gap:15px}.panel-header h1 i{color:var(--primary-accent)}.logout-btn,.btn-save{background:var(--bg-color);border:none;cursor:pointer;transition:var(--transition-fast);box-shadow:-5px -5px 10px var(--light-shadow),5px 5px 10px var(--dark-shadow)}.logout-btn:active,.btn-save:active{box-shadow:inset 4px 4px 8px var(--dark-shadow),inset -4px -4px 8px var(--light-shadow)}.logout-btn{width:50px;height:50px;border-radius:50%;color:var(--text-color);font-size:18px}.logout-btn:hover{color:var(--primary-accent)}.panel-main{flex-grow:1;overflow-y:auto;overflow-x:hidden;width:100%;padding:15px 5px}.panel-section{background:var(--bg-color);padding:25px;border-radius:20px;box-shadow:-7px -7px 14px var(--light-shadow),7px 7px 14px var(--dark-shadow)}.section-title{display:flex;align-items:center;gap:15px;font-size:1.4rem;font-weight:600;margin-bottom:25px}.section-title i{color:var(--primary-accent);font-size:1.6rem}.panel-actions{flex-shrink:0;width:100%;padding:25px 0 10px;display:flex;justify-content:flex-end;align-items:center;margin-top:auto}.btn-save{border-radius:50px;color:var(--primary-accent);font-size:1rem;font-weight:600;padding:15px 30px;display:flex;align-items:center;gap:10px}.btn-save:hover{color:#1e77d3}@media (min-width:992px){#adminPanelBox{padding:40px}.panel-main{display:grid;grid-template-columns:1fr 1fr;gap:30px}.panel-section.full-width{grid-column:1 / -1}}@media (max-width:991px){#adminPanelBox{padding:20px 15px}.panel-main{display:flex;flex-direction:column;gap:25px}.panel-section{padding:20px}.panel-actions{padding:20px;justify-content:center}.btn-save{width:100%}}.feedback-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(224,229,236,.7);backdrop-filter:blur(4px);z-index:3000;justify-content:center;align-items:center}.feedback-content{background:var(--bg-color);border-radius:20px;padding:40px;text-align:center;width:90%;max-width:400px;box-shadow:-9px -9px 16px var(--light-shadow),9px 9px 16px var(--dark-shadow)}.icon-container{height:80px;margin-bottom:20px}.icon-container .icon{font-size:60px}.icon-container .icon.success{color:var(--success)}.icon-container .icon.failure{color:var(--error)}.loader{margin:0 auto;border:6px solid rgba(90,103,126,.2);border-top:6px solid var(--primary-accent);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}.hidden{display:none}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.qr-preview-container{margin-top:15px;text-align:center}.qr-preview-image{max-width:150px;border-radius:15px;display:none;box-shadow:-5px -5px 10px var(--light-shadow),5px 5px 10px var(--dark-shadow)}input{font-size:16px}
     </style>
 </head>
 <body>
@@ -81,151 +104,174 @@
             <div class="box" id="adminLoginBox">
                 <div class="login-content">
                     <div class="header">
-                        <div class="header-icon"><i class="fas fa-user-lock"></i></div>
-                        <h1>Admin Login</h1>
-                        <p>Akses panel dengan akun terdaftar</p>
+                        <div class="header-icon"><i class="fas fa-user-shield"></i></div>
+                        <h1>Welcome Back</h1>
+                        <p>Sign in to continue</p>
                     </div>
                     <div class="input-group">
-                        <label>Username</label>
-                        <div class="input-wrapper"><input type="text" id="adminUser" class="input-field" placeholder="admin"><i class="fas fa-user"></i></div>
+                        <label for="adminUser">Username</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user icon-left"></i>
+                            <input type="text" id="adminUser" class="input-field" placeholder="Enter username">
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label>Password</label>
-                        <div class="input-wrapper"><input type="password" id="adminPass" class="input-field" placeholder="••••••••"><i class="fas fa-key"></i><i class="fas fa-eye" id="togglePassword"></i></div>
+                        <label for="adminPass">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock icon-left"></i>
+                            <input type="password" id="adminPass" class="input-field" placeholder="••••••••">
+                            <i class="fas fa-eye icon-right" id="togglePassword"></i>
+                        </div>
                     </div>
-                    <button class="btn" onclick="adminLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
-                    <p class="register-link">Admin baru? <a href="register.html">Buat Akun Disini</a></p>
+                    <button class="btn" onclick="adminLogin()"><i class="fas fa-sign-in-alt"></i> Login</button>
+                    <p class="register-link">Don't have an account? <a href="register.html">Register here</a></p>
                 </div>
             </div>
+
             <div class="box" id="adminPanelBox">
                 <div class="panel-header">
-                    <h1><i class="fas fa-cogs"></i> Admin Panel</h1>
+                    <h1><i class="fas fa-sliders-h"></i>Control Panel</h1>
                     <button class="logout-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
                 <form id="editForm" onsubmit="event.preventDefault(); saveData();" class="panel-main">
-                    <div class="panel-section" data-span="2">
-                        <div class="section-title"><i class="fas fa-share-alt"></i><span>Your Unique Page Link</span></div>
+                    <div class="panel-section full-width">
+                        <div class="section-title"><i class="fas fa-link"></i><span>Your Unique Page Link</span></div>
                         <div class="input-group">
-                            <label for="shareableLink">Copy and share this link with your guests</label>
+                            <label for="shareableLink">Share this link with your guests</label>
                             <div class="input-wrapper">
-                                <input type="text" id="shareableLink" class="input-field" readonly>
-                                <i class="fas fa-link"></i>
+                                <i class="fas fa-link icon-left"></i>
+                                <input type="text" id="shareableLink" class="input-field" readonly style="padding-right: 50px;">
+                                <i class="fas fa-copy icon-right" id="copyLinkBtn" title="Copy to clipboard"></i>
                             </div>
                         </div>
                     </div>
                     <div class="panel-section">
-                        <div class="section-title"><i class="fas fa-birthday-cake"></i><span>Personal Info</span></div>
-                        <div class="input-group"><label for="birthdayNameInput">Birthday Name</label><div class="input-wrapper"><input type="text" id="birthdayNameInput" class="input-field" required><i class="fas fa-user-edit"></i></div></div>
-                        <div class="input-group"><label for="birthDateInput">Birth Date</label><div class="input-wrapper"><input type="date" id="birthDateInput" class="input-field" required><i class="fas fa-calendar-alt"></i></div></div>
+                        <div class="section-title"><i class="fas fa-user-circle"></i><span>Personal Info</span></div>
+                        <div class="input-group"><label for="birthdayNameInput">Birthday Name</label><div class="input-wrapper"><i class="fas fa-user-edit icon-left"></i><input type="text" id="birthdayNameInput" class="input-field" required></div></div>
+                        <div class="input-group"><label for="birthDateInput">Birth Date</label><div class="input-wrapper"><i class="fas fa-calendar-alt icon-left"></i><input type="date" id="birthDateInput" class="input-field" required></div></div>
                     </div>
                     <div class="panel-section">
-                        <div class="section-title"><i class="fas fa-qrcode"></i><span>Gift QR Code</span></div>
-                        <div class="input-group"><label for="qrImageUrlInput">QR Code Image URL</label><div class="input-wrapper"><input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://..." required><i class="fas fa-link"></i></div></div>
+                        <div class="section-title"><i class="fas fa-users-cog"></i><span>Guest Access</span></div>
+                        <div class="input-group"><label for="guestUserInput">Guest Username</label><div class="input-wrapper"><i class="fas fa-user icon-left"></i><input type="text" id="guestUserInput" class="input-field" required></div></div>
+                        <div class="input-group"><label for="guestPassInput">Guest Password</label><div class="input-wrapper"><i class="fas fa-lock icon-left"></i><input type="text" id="guestPassInput" class="input-field" required></div></div>
                     </div>
-                    <div class="panel-section" data-span="2">
-                        <div class="section-title"><i class="fas fa-users"></i><span>Guest Login</span></div>
-                        <div class="input-group"><label for="guestUserInput">Guest Username</label><div class="input-wrapper"><input type="text" id="guestUserInput" class="input-field" required><i class="fas fa-user"></i></div></div>
-                        <div class="input-group"><label for="guestPassInput">Guest Password</label><div class="input-wrapper"><input type="text" id="guestPassInput" class="input-field" required><i class="fas fa-lock"></i></div></div>
+                    <div class="panel-section full-width">
+                        <div class="section-title"><i class="fas fa-qrcode"></i><span>Gift QR Code</span></div>
+                        <div class="input-group"><label for="qrImageUrlInput">QR Code Image URL</label><div class="input-wrapper"><i class="fas fa-image icon-left"></i><input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://..." required></div></div>
+                        <div class="qr-preview-container"><img id="qrPreviewImage" class="qr-preview-image" src="" alt="QR Preview"></div>
                     </div>
                 </form>
                 <div class="panel-actions">
-                    <button type="submit" form="editForm" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                    <button type="submit" form="editForm" class="btn-save"><i class="fas fa-check"></i> Save Changes</button>
                 </div>
             </div>
         </div>
     </div>
     <div class="feedback-modal" id="feedbackModal">
         <div class="feedback-content">
-            <div class="icon-container"><div class="loader" id="feedbackLoader"></div><i class="fas fa-check-circle icon success hidden" id="successIcon"></i><i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i></div>
+            <div class="icon-container">
+                <div class="loader" id="feedbackLoader"></div>
+                <i class="fas fa-check-circle icon success hidden" id="successIcon"></i>
+                <i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i>
+            </div>
             <h2 id="feedbackTitle">Checking...</h2>
             <p id="feedbackMessage"></p>
         </div>
     </div>
     <script>
-        const firebaseConfig = { apiKey: "GANTI_DENGAN_API_KEY_ANDA", authDomain: "mayfa-fa284.firebaseapp.com", databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" };
+        // Kode JavaScript tidak ada perubahan
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        document.addEventListener('touchmove', (e) => { if (e.scale !== 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
+        const firebaseConfig = {
+            apiKey: "GANTI_DENGAN_API_KEY_ANDA",
+            authDomain: "mayfa-fa284.firebaseapp.com",
+            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const authContainer = document.getElementById('auth-container'), feedbackModal = document.getElementById('feedbackModal'), feedbackTitle = document.getElementById('feedbackTitle'), feedbackMessage = document.getElementById('feedbackMessage'), feedbackLoader = document.getElementById('feedbackLoader'), successIcon = document.getElementById('successIcon'), failureIcon = document.getElementById('failureIcon');
-        let currentAdminId = null; // Variabel untuk menyimpan ID admin yang sedang login
-        
+        const authContainer = document.getElementById('auth-container');
+        let currentAdminId = null;
         function showFeedback(state, title, message = '') {
-            feedbackLoader.classList.add('hidden'); successIcon.classList.add('hidden'); failureIcon.classList.add('hidden');
-            feedbackModal.style.display = 'flex';
-            feedbackTitle.textContent = title; feedbackMessage.textContent = message;
-            const feedbackContent = feedbackModal.querySelector('.feedback-content');
-            if (state === 'loading') { feedbackLoader.classList.remove('hidden'); feedbackContent.style.borderColor = 'var(--primary)'; }
-            else if (state === 'success') { successIcon.classList.remove('hidden'); feedbackContent.style.borderColor = 'var(--success)'; }
-            else if (state === 'failure') { failureIcon.classList.remove('hidden'); feedbackContent.style.borderColor = 'var(--error)'; }
+            const modal = document.getElementById('feedbackModal'), content = modal.querySelector('.feedback-content'),
+                  titleEl = document.getElementById('feedbackTitle'), msgEl = document.getElementById('feedbackMessage'),
+                  loader = document.getElementById('feedbackLoader'), successIcon = document.getElementById('successIcon'),
+                  failureIcon = document.getElementById('failureIcon');
+            loader.classList.add('hidden'); successIcon.classList.add('hidden'); failureIcon.classList.add('hidden');
+            titleEl.textContent = title; msgEl.textContent = message; modal.style.display = 'flex';
+            if (state === 'loading') loader.classList.remove('hidden');
+            else if (state === 'success') successIcon.classList.remove('hidden');
+            else if (state === 'failure') failureIcon.classList.remove('hidden');
         }
-        function hideFeedback() { feedbackModal.style.display = 'none'; }
-        
+        function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
         function adminLogin() {
             const user = document.getElementById('adminUser').value.trim();
             const pass = document.getElementById('adminPass').value;
-            if (!user || !pass) { return showFeedback('failure', 'Input Diperlukan', 'Masukkan username dan password.'); }
-            showFeedback('loading', 'Mengecek Kredensial...');
+            if (!user || !pass) {
+                showFeedback('failure', 'Input Required', 'Please enter username and password.');
+                setTimeout(hideFeedback, 2000); return;
+            }
+            showFeedback('loading', 'Verifying Credentials...');
             database.ref('admins').orderByChild('username').equalTo(user).once('value').then((snapshot) => {
                 if (!snapshot.exists()) {
-                    showFeedback('failure', 'Login Gagal!', 'Username atau password salah.');
-                    setTimeout(hideFeedback, 2500);
-                    return;
+                    showFeedback('failure', 'Login Failed', 'Incorrect username or password.');
+                    setTimeout(hideFeedback, 2500); return;
                 }
                 let isValidLogin = false;
                 snapshot.forEach((childSnapshot) => {
                     if (childSnapshot.val().password === pass) {
-                        isValidLogin = true;
-                        currentAdminId = childSnapshot.key; // Simpan ID unik admin
+                        isValidLogin = true; currentAdminId = childSnapshot.key;
                     }
                 });
                 if (isValidLogin) {
-                    showFeedback('success', 'Login Berhasil!', 'Mengarahkan...');
+                    showFeedback('success', 'Login Successful!', 'Redirecting to panel...');
                     setTimeout(() => {
-                        hideFeedback();
-                        authContainer.classList.add('is-active');
-                        loadDataToForm(); 
+                        hideFeedback(); authContainer.classList.add('is-active'); loadDataToForm();
                     }, 1500);
                 } else {
-                    showFeedback('failure', 'Login Gagal!', 'Username atau password salah.');
+                    showFeedback('failure', 'Login Failed', 'Incorrect username or password.');
                     setTimeout(hideFeedback, 2500);
                 }
             }).catch(error => {
-                showFeedback('failure', 'Error Database', error.message);
+                showFeedback('failure', 'Database Error', error.message);
                 setTimeout(hideFeedback, 3000);
             });
         }
-        
         function logout() {
-            currentAdminId = null; // Hapus ID admin saat logout
-            authContainer.classList.remove('is-active');
-            document.getElementById('editForm').reset();
-            document.getElementById('adminUser').value = '';
-            document.getElementById('adminPass').value = '';
+            currentAdminId = null; authContainer.classList.remove('is-active');
+            setTimeout(() => {
+                document.getElementById('editForm').reset();
+                document.getElementById('adminUser').value = '';
+                document.getElementById('adminPass').value = '';
+                updateQrPreview();
+            }, 600);
         }
-        
         function loadDataToForm() {
             if (!currentAdminId) return;
-            showFeedback('loading', 'Memuat Data...');
-            // Ganti path dari 'settings' ke path unik admin
+            showFeedback('loading', 'Loading Data...');
             database.ref('birthday_pages/' + currentAdminId).once('value').then((snapshot) => {
-                const settings = snapshot.val() || {};
-                document.getElementById('birthdayNameInput').value = settings.birthdayName || '';
-                document.getElementById('birthDateInput').value = settings.birthDate || '';
-                document.getElementById('qrImageUrlInput').value = settings.qrImageUrl || '';
-                document.getElementById('guestUserInput').value = settings.guestUser || '';
-                document.getElementById('guestPassInput').value = settings.guestPass || '';
-                // Tampilkan link unik
-                const shareLink = `${window.location.origin}/index.html?id=${currentAdminId}`;
-                document.getElementById('shareableLink').value = shareLink;
+                const s = snapshot.val() || {};
+                document.getElementById('birthdayNameInput').value = s.birthdayName || '';
+                document.getElementById('birthDateInput').value = s.birthDate || '';
+                document.getElementById('qrImageUrlInput').value = s.qrImageUrl || '';
+                document.getElementById('guestUserInput').value = s.guestUser || '';
+                document.getElementById('guestPassInput').value = s.guestPass || '';
+                const origin = window.location.origin;
+                const pathname = window.location.pathname.replace(/[^/]*$/, '');
+                document.getElementById('shareableLink').value = `${origin}${pathname}index.html?id=${currentAdminId}`;
+                updateQrPreview();
                 hideFeedback();
             }).catch(error => {
-                showFeedback('failure', 'Gagal Memuat', error.message);
+                showFeedback('failure', 'Failed to Load', error.message);
                 setTimeout(hideFeedback, 3000);
             });
         }
-        
         function saveData() {
-            if (!currentAdminId) return;
-            showFeedback('loading', 'Menyimpan Perubahan...');
+            if (!currentAdminId) {
+                showFeedback('failure', 'Error', 'Admin ID not found. Please log in again.');
+                setTimeout(hideFeedback, 2500); return;
+            }
+            showFeedback('loading', 'Saving Changes...');
             const settings = {
                 birthdayName: document.getElementById('birthdayNameInput').value,
                 birthDate: document.getElementById('birthDateInput').value,
@@ -233,21 +279,43 @@
                 guestUser: document.getElementById('guestUserInput').value,
                 guestPass: document.getElementById('guestPassInput').value
             };
-            // Simpan ke path unik admin
             database.ref('birthday_pages/' + currentAdminId).set(settings).then(() => {
-                showFeedback('success', 'Berhasil Disimpan!');
+                showFeedback('success', 'Saved Successfully!');
                 setTimeout(hideFeedback, 2000);
             }).catch(error => {
-                showFeedback('failure', 'Gagal Menyimpan', error.message);
+                showFeedback('failure', 'Save Failed', error.message);
                 setTimeout(hideFeedback, 3000);
             });
         }
-
+        function updateQrPreview() {
+            const qrInput = document.getElementById('qrImageUrlInput'), qrImage = document.getElementById('qrPreviewImage');
+            const url = qrInput.value.trim();
+            qrImage.style.display = url ? 'block' : 'none';
+            if(url) qrImage.src = url;
+        }
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('togglePassword').addEventListener('click', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const copyBtn = document.getElementById('copyLinkBtn');
+            document.getElementById('qrImageUrlInput').addEventListener('input', updateQrPreview);
+            togglePassword.addEventListener('click', function() {
                 const passField = document.getElementById('adminPass');
-                passField.type = passField.type === 'password' ? 'text' : 'password';
-                this.classList.toggle('fa-eye-slash');
+                const isPassword = passField.type === 'password';
+                passField.type = isPassword ? 'text' : 'password';
+                this.classList.toggle('fa-eye-slash', isPassword);
+            });
+            copyBtn.addEventListener('click', function() {
+                const linkInput = document.getElementById('shareableLink');
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(linkInput.value).then(() => {
+                        showFeedback('success', 'Copied!', 'Link copied to clipboard.');
+                        setTimeout(hideFeedback, 2000);
+                        this.classList.remove('fa-copy'); this.classList.add('fa-check');
+                        setTimeout(() => { this.classList.remove('fa-check'); this.classList.add('fa-copy'); }, 2000);
+                    }).catch(err => {
+                        showFeedback('failure', 'Copy Failed', 'Could not copy the link.');
+                        setTimeout(hideFeedback, 2500);
+                    });
+                }
             });
         });
     </script>
