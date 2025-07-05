@@ -3,219 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin Registration - Happy Birthday</title>
+    <title>Register - Neumorphic</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
+        /* CSS di sini sama persis dengan admin.html untuk konsistensi */
         :root {
-            --primary: #ff7e5f; --secondary: #feb47b; --accent1: #ffc371; --accent2: #ff5f6d;
-            --dark: #1a1a2e; --darker: #16213e; --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15); --success: #30cfd0; --error: #f87171;
-            --light-text: rgba(255, 255, 255, 0.9); --transition-fast: all 0.3s ease;
+            --bg-color: #e0e5ec; --primary-accent: #4a90e2; --text-color: #5a677e;
+            --light-shadow: #ffffff; --dark-shadow: #a3b1c6; --success: #2ecc71;
+            --error: #e74c3c; --transition-fast: all 0.3s ease;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--darker); min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #fff; position: relative; overflow: hidden; padding: 20px; }
-        body::before, body::after { content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px; background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%); border-radius: 50%; transform: translate(-50%, -50%); animation: move-aurora 20s linear infinite; filter: blur(100px); opacity: 0.4; }
-        body::after { background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%); animation-name: move-aurora-2; animation-delay: -10s; }
-        @keyframes move-aurora { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); } 50% { transform: translate(-45%, -55%) rotate(180deg) scale(1.2); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
-        @keyframes move-aurora-2 { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); } 50% { transform: translate(-55%, -45%) rotate(-180deg) scale(0.9); } 100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1.1); } }
-        .container { width: 100%; max-width: 450px; z-index: 10; }
-        .box { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px; width: 100%; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header-icon { width: 75px; height: 75px; background: linear-gradient(45deg, var(--accent2), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 2px solid var(--glass-border); box-shadow: 0 8px 30px rgba(255, 95, 109, 0.4); animation: float 4s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        .header-icon i { font-size: 36px; color: #fff; text-shadow: 0 0 15px rgba(0,0,0,0.3); }
-        h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(45deg, var(--primary), var(--accent1)); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 6px; }
-        .header p { color: var(--light-text); font-size: 1rem; }
-        .input-group { margin-bottom: 20px; position: relative; }
+        body {
+            background: var(--bg-color); min-height: 100vh; display: flex;
+            justify-content: center; align-items: center; color: var(--text-color);
+            position: relative; overflow: hidden; padding: 10px;
+            -webkit-user-select: none; user-select: none; touch-action: pan-y;
+        }
+        .container {
+            width: 100%; max-width: 450px; display: flex;
+            justify-content: center; align-items: center; z-index: 5; padding: 20px;
+        }
+        .box {
+            background: var(--bg-color); border-radius: 30px; padding: 30px;
+            width: 100%;
+            box-shadow: -9px -9px 16px var(--light-shadow), 9px 9px 16px var(--dark-shadow);
+            display: flex; flex-direction: column;
+        }
+        .content-wrapper { width: 100%; max-width: 350px; text-align: center; margin: 0 auto; }
+        .header { margin-bottom: 25px; }
+        .header-icon {
+            width: 80px; height: 80px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; margin: 0 auto 20px;
+            font-size: 38px; color: var(--primary-accent);
+            box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow);
+        }
+        h1 { font-size: 2.2rem; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
+        .header p { font-size: 1rem; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; padding-left: 15px; }
         .input-wrapper { position: relative; }
-        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 16px; transition: var(--transition-fast); }
-        .input-field { width: 100%; padding: 14px 16px 14px 45px; background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border); border-radius: 10px; color: #fff; font-size: 1rem; transition: var(--transition-fast); }
-        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(255, 126, 95, 0.4); }
-        .input-field:focus + i { color: var(--accent1); }
-        .btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--accent2) 0%, var(--primary) 100%); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-        .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(255, 95, 109, 0.35); }
-        .btn:disabled { cursor: not-allowed; opacity: 0.7; transform: none; box-shadow: none; }
-        .btn i { transition: transform 0.3s ease; }
-        .btn:hover:not(:disabled) i { transform: rotate(15deg); }
-        .back-link { color: var(--light-text); text-decoration: none; font-weight: 500; transition: var(--transition-fast); text-align: center; display: block; margin-top: 20px; }
-        .back-link:hover { color: var(--primary); }
-        .feedback-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 3000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
-        .feedback-modal.visible { opacity: 1; }
-        .feedback-content { background: rgba(30, 40, 60, 0.95); border-radius: 20px; padding: 30px 40px; text-align: center; width: 90%; max-width: 450px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); transform: scale(0.95); transition: transform 0.3s ease; }
-        .feedback-modal.visible .feedback-content { transform: scale(1); }
-        #accountModal .feedback-content { border-top: 4px solid var(--success); }
-        #failureModal .feedback-content { border-top: 4px solid var(--error); }
-        #failureModal h2 { background: linear-gradient(45deg, var(--error), var(--primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .feedback-content .icon-container { height: 60px; margin-bottom: 20px; }
-        .feedback-content .icon { font-size: 50px; }
-        .feedback-content .icon.failure { color: var(--error); animation: shake 0.5s ease-out; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); } 20%, 40%, 60%, 80% { transform: translateX(8px); } }
-        .feedback-content h2 { font-size: 1.8rem; margin-bottom: 10px; font-weight: 600; }
-        #accountModal h2 { background: linear-gradient(45deg, var(--success), #a1ffce); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .feedback-content p { font-size: 1rem; color: var(--light-text); }
-        .data-display { background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 20px; margin-top: 20px; margin-bottom: 25px; text-align: left; }
-        .data-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 1.1rem; }
-        .data-item:last-child { margin-bottom: 0; }
-        .data-item span { color: var(--light-text); }
-        .data-item strong, .data-item .share-link { color: #fff; font-weight: 600; word-break: break-all; }
-        .share-link-container { background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 8px; }
-        .copy-btn { background: none; border: 1px solid var(--glass-border); color: var(--light-text); padding: 5px 10px; border-radius: 8px; cursor: pointer; transition: var(--transition-fast); margin-left: 10px; }
-        .copy-btn:hover { background: var(--success); color: var(--darker); }
-        .feedback-actions { display: flex; gap: 15px; justify-content: center; }
-        .feedback-btn { flex-grow: 1; padding: 12px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition-fast); }
-        .btn-back { background: var(--glass); border: 1px solid var(--glass-border); color: var(--light-text); }
-        .btn-back:hover { background: rgba(255, 255, 255, 0.1); }
-        .btn-signin { background: linear-gradient(to right, var(--success) 0%, #a1ffce 100%); border: none; color: var(--darker); }
-        .btn-signin:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(48, 207, 208, 0.4); }
+        .input-field {
+            width: 100%; padding: 16px 20px 16px 50px; background: var(--bg-color);
+            border: none; border-radius: 50px; color: var(--text-color); font-size: 1rem;
+            font-weight: 500; outline: none; transition: var(--transition-fast);
+            box-shadow: inset 5px 5px 8px var(--dark-shadow), inset -5px -5px 8px var(--light-shadow);
+        }
+        .input-field:focus { box-shadow: inset 7px 7px 12px var(--dark-shadow), inset -7px -7px 12px var(--light-shadow); }
+        .input-wrapper .icon-left, .input-wrapper .icon-right {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            color: var(--text-color); opacity: 0.7; font-size: 16px; transition: var(--transition-fast);
+        }
+        .input-wrapper .icon-left { left: 20px; }
+        .input-wrapper .icon-right { right: 20px; cursor: pointer; }
+        .input-wrapper .icon-right:hover, .input-field:focus ~ .icon-left { color: var(--primary-accent); opacity: 1; }
+        #togglePass.fa-eye-slash, #toggleConfirmPass.fa-eye-slash { transform: translateY(-50%) rotate(180deg); }
+        .btn {
+            width: 100%; padding: 18px; background: var(--bg-color); border: none;
+            border-radius: 50px; color: var(--primary-accent); font-size: 1.1rem;
+            font-weight: 600; cursor: pointer; transition: var(--transition-fast);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: -5px -5px 15px var(--light-shadow), 5px 5px 15px var(--dark-shadow);
+        }
+        .btn:hover { color: #1e77d3; }
+        .btn:active { color: #1e77d3; box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow); }
+        .login-link { text-align: center; margin-top: 25px; font-size: 0.9rem; color: var(--text-color); }
+        .login-link a { color: var(--primary-accent); text-decoration: none; font-weight: 600; }
+        .login-link a:hover { text-decoration: underline; }
+        .feedback-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(224,229,236,.7);backdrop-filter:blur(4px);z-index:3000;justify-content:center;align-items:center}.feedback-content{background:var(--bg-color);border-radius:20px;padding:40px;text-align:center;width:90%;max-width:400px;box-shadow:-9px -9px 16px var(--light-shadow),9px 9px 16px var(--dark-shadow)}.icon-container{height:80px;margin-bottom:20px}.icon-container .icon{font-size:60px}.icon-container .icon.success{color:var(--success)}.icon-container .icon.failure{color:var(--error)}.loader{margin:0 auto;border:6px solid rgba(90,103,126,.2);border-top:6px solid var(--primary-accent);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}.hidden{display:none}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}input{font-size:16px}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="box" id="registrationBox">
-            <div class="header">
-                <div class="header-icon"><i class="fas fa-user-shield"></i></div>
-                <h1>Create Admin Account</h1>
-                <p>Fill in the details to register a new admin.</p>
-            </div>
-            <form id="registerForm" onsubmit="event.preventDefault(); createAccount();">
+        <div class="box">
+            <div class="content-wrapper">
+                <div class="header">
+                    <div class="header-icon"><i class="fas fa-user-plus"></i></div>
+                    <h1>Create Account</h1>
+                    <p>Join us by creating a new account</p>
+                </div>
                 <div class="input-group">
+                    <label for="regUser">Username</label>
                     <div class="input-wrapper">
-                        <input type="text" id="adminName" class="input-field" placeholder="Admin Name" required>
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user icon-left"></i>
+                        <input type="text" id="regUser" class="input-field" placeholder="Choose a username">
                     </div>
                 </div>
                 <div class="input-group">
+                    <label for="regPass">Password</label>
                     <div class="input-wrapper">
-                        <input type="password" id="adminPass" class="input-field" placeholder="Password" required>
-                        <i class="fas fa-key"></i>
+                        <i class="fas fa-lock icon-left"></i>
+                        <input type="password" id="regPass" class="input-field" placeholder="Create a password">
+                        <i class="fas fa-eye icon-right" id="togglePass"></i>
                     </div>
                 </div>
-                <button type="submit" class="btn"><i class="fas fa-plus-circle"></i> Create Account</button>
-            </form>
-            <a href="admin.html" class="back-link">Go to Admin Panel</a>
-        </div>
-    </div>
-    <div class="feedback-modal" id="accountModal">
-        <div class="feedback-content">
-            <h2><i class="fas fa-party-horn"></i> Account Created!</h2>
-            <div class="data-display">
-                <div class="data-item">
-                    <span>Username:</span>
-                    <div><strong id="displayUser"></strong><button class="copy-btn" onclick="copyData('displayUser')"><i class="fas fa-copy"></i></button></div>
+                <div class="input-group">
+                    <label for="regConfirmPass">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-check-double icon-left"></i>
+                        <input type="password" id="regConfirmPass" class="input-field" placeholder="Confirm your password">
+                        <i class="fas fa-eye icon-right" id="toggleConfirmPass"></i>
+                    </div>
                 </div>
-                <div class="data-item">
-                    <span>Password:</span>
-                     <div><strong id="displayPass"></strong><button class="copy-btn" onclick="copyData('displayPass')"><i class="fas fa-copy"></i></button></div>
-                </div>
-                <div class="data-item">
-                    <span>Share Link:</span>
-                    <button class="copy-btn" onclick="copyData('shareLink')"><i class="fas fa-copy"></i></button>
-                </div>
-                <div class="share-link-container">
-                    <span id="shareLink" class="share-link"></span>
-                </div>
-            </div>
-            <div class="feedback-actions">
-                <button class="feedback-btn btn-back" onclick="closeModal('accountModal')">Close</button>
-                <button class="feedback-btn btn-signin" onclick="goToAdmin()">Go to Admin</button>
+                <button class="btn" onclick="registerAdmin()"><i class="fas fa-plus-circle"></i> Register</button>
+                <p class="login-link">Already have an account? <a href="admin.html">Login here</a></p>
             </div>
         </div>
     </div>
-    <div class="feedback-modal" id="failureModal">
+    
+    <div class="feedback-modal" id="feedbackModal">
         <div class="feedback-content">
-            <div class="icon-container"><i class="fas fa-times-circle icon failure"></i></div>
-            <h2 id="failureTitle">Gagal Registrasi</h2>
-            <p id="failureMessage"></p>
+            <div class="icon-container">
+                <div class="loader" id="feedbackLoader"></div>
+                <i class="fas fa-check-circle icon success hidden" id="successIcon"></i>
+                <i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i>
+            </div>
+            <h2 id="feedbackTitle">Checking...</h2>
+            <p id="feedbackMessage"></p>
         </div>
     </div>
+
     <script>
-        const firebaseConfig = { apiKey: "GANTI_DENGAN_API_KEY_ANDA", authDomain: "mayfa-fa284.firebaseapp.com", databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" };
+        document.addEventListener('gesturestart', (e) => e.preventDefault());
+        document.addEventListener('touchmove', (e) => { if (e.scale !== 1) e.preventDefault(); }, { passive: false });
+        document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
+
+        const firebaseConfig = {
+            apiKey: "GANTI_DENGAN_API_KEY_ANDA",
+            authDomain: "mayfa-fa284.firebaseapp.com",
+            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        function createAccount() {
-            const adminName = document.getElementById('adminName').value.trim();
-            const adminPass = document.getElementById('adminPass').value;
-            const submitBtn = document.querySelector('#registerForm button');
-            if (!adminName || !adminPass) { return alert("Admin Name and Password are required."); }
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
-            submitBtn.disabled = true;
-            database.ref('admins').orderByChild('username').equalTo(adminName).once('value', snapshot => {
+
+        function showFeedback(state, title, message = '') {
+            const modal = document.getElementById('feedbackModal'), titleEl = document.getElementById('feedbackTitle'),
+                  msgEl = document.getElementById('feedbackMessage'), loader = document.getElementById('feedbackLoader'),
+                  successIcon = document.getElementById('successIcon'), failureIcon = document.getElementById('failureIcon');
+            loader.classList.add('hidden'); successIcon.classList.add('hidden'); failureIcon.classList.add('hidden');
+            titleEl.textContent = title; msgEl.textContent = message; modal.style.display = 'flex';
+            if (state === 'loading') loader.classList.remove('hidden');
+            else if (state === 'success') successIcon.classList.remove('hidden');
+            else if (state === 'failure') failureIcon.classList.remove('hidden');
+        }
+
+        function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
+
+        async function registerAdmin() {
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const confirmPass = document.getElementById('regConfirmPass').value;
+
+            if (!user || !pass || !confirmPass) {
+                showFeedback('failure', 'Input Required', 'All fields must be filled.');
+                setTimeout(hideFeedback, 2500); return;
+            }
+            if (pass.length < 6) {
+                showFeedback('failure', 'Weak Password', 'Password must be at least 6 characters long.');
+                setTimeout(hideFeedback, 2500); return;
+            }
+            if (pass !== confirmPass) {
+                showFeedback('failure', 'Password Mismatch', 'The passwords do not match.');
+                setTimeout(hideFeedback, 2500); return;
+            }
+
+            showFeedback('loading', 'Checking Availability...');
+
+            try {
+                const snapshot = await database.ref('admins').orderByChild('username').equalTo(user).once('value');
                 if (snapshot.exists()) {
-                    showFailureModal("Username sudah terdaftar", "Silakan pilih nama lain.");
-                    submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Create Account';
-                    submitBtn.disabled = false;
-                } else {
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
-                    const newAdminRef = database.ref('admins').push();
-                    newAdminRef.set({ username: adminName, password: adminPass, createdAt: new Date().toISOString() })
-                    .then(() => {
-                        const newAdminId = newAdminRef.key;
-                        // Membuat data default untuk halaman ulang tahun baru
-                        const defaultPageData = {
-                            birthdayName: "Your Name",
-                            birthDate: "2000-01-01",
-                            guestUser: "guest",
-                            guestPass: "123",
-                            qrImageUrl: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.google.com"
-                        };
-                        return database.ref('birthday_pages/' + newAdminId).set(defaultPageData);
-                    })
-                    .then(() => {
-                        showAccountModal(adminName, adminPass, newAdminRef.key);
-                    }).catch(error => {
-                        showFailureModal('Error Creating Account', error.message);
-                    }).finally(() => {
-                        submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Create Account';
-                        submitBtn.disabled = false;
-                    });
+                    showFeedback('failure', 'Username Taken', 'This username is already registered. Please choose another one.');
+                    setTimeout(hideFeedback, 3000);
+                    return;
                 }
-            });
+                
+                showFeedback('loading', 'Creating Account...');
+
+                const newAdminRef = database.ref('admins').push();
+                const newAdminId = newAdminRef.key;
+                
+                // Get user's birth date from memory if available
+                const userBirthDate = '2005-09-28';
+
+                const newAdminData = { username: user, password: pass };
+                const newBirthdayPageData = {
+                    birthdayName: 'New User',
+                    birthDate: userBirthDate, // Set default from memory
+                    guestUser: 'guest',
+                    guestPass: '12345',
+                    qrImageUrl: ''
+                };
+
+                await newAdminRef.set(newAdminData);
+                await database.ref('birthday_pages/' + newAdminId).set(newBirthdayPageData);
+                
+                showFeedback('success', 'Registration Successful!', 'You will be redirected to the login page.');
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 2500);
+
+            } catch (error) {
+                showFeedback('failure', 'Database Error', error.message);
+                setTimeout(hideFeedback, 3000);
+            }
         }
-        function showAccountModal(user, pass, newId) {
-            document.getElementById('displayUser').textContent = user;
-            document.getElementById('displayPass').textContent = pass;
-            const shareLinkElement = document.getElementById('shareLink');
-            const fullLink = `${window.location.origin}/index.html?id=${newId}`;
-            shareLinkElement.textContent = fullLink;
-            const modal = document.getElementById('accountModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('visible'), 10);
-        }
-        function showFailureModal(title, message) {
-            document.getElementById('failureTitle').textContent = title;
-            document.getElementById('failureMessage').textContent = message;
-            const modal = document.getElementById('failureModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('visible'), 10);
-            setTimeout(() => closeModal('failureModal'), 3500);
-        }
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.remove('visible');
-            setTimeout(() => {
-                modal.style.display = 'none';
-                if (modalId === 'accountModal') { document.getElementById('registerForm').reset(); }
-            }, 300);
-        }
-        document.querySelectorAll('.feedback-modal').forEach(modal => {
-            modal.addEventListener('click', (event) => {
-                if (event.target === modal) { closeModal(modal.id); }
-            });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const togglePass = document.getElementById('togglePass');
+            const toggleConfirmPass = document.getElementById('toggleConfirmPass');
+
+            function togglePasswordVisibility(fieldId, toggleElement) {
+                const passField = document.getElementById(fieldId);
+                const isPassword = passField.type === 'password';
+                passField.type = isPassword ? 'text' : 'password';
+                toggleElement.classList.toggle('fa-eye-slash', isPassword);
+            }
+
+            togglePass.addEventListener('click', () => togglePasswordVisibility('regPass', togglePass));
+            toggleConfirmPass.addEventListener('click', () => togglePasswordVisibility('regConfirmPass', toggleConfirmPass));
         });
-        function goToAdmin() { window.location.href = 'admin.html'; }
-        function copyData(elementId) {
-            const textToCopy = document.getElementById(elementId).textContent;
-            const copyButton = event.target.closest('.copy-btn');
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                copyButton.innerHTML = '<i class="fas fa-check"></i>';
-                setTimeout(() => { copyButton.innerHTML = '<i class="fas fa-copy"></i>'; }, 1500);
-            }).catch(err => { alert('Gagal menyalin!'); });
-        }
     </script>
 </body>
 </html>
