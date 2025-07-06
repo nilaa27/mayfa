@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Data Management - Super Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
+    <style>
+        :root {
+            /* Dark Neumorphic Palette */
+            --bg-color: #2c2f36;
+            --shadow-dark: #202227;
+            --shadow-light: #383c45;
+            --text-color: #d1d5db;
+            --text-light: #8a91a0;
+            --primary: #5a7dff;
+            --primary-dark: #4a6fe0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --transition-smooth: all 0.3s ease-in-out;
+            --border-radius-main: 24px;
+            --border-radius-inner: 15px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* --- UTILITIES --- */
+        .hidden { display: none !important; }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius-inner);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            background: var(--bg-color);
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); }
+        .btn:active:not(:disabled) {
+            transform: translateY(0px);
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+        }
+        .btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        .btn-primary { color: var(--primary); }
+        .btn-primary:hover:not(:disabled) { color: var(--primary-dark); }
+        .btn-danger { color: var(--danger); }
+        .btn-secondary { color: var(--text-light); }
+
+        .neumorphic-panel {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            padding: 2.5rem;
+        }
+
+        .neumorphic-inset {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-inner);
+            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
+            border: none;
+        }
+        
+        /* --- PASSWORD MODAL --- */
+        .password-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 5000;
+        }
+        .password-box {
+            text-align: center;
+            width: 90%; max-width: 400px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .password-box h2 { margin-bottom: 1rem; font-size: 1.5rem; }
+        .password-box p { margin-bottom: 2rem; color: var(--text-secondary); }
+        .password-box input {
+            width: 100%; padding: 14px;
+            color: var(--text-color); font-size: 1rem;
+            margin-bottom: 1.5rem; outline: none;
+        }
+        .password-box .btn { width: 100%; }
+
+        /* --- KONTEN UTAMA --- */
+        .container { width: 100%; max-width: 1200px; animation: fadeIn 0.5s ease forwards; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { font-size: 2rem; font-weight: 700; }
+        .header p { color: var(--text-secondary); font-size: 1rem; }
+
+        .toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; flex-wrap: wrap; gap: 1.5rem;
+        }
+        .search-wrapper { position: relative; flex-grow: 1; min-width: 250px; }
+        .search-wrapper i {
+            position: absolute; left: 18px; top: 50%;
+            transform: translateY(-50%); color: var(--text-secondary);
+        }
+        #searchInput {
+            width: 100%; padding: 14px 15px 14px 50px;
+            color: var(--text-primary); font-size: 1rem;
+            transition: all var(--transition-smooth);
+        }
+        #searchInput:focus { outline: none; }
+        #searchInput:focus ~ i { color: var(--primary); }
+
+        #loader { display: flex; justify-content: center; padding: 4rem 0; }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid var(--shadow-dark);
+            border-top-color: var(--primary);
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+
+        .user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .user-card {
+            padding: 1.5rem; display: flex; flex-direction: column;
+            gap: 1rem; transition: all var(--transition-smooth);
+            border-radius: var(--border-radius-inner); /* Inner radius for cards */
+        }
+        .user-card:hover { transform: translateY(-5px); }
+        .user-card-header {
+            display: flex; align-items: center; gap: 1rem;
+            padding-bottom: 1rem; border-bottom: 1px solid var(--shadow-light);
+        }
+        .user-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            color: var(--primary); font-weight: 700;
+            font-size: 1.5rem; flex-shrink: 0;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .user-info h3 { font-size: 1.1rem; font-weight: 600; }
+        .user-info p { font-size: 0.9rem; color: var(--text-secondary); overflow-wrap: break-word; }
+        .user-card-body { display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem; }
+        .user-card-body div { display: flex; justify-content: space-between; }
+        .user-card-body .label { color: var(--text-secondary); }
+        .user-card-body .value { font-weight: 500; }
+        .password-value { font-family: monospace; letter-spacing: 1px; }
+
+        .user-card-actions {
+            display: flex; gap: 0.75rem; margin-top: auto;
+            padding-top: 1rem; border-top: 1px solid var(--shadow-light);
+            flex-wrap: wrap; /* Added for responsive buttons */
+        }
+        .user-card-actions .btn { flex-grow: 1; padding: 8px 10px; font-size: 0.85rem; }
+        .btn-edit { color: var(--text-secondary); }
+        .btn-edit:hover { color: var(--text-color); }
+        .btn-access { color: var(--primary); } /* New style for access button */
+        .btn-access:hover { color: var(--primary-dark); }
+        
+        .no-data-message { text-align: center; padding: 3rem; color: var(--text-secondary); }
+
+        /* --- ADD/EDIT MODAL --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal.show { opacity: 1; visibility: visible; }
+        .modal-content { width: 90%; max-width: 500px; transform: scale(0.95); transition: transform 0.3s; }
+        .modal.show .modal-content { transform: scale(1); }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem;
+        }
+        .modal-header h2 { font-size: 1.5rem; }
+        .close-button {
+            background: none; border: none; font-size: 1.8rem;
+            color: var(--text-secondary); cursor: pointer;
+            transition: color var(--transition-smooth);
+        }
+        .close-button:hover { color: var(--text-color); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input { width: 100%; padding: 14px; font-size: 1rem; color: var(--text-color); }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
+        
+        /* --- BACK BUTTON STYLING --- */
+        .back-button-container { display: flex; justify-content: center; margin-top: 2rem; }
+        
+        /* --- Kustomisasi SweetAlert2 --- */
+        .swal2-popup {
+            background-color: var(--bg-color) !important;
+            border-radius: var(--border-radius-main) !important;
+            color: var(--text-color) !important;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important;
+        }
+        .swal2-title { color: var(--text-color) !important; }
+        .swal2-html-container { color: var(--text-secondary) !important; }
+        .swal2-confirm, .swal2-cancel {
+             box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light) !important;
+             border: none !important;
+        }
+        .swal2-confirm { background-color: var(--bg-color) !important; color: var(--primary) !important; }
+        .swal2-cancel { background-color: var(--bg-color) !important; color: var(--text-light) !important;}
+        .swal2-icon.swal2-success .swal2-success-ring { border-color: var(--success) !important; }
+        .swal2-icon.swal2-error { border-color: var(--danger) !important; }
+        .swal2-icon.swal2-warning { border-color: var(--warning) !important; color: var(--warning) !important; }
+
+        /* --- Responsive --- */
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .main-content-panel { padding: 1.5rem; }
+            .user-list { grid-template-columns: 1fr; }
+            .modal-content { padding: 1.5rem; }
+            .modal-footer { flex-direction: column; align-items: stretch; }
+            .modal-footer .btn { width: 100%; }
+            .user-card-actions { flex-direction: column; } /* Stack buttons on small screens */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="password-modal" id="passwordModal">
+        <div class="password-box neumorphic-panel">
+            <h2><i class="fas fa-user-shield"></i> Akses Super Admin</h2>
+            <p>Masukkan password untuk melanjutkan ke panel manajemen.</p>
+            <form id="passwordForm">
+                <input type="password" id="superAdminPassword" class="neumorphic-inset" placeholder="••••••••" required autocomplete="current-password">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-arrow-right-to-bracket"></i> Masuk</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container hidden" id="mainContent">
+        <div class="header">
+            <div class="header-title">
+                <h1>Manajemen Data Admin</h1>
+                <p>Tambah, edit, atau hapus akun admin.</p>
+            </div>
+        </div>
+
+        <div class="main-content-panel neumorphic-panel">
+            <div class="toolbar">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" class="neumorphic-inset" placeholder="Cari admin berdasarkan username...">
+                </div>
+                <button class="btn btn-primary" id="addAdminBtn"><i class="fas fa-plus"></i> Tambah Admin Baru</button>
+            </div>
+
+            <div id="loader">
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="userListContainer" class="hidden">
+                 <div class="user-list" id="userList"></div>
+                 <div id="noDataMessage" class="no-data-message hidden">
+                    <h3>Tidak Ada Data</h3>
+                    <p>Belum ada admin yang terdaftar atau sesuai dengan pencarian Anda.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="back-button-container">
+            <a href="admin.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
+        </div>
+    </div>
+
+    <div class="modal" id="userModal">
+        <div class="modal-content neumorphic-panel">
+            <div class="modal-header">
+                <h2 id="modalTitle">Tambah Admin Baru</h2>
+                <button class="close-button" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="userForm">
+                <input type="hidden" id="adminId">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="neumorphic-inset" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="text" id="password" class="neumorphic-inset" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalBirthdayName">Nama Target (Halaman Ultah)</label>
+                    <input type="text" id="modalBirthdayName" class="neumorphic-inset">
+                </div>
+                <div class="form-group">
+                    <label for="modalTargetWhatsapp">Nomor WhatsApp Target</label>
+                    <input type="tel" id="modalTargetWhatsapp" class="neumorphic-inset" placeholder="6281xxxxxxxx" pattern="[0-9]{10,15}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelModalBtn">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+    <script>
+        // NOTE: Replace "GANTI_DENGAN_API_KEY_ANDA" with your actual Firebase API Key
+        const firebaseConfig = { 
+            apiKey: "GANTI_DENGAN_API_KEY_ANDA", 
+            authDomain: "mayfa-fa284.firebaseapp.com", 
+            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const SUPER_ADMIN_PASSWORD = "Xlord01"; // Make sure to change this to a strong password!
+        let allAdmins = {}; 
+        let allBirthdayPages = {}; // New: Store all birthday page data
+
+        // DOM Elements
+        const passwordModal = document.getElementById('passwordModal');
+        const passwordForm = document.getElementById('passwordForm');
+        const mainContent = document.getElementById('mainContent');
+        const loader = document.getElementById('loader');
+        const userListContainer = document.getElementById('userListContainer');
+        const userList = document.getElementById('userList');
+        const noDataMessage = document.getElementById('noDataMessage');
+        const searchInput = document.getElementById('searchInput');
+        
+        const userModal = document.getElementById('userModal');
+        const userForm = document.getElementById('userForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const adminIdInput = document.getElementById('adminId');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const modalBirthdayNameInput = document.getElementById('modalBirthdayName'); // New
+        const modalTargetWhatsappInput = document.getElementById('modalTargetWhatsapp'); // New
+        
+        const addAdminBtn = document.getElementById('addAdminBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            passwordModal.classList.add('show');
+            document.getElementById('superAdminPassword').focus();
+        });
+
+        passwordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('superAdminPassword').value;
+            if (password === SUPER_ADMIN_PASSWORD) {
+                passwordModal.style.display = 'none';
+                mainContent.classList.remove('hidden');
+                Swal.fire({
+                    icon: 'success', title: 'Akses Diberikan!',
+                    toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true,
+                });
+                loadAllData(); // Modified to load all data
+            } else {
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak!', text: 'Password salah.' });
+                document.getElementById('superAdminPassword').value = '';
+            }
+        });
+        
+        // Modified function to load both admins and birthday_pages data
+        function loadAllData() {
+            loader.classList.remove('hidden');
+            userListContainer.classList.add('hidden');
+            
+            const adminRef = database.ref('admins');
+            const birthdayPagesRef = database.ref('birthday_pages');
+
+            Promise.all([
+                adminRef.once('value'),
+                birthdayPagesRef.once('value')
+            ]).then(snapshots => {
+                allAdmins = snapshots[0].val() || {};
+                allBirthdayPages = snapshots[1].val() || {};
+                renderUsers(allAdmins); // Render based on admin data initially
+                loader.classList.add('hidden');
+                userListContainer.classList.remove('hidden');
+            }).catch(error => {
+                console.error("Error fetching data: ", error);
+                Swal.fire({ icon: 'error', title: 'Gagal Memuat Data', text: 'Terjadi kesalahan saat memuat data dari Firebase.' });
+                loader.classList.add('hidden');
+            });
+        }
+        
+        function renderUsers(adminsObject) {
+            userList.innerHTML = '';
+            const adminIds = Object.keys(adminsObject);
+            
+            if (adminIds.length === 0) {
+                noDataMessage.classList.remove('hidden');
+                return;
+            }
+            
+            noDataMessage.classList.add('hidden');
+            
+            adminIds.forEach(id => {
+                const admin = adminsObject[id];
+                const birthdayPageData = allBirthdayPages[id] || {}; // Get corresponding birthday page data
+                const date = admin.createdAt ? new Date(admin.createdAt) : new Date();
+                const formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                const firstLetter = admin.username ? admin.username.charAt(0).toUpperCase() : '?';
+
+                // Dapatkan username dan password tamu
+                const guestUser = birthdayPageData.guestUser || '';
+                const guestPass = birthdayPageData.guestPass || '';
+
+                // Encode kredensial tamu untuk URL
+                // Menggunakan btoa untuk encoding Base64 sederhana
+                const encodedGuestCredentials = btoa(JSON.stringify({ user: guestUser, pass: guestPass }));
+
+                // Construct the shareable link for the birthday page with encoded credentials
+                // Tambahkan parameter 'auth' ke URL untuk auto-login tamu
+                const shareableLink = `${window.location.origin}/index.html?id=${id}&auth=${encodedGuestCredentials}`;
+                const adminPanelLink = `${window.location.origin}/admin.html?id=${id}`; // Link ke panel admin individu
+
+                const card = document.createElement('div');
+                card.className = 'user-card neumorphic-panel';
+                card.dataset.adminId = id;
+                card.innerHTML = `
+                    <div class="user-card-header">
+                        <div class="user-avatar neumorphic-inset">${firstLetter}</div>
+                        <div class="user-info">
+                            <h3>${admin.username || 'N/A'}</h3>
+                            <p>ID: ${id}</p>
+                        </div>
+                    </div>
+                    <div class="user-card-body">
+                        <div>
+                            <span class="label">Password Admin:</span>
+                            <span class="value password-value">${admin.password || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="label">Nama Target:</span>
+                            <span class="value">${birthdayPageData.birthdayName || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="label">Tgl Lahir Target:</span>
+                            <span class="value">${birthdayPageData.birthDate || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="label">Username Tamu:</span>
+                            <span class="value">${birthdayPageData.guestUser || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="label">Pass Tamu:</span>
+                            <span class="value">${birthdayPageData.guestPass || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="label">WA Target:</span>
+                            <span class="value">${birthdayPageData.targetWhatsappNumber || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="label">Link Halaman:</span>
+                            <span class="value">
+                                <a href="${shareableLink}" target="_blank" style="color: var(--primary); text-decoration: none;">
+                                    Lihat Halaman (Auto Login) <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="label">Dibuat:</span>
+                            <span class="value">${formattedDate}</span>
+                        </div>
+                    </div>
+                    <div class="user-card-actions">
+                        <button class="btn btn-primary btn-access" onclick="accessAdminPanel('${id}')"><i class="fas fa-user-cog"></i> Akses Panel</button>
+                        <button class="btn btn-edit" onclick="openEditModal('${id}')"><i class="fas fa-edit"></i> Edit Admin</button>
+                        <button class="btn btn-danger" onclick="deleteUser('${id}', '${admin.username}')"><i class="fas fa-trash"></i> Hapus</button>
+                    </div>
+                `;
+                userList.appendChild(card);
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            if (!searchTerm) {
+                renderUsers(allAdmins);
+                return;
+            }
+            
+            const filteredAdmins = Object.keys(allAdmins)
+                .filter(key => allAdmins[key].username.toLowerCase().includes(searchTerm) || 
+                                (allBirthdayPages[key] && allBirthdayPages[key].birthdayName && allBirthdayPages[key].birthdayName.toLowerCase().includes(searchTerm)))
+                .reduce((obj, key) => {
+                    obj[key] = allAdmins[key];
+                    return obj;
+                }, {});
+                
+            renderUsers(filteredAdmins);
+        });
+        
+        function openModal(mode, adminId = null) {
+            userForm.reset();
+            if (mode === 'add') {
+                modalTitle.textContent = 'Tambah Admin Baru';
+                adminIdInput.value = '';
+                // Default values for new admin's birthday page in modal
+                modalBirthdayNameInput.value = '';
+                modalTargetWhatsappInput.value = '';
+            } else {
+                modalTitle.textContent = 'Edit Admin';
+                adminIdInput.value = adminId;
+                const admin = allAdmins[adminId];
+                const birthdayPageData = allBirthdayPages[adminId] || {};
+                usernameInput.value = admin.username;
+                passwordInput.value = admin.password;
+                // Load birthday page data into modal
+                modalBirthdayNameInput.value = birthdayPageData.birthdayName || '';
+                modalTargetWhatsappInput.value = birthdayPageData.targetWhatsappNumber || '';
+            }
+            userModal.classList.add('show');
+        }
+
+        function closeModal() {
+            userModal.classList.remove('show');
+        }
+        
+        window.openEditModal = (id) => {
+            openModal('edit', id);
+        }
+
+        addAdminBtn.addEventListener('click', () => openModal('add'));
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelModalBtn.addEventListener('click', closeModal);
+        userModal.addEventListener('click', (e) => {
+            if(e.target === userModal) closeModal();
+        });
+
+        userForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = adminIdInput.value;
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const birthdayName = modalBirthdayNameInput.value.trim(); // Get from modal
+            const targetWhatsappNumber = modalTargetWhatsappInput.value.trim(); // Get from modal
+            
+            if(!username || !password) {
+                Swal.fire({ icon: 'warning', title: 'Input Tidak Lengkap', text: 'Username dan Password wajib diisi.' });
+                return;
+            }
+
+            if (id) { // Edit mode
+                const adminUpdates = { username, password };
+                const birthdayPageUpdates = { 
+                    birthdayName: birthdayName, 
+                    targetWhatsappNumber: targetWhatsappNumber 
+                };
+                
+                // Perform multiple updates
+                Promise.all([
+                    database.ref(`/admins/${id}`).update(adminUpdates),
+                    database.ref(`/birthday_pages/${id}`).update(birthdayPageUpdates)
+                ])
+                .then(() => {
+                    Swal.fire({ icon: 'success', title: 'Data berhasil diperbarui!', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                    closeModal();
+                })
+                .catch(err => Swal.fire({ icon: 'error', title: 'Gagal Memperbarui', text: err.message }));
+            } else { // Add mode
+                const newAdminRef = database.ref('/admins').push();
+                const newAdminId = newAdminRef.key;
+                const newAdminData = {
+                    username, password,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Create a corresponding birthday page with more default fields
+                const defaultPageData = {
+                    birthdayName: birthdayName || username, // Use modal input or username as default
+                    birthDate: "2005-09-28", // As per user's request
+                    guestUser: "guest",
+                    guestPass: "123",
+                    qrImageUrl: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=YourGiftLinkHere",
+                    bestWishes: "", 
+                    stayStrongQuote: "", 
+                    qrMessage: "", 
+                    targetWhatsappNumber: targetWhatsappNumber || "" 
+                };
+
+                const updates = {};
+                updates[`/admins/${newAdminId}`] = newAdminData;
+                updates[`/birthday_pages/${newAdminId}`] = defaultPageData;
+                
+                database.ref().update(updates)
+                    .then(() => {
+                         Swal.fire({ icon: 'success', title: 'Admin baru berhasil ditambahkan!', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+                         closeModal();
+                    })
+                    .catch(err => Swal.fire({ icon: 'error', title: 'Gagal Menambah', text: err.message }));
+            }
+        });
+        
+        window.deleteUser = (id, username) => {
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                html: `Anda yakin ingin menghapus <b>"${username}"</b>?<br>Semua data terkait (termasuk halaman ulang tahun) akan ikut terhapus secara permanen.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const updates = {
+                        [`/admins/${id}`]: null,
+                        [`/birthday_pages/${id}`]: null
+                    };
+                    database.ref().update(updates)
+                        .then(() => {
+                            Swal.fire({ icon: 'success', title: 'Terhapus!', text: `Pengguna "${username}" telah dihapus.` });
+                        })
+                        .catch((error) => {
+                            Swal.fire({ icon: 'error', title: 'Gagal Menghapus', text: error.message });
+                        });
+                }
+            });
+        }
+
+        // New function to directly access an admin's panel (remains the same)
+        window.accessAdminPanel = (adminId) => {
+            window.location.href = `admin.html?super_admin_access=true&id=${adminId}`;
+        }
+    </script>
+</body>
+</html>
