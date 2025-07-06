@@ -10,126 +10,222 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
     <style>
         :root {
-            --primary: #ff7e5f; --secondary: #feb47b; --accent1: #ffc371; --accent2: #ff5f6d;
-            --dark: #1a1a2e; --darker: #16213e; --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15); --success: #30cfd0; --error: #f87171;
-            --light-text: rgba(255, 255, 255, 0.9); --transition-fast: all 0.3s ease;
+            /* Dark Neumorphic Palette */
+            --bg-color: #2c2f36;
+            --shadow-dark: #202227;
+            --shadow-light: #383c45;
+            --text-color: #d1d5db;
+            --text-light: #8a91a0;
+            --primary: #5a7dff;
+            --primary-dark: #4a6fe0;
+            --success: #28a745;
+            --error: #dc3545;
+            --transition-smooth: all 0.3s ease-in-out;
+            --border-radius-main: 24px;
+            --border-radius-inner: 15px;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body.no-scroll { overflow: hidden; }
-        body {
-            background: var(--darker); min-height: 100vh; transition: background 0.5s ease; display: flex;
-            justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; position: relative;
-        }
-        body::before, body::after {
-            content: ''; position: absolute; top: 50%; left: 50%; width: 800px; height: 800px;
-            background-image: radial-gradient(circle, var(--primary) 0%, rgba(255,126,95,0) 60%);
-            border-radius: 50%; transform: translate(-50%, -50%); animation: move-aurora 20s linear infinite;
-            filter: blur(100px); opacity: 0.5; z-index: -1;
-        }
-        body::after {
-            background-image: radial-gradient(circle, var(--accent2) 0%, rgba(255,95,109,0) 60%);
-            animation-name: move-aurora-2; animation-delay: -10s;
-        }
-        @keyframes move-aurora { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); } 50% { transform: translate(-45%, -55%) rotate(180deg) scale(1.2); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); } }
-        @keyframes move-aurora-2 { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); } 50% { transform: translate(-55%, -45%) rotate(-180deg) scale(0.9); } 100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1.1); } }
-        
-        /* --- STYLING UNTUK KONTEN UTAMA & ERROR PAGE --- */
-        .login-container, .error-page {
-            width: 100%;
-            max-width: 400px;
-            perspective: 1000px;
-            z-index: 10;
-        }
-        .error-page {
-            display: none; /* Sembunyi secara default */
-            text-align: center;
-            color: var(--light-text);
-            animation: fadeIn 0.5s ease-out;
-        }
-        .error-page .error-icon {
-            font-size: 5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px var(--primary);
-        }
-        .error-page h1 {
-            font-size: 2.2rem;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        .error-page p {
-            font-size: 1.1rem;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        /* --- AKHIR STYLING ERROR PAGE --- */
 
-        .login-box {
-            background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            border-radius: 24px; padding: 40px; text-align: center;
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease, box-shadow 0.3s ease;
-            transform-style: preserve-3d; position: relative; overflow: hidden;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
-        .login-header { margin-bottom: 35px; position: relative; }
-        .login-icon { width: 80px; height: 80px; background: linear-gradient(45deg, var(--accent2), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; border: 1px solid var(--glass-border); box-shadow: 0 8px 30px rgba(255, 95, 109, 0.4); animation: float 4s ease-in-out infinite; position: relative; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .login-box h1 { background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 34px; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.2); margin-bottom: 8px; }
+        body.no-scroll { overflow: hidden; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .btn {
+            padding: 16px;
+            background: var(--bg-color); border: none; border-radius: var(--border-radius-inner);
+            color: var(--primary); font-size: 1.05rem; font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition-smooth);
+            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); color: var(--primary-dark); }
+        .btn:active:not(:disabled) {
+            transform: translateY(0px);
+            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
+        }
+        
+        /* Error Page */
+        .error-page { display: none; text-align: center; color: var(--text-light); animation: fadeIn 0.5s ease-out; z-index: 20; }
+        .error-page .error-icon { font-size: 5rem; color: var(--primary); margin-bottom: 20px; }
+        .error-page h1 { font-size: 2.2rem; color: var(--text-color); margin-bottom: 10px; }
+        .error-page p { font-size: 1.1rem; }
+
+        /* Login Container */
+        .login-container { width: 100%; max-width: 400px; display: none; }
+        .login-box {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            padding: 40px; text-align: center;
+        }
+        .login-header { margin-bottom: 35px; }
+        .login-icon {
+            width: 85px; height: 85px;
+            background: var(--bg-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
+        }
+        .login-icon i { font-size: 40px; color: var(--primary); }
+        .login-box h1 { font-size: 2rem; color: var(--text-color); margin-bottom: 8px; }
+        .login-box p { color: var(--text-light); font-size: 1rem; }
         .input-group { position: relative; margin-bottom: 25px; }
-        .input-group .icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--primary); transition: all 0.3s ease; font-size: 18px; }
-        .input-group input { width: 100%; padding: 16px 20px 16px 55px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: #fff; font-size: 16px; transition: all 0.3s; border-radius: 12px; }
-        .login-btn { width: 100%; padding: 16px; background: linear-gradient(90deg, var(--accent2) 0%, var(--primary) 100%); border: none; border-radius: 12px; color: #fff; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .birthday-page-container { display: none; align-items: flex-start; padding-top: 8vh; padding-bottom: 8vh; width: 100%; max-width: 1000px; }
-        .main-title { font-family: 'Pacifico', cursive; font-size: clamp(3rem, 10vw, 6rem); line-height: 1.2; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 25px rgba(255,255,255,0.5); animation: fadeInDown 1s ease-out forwards; }
-        .main-title span { background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .message-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 30px; color: white; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); opacity: 0; filter: blur(5px); transform: perspective(800px) rotateY(var(--initial-rotation, -20deg)) scale(0.9); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s ease-out, opacity 0.6s ease-out; }
-        .message-card.is-visible { opacity: 1; filter: blur(0); transform: perspective(800px) rotateY(0) scale(1); }
-        .gift-card { display: none; background: linear-gradient(135deg, #FFFDE7, #FFE2E6); color: #4A4A4A; border-radius: 15px; padding: 30px; text-align: center; width: 100%; max-width: 320px; z-index: 1001; position: relative; overflow: hidden; animation: fadeInCard 0.5s ease-out forwards, subtle-glow 3s ease-in-out infinite alternate; }
+        .input-group .icon { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); color: var(--text-light); transition: all 0.3s ease; font-size: 16px; }
+        .input-group input {
+            width: 100%; padding: 18px 22px 18px 55px;
+            background: var(--bg-color); border: none;
+            border-radius: var(--border-radius-inner); color: var(--text-color);
+            font-size: 1rem;
+            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
+            transition: var(--transition-smooth);
+        }
+        .input-group input:focus { outline: none; box-shadow: inset 9px 9px 18px var(--shadow-dark), inset -9px -9px 18px var(--shadow-light); }
+        .input-group:focus-within .icon { color: var(--primary); }
+        #togglePassword { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-light); }
+        .login-box .btn { margin-top: 10px; }
+
+        /* Birthday Page */
+        .birthday-page-container { display: none; align-items: flex-start; padding-top: 8vh; padding-bottom: 8vh; width: 100%; max-width: 1000px; animation: fadeIn 1s ease-out; }
+        .birthday-content { width: 100%; text-align: center; z-index: 10; }
+        .main-title { font-family: 'Pacifico', cursive; font-size: clamp(3rem, 10vw, 6rem); line-height: 1.2; color: var(--text-color); text-shadow: 0 0 20px rgba(255,255,255,0.1); animation: fadeInDown 1s ease-out forwards; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        .main-title span { color: var(--primary); }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 40px; }
+        
+        .message-card {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            padding: 30px;
+            color: var(--text-color);
+            opacity: 0;
+            filter: blur(5px);
+            transform: perspective(800px) rotateY(var(--initial-rotation, -20deg)) scale(0.9);
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s ease-out, opacity 0.6s ease-out;
+        }
+        .message-card.is-visible {
+            opacity: 1;
+            filter: blur(0);
+            transform: perspective(800px) rotateY(0) scale(1);
+        }
+
+        .card-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--primary); }
+        .card-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 10px; }
+        .card-text { font-size: 1rem; line-height: 1.6; font-weight: 300; color: var(--text-light); white-space: pre-wrap; /* Preserve line breaks */ }
+        .gift-btn { margin-top: 20px; color: var(--success); width: auto; padding: 15px 40px; font-size: 1.2rem;}
+
+        /* Modals */
+        .feedback-modal, .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .feedback-content {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            padding: 40px; text-align: center; width: 90%; max-width: 400px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .feedback-content h2 { font-size: 24px; color: var(--text-color); margin-bottom: 10px; }
+        .feedback-content p { color: var(--text-light); }
+        .loader { margin: 0 auto; border: 6px solid var(--shadow-light); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        
+        .gift-box { position: relative; width: 250px; height: 250px; cursor: pointer; animation: wobble-gift 2s ease-in-out infinite alternate; }
+        @keyframes wobble-gift { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+        .gift-card {
+            display: none; background: #f0f2f5; color: #333;
+            border-radius: 15px; padding: 30px; text-align: center;
+            width: 100%; max-width: 320px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            animation: fadeInCard-anim 0.5s ease-out forwards;
+        }
+        @keyframes fadeInCard-anim { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         .gift-card h2 { color: #333; }
-        @keyframes fadeInCard { from { opacity: 0; transform: scale(0.8) rotateZ(-5deg); } to { opacity: 1; transform: scale(1) rotateZ(0deg); } }
-        @keyframes subtle-glow { from { box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px rgba(255, 239, 186, 0.4); } to { box-shadow: 0 15px 35px rgba(0,0,0,0.3), 0 0 30px rgba(255, 239, 186, 0.8); } }
-        .feedback-modal, .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 3000; justify-content: center; align-items: center; padding: 15px; }
-        .feedback-content { background: rgba(30, 40, 60, 0.95); border-radius: 20px; padding: 40px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; align-items: center; }
-        .loader { margin: 0 auto; border: 6px solid rgba(255, 255, 255, 0.1); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        .hidden { display: none; }
+        .gift-card p { margin-top: 10px; color: #555; white-space: pre-wrap; /* Preserve line breaks */ }
+        #qrCodeImg {
+            width: 180px; height: 180px; margin: 15px auto;
+            border-radius: 10px; border: 5px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Effects */
+        .particle-fall, .falling-confetti, .confetti-piece { position: fixed; pointer-events: none; border-radius: 50%; }
+        
+        .music-toggle {
+            position: fixed; top: 20px; right: 20px;
+            width: 50px; height: 50px; z-index: 1000;
+        }
+        .music-toggle i { font-size: 18px; }
+
+        /* Kustomisasi SweetAlert2 */
+        .swal2-popup {
+            background-color: var(--bg-color) !important;
+            border-radius: var(--border-radius-main) !important;
+            color: var(--text-color) !important;
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important;
+        }
+        .swal2-title { color: var(--text-color) !important; }
+        .swal2-html-container { color: var(--text-light) !important; }
+        .swal2-confirm { background-color: var(--primary) !important; color: white !important; }
+        .swal2-icon.swal2-success .swal2-success-ring { border-color: var(--success) !important; }
+        .swal2-icon.swal2-error { border-color: var(--error) !important; }
     </style>
 </head>
 <body>
     <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
-    
+    <button id="musicToggleBtn" class="btn music-toggle"><i class="fas fa-volume-off"></i></button>
+
     <div class="login-container" id="loginContainer">
-         <div class="login-box" id="loginBox">
+        <div class="login-box">
             <div class="login-header">
                 <div class="login-icon"><i class="fas fa-birthday-cake"></i></div>
                 <h1>Hi, There ✨</h1>
+                <p>Silakan login untuk melanjutkan</p>
             </div>
-            <div class="input-group"><i class="fas fa-user icon"></i><input type="text" id="username" placeholder="Username"></div>
-            <div class="input-group"><i class="fas fa-lock icon"></i><input type="password" id="password" placeholder="Password"></div>
-            <button class="login-btn" onclick="login()"><i class="fas fa-right-to-bracket"></i> Login</button>
+            <div class="input-group">
+                <i class="fas fa-user icon"></i>
+                <input type="text" id="username" placeholder="Username">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" id="password" placeholder="••••••••">
+                <i class="fas fa-eye" id="togglePassword"></i>
+            </div>
+            <button class="btn" onclick="login()"><i class="fas fa-right-to-bracket"></i> Login</button>
         </div>
     </div>
     
     <div class="birthday-page-container" id="birthdayPage">
         <div class="birthday-content">
-            <h1 class="main-title">Happy Birthday, <span id="birthdayName"></span></h1>
+            <h1 class="main-title">Happy Birthday, <span></span></h1>
             <div class="card-grid">
                 <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">Spesial Untukmu</h2><p class="card-text" id="ageDisplay"></p></div>
-                <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text">semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar</p></div>
-                <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Jadilah Kuat</h2><p class="card-text">"untuk segala hal yang membuat mu patah. it's okay, just say: Allah itu baik"</p></div>
+                <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text" id="bestWishesText"></p></div>
+                <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Jadilah Kuat</h2><p class="card-text" id="stayStrongQuoteText"></p></div>
             </div>
-            <div class="message-card" style="margin-top: 20px;"><h2 class="card-title">Ada Sesuatu Untukmu...</h2><button class="gift-btn-modern" onclick="openGift()"><i class="fas fa-gift"></i> Claim Ur Gift</button></div>
+            <div class="message-card" style="margin-top: 30px;">
+                <h2 class="card-title">Ada Sesuatu Untukmu...</h2>
+                <button class="btn gift-btn" onclick="openGift()"><i class="fas fa-gift"></i> Klaim Hadiahmu</button>
+            </div>
         </div>
     </div>
 
     <div class="error-page" id="errorPage">
-        <div class="error-icon">
-            <i class="fas fa-link-slash"></i>
-        </div>
+        <div class="error-icon"><i class="fas fa-link-slash"></i></div>
         <h1 id="errorTitle">Halaman Tidak Ditemukan</h1>
         <p id="errorMessage">Pastikan link yang Anda masukkan sudah benar dan lengkap.</p>
     </div>
@@ -138,105 +234,330 @@
         <div class="gift-box" onclick="openCard()"><img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
         <div class="gift-card" id="giftCard">
             <h2 style="font-weight: 600;">Hi, <span id="giftCardName"></span>!</h2>
-            <p>Scan To Claim Gift</p>
-            <img id="qrCodeImg" alt="QR Code Hadiah" style="width: 180px; height: 180px; margin: 15px auto; border-radius: 10px; border: 10px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-            <p>"mungkin hadiahku ga seberapa semoga bermanfaat, dan selamat bertambah usia, dilancarkan disemua hal, dan menjadi pribadi yang lebih baik dari sebelum nya ✨"</p>
+            <p>Scan untuk klaim hadiahmu!</p>
+            <img id="qrCodeImg" alt="QR Code Hadiah">
+            <p id="qrMessageText"></p>
         </div>
     </div>
+    
     <div class="feedback-modal" id="feedbackModal">
         <div class="feedback-content">
-            <div class="icon-container"><div class="loader" id="feedbackLoader"></div><i class="fas fa-check-circle icon success hidden" id="successIcon"></i><i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i></div>
+            <div class="loader" id="feedbackLoader"></div>
             <h2 id="feedbackTitle"></h2><p id="feedbackMessage"></p>
         </div>
     </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
     <script>
         const firebaseConfig = { apiKey: "GANTI_DENGAN_API_KEY_ANDA", authDomain: "mayfa-fa284.firebaseapp.com", databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         let pageData = {};
-        const loginContainer = document.getElementById("loginContainer"), birthdayPage = document.getElementById("birthdayPage"), errorPage = document.getElementById("errorPage"), giftModal = document.getElementById("giftModal"), giftBox = document.querySelector(".gift-box"), giftCard = document.getElementById("giftCard"), backgroundMusic = document.getElementById("background-music");
+        let particleInterval;
+
+        const loginContainer = document.getElementById("loginContainer"), 
+              birthdayPage = document.getElementById("birthdayPage"), 
+              errorPage = document.getElementById("errorPage"), 
+              giftModal = document.getElementById("giftModal"), 
+              giftBox = document.querySelector(".gift-box"), 
+              giftCard = document.getElementById("giftCard"), 
+              backgroundMusic = document.getElementById("background-music"), 
+              togglePassword = document.getElementById("togglePassword"), 
+              passwordInput = document.getElementById("password"),
+              musicToggleBtn = document.getElementById('musicToggleBtn');
         
-        // --- LOGIKA UTAMA YANG DIPERBARUI ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pageId = urlParams.get('id');
+        // New elements for text content
+        const bestWishesText = document.getElementById('bestWishesText');
+        const stayStrongQuoteText = document.getElementById('stayStrongQuoteText');
+        const qrMessageText = document.getElementById('qrMessageText');
 
-            // Tampilkan halaman error jika ID tidak ada di URL
-            if (!pageId) {
-                showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap.");
-                return;
-            }
 
-            // Muat data spesifik berdasarkan pageId
-            database.ref('birthday_pages/' + pageId).on('value', (snapshot) => {
-                // Tampilkan halaman error jika ID salah atau data tidak ada
-                if (!snapshot.exists()) {
-                    showErrorPage("Konten Tidak Tersedia", "Halaman ini ada, namun kontennya belum diatur oleh pemilik.");
-                    return;
-                }
-                
-                // Jika data ada, lanjutkan seperti biasa
-                pageData = snapshot.val();
-                loginContainer.style.display = 'block'; // Pastikan form login terlihat
-                document.getElementById('birthdayName').textContent = pageData.birthdayName || "Someone";
-                document.getElementById('giftCardName').textContent = pageData.birthdayName || "Someone";
-                document.getElementById('qrCodeImg').src = pageData.qrImageUrl || '';
-                calculateAndDisplayAge(pageData.birthDate);
-            }, (error) => {
-                // Handle error koneksi firebase
-                showErrorPage("Gagal Terhubung", "Tidak dapat memuat data. Periksa koneksi internet Anda.");
-            });
-        });
+        // --- Utility function to get URL parameters ---
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
 
-        // --- FUNGSI BARU UNTUK MENAMPILKAN HALAMAN ERROR ---
         function showErrorPage(title, message) {
             loginContainer.style.display = 'none';
             birthdayPage.style.display = 'none';
             document.getElementById('errorTitle').textContent = title;
             document.getElementById('errorMessage').textContent = message;
             errorPage.style.display = 'block';
+            document.body.classList.remove("no-scroll"); // Allow scrolling on error page
         }
 
-        function login() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            if (username === pageData.guestUser && password === pageData.guestPass) {
-                showFeedback('loading', 'Login Berhasil!', 'Mempersiapkan keajaiban...');
-                setTimeout(() => {
+        // --- Perbaikan fungsi login utama ---
+        async function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const pageId = getUrlParameter('id'); // Dapatkan pageId dari URL
+
+            if (!username || !password) {
+                Swal.fire({ icon: 'warning', title: 'Input Tidak Lengkap', text: 'Mohon isi Username dan Password.' });
+                return;
+            }
+
+            if (!pageId) {
+                showErrorPage("Link Tidak Valid", "ID halaman tidak ditemukan di URL.");
+                return;
+            }
+
+            // Panggil fungsi performGuestLogin yang terpusat
+            await performGuestLogin(username, password, pageId);
+        }
+
+        // --- Fungsi inti untuk memverifikasi dan menampilkan halaman ---
+        async function performGuestLogin(username, password, pageId) {
+            showFeedback('loading', 'Mengecek Kredensial...', 'Harap tunggu sebentar.');
+
+            try {
+                const snapshot = await database.ref(`birthday_pages/${pageId}`).once('value');
+                const data = snapshot.val();
+
+                if (data && data.guestUser === username && data.guestPass === password) {
+                    pageData = data; // Simpan data yang dimuat ke variabel global pageData
+                    
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Login Berhasil!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000, // Durasi lebih singkat agar transisi cepat
+                        timerProgressBar: true,
+                    });
+
                     loginContainer.style.display = "none";
                     birthdayPage.style.display = "flex";
-                    try { backgroundMusic.play().catch(e => {}); } catch (e) {}
+                    document.body.classList.remove("no-scroll");
+
+                    document.querySelector(".main-title span").textContent = pageData.birthdayName;
+                    calculateAndDisplayAge(pageData.birthDate);
+                    bestWishesText.textContent = pageData.bestWishes || 'semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar';
+                    stayStrongQuoteText.textContent = pageData.stayStrongQuote || '"untuk segala hal yang membuat mu patah. it\'s okay, just say: Allah itu baik"';
+                    
+                    initScrollAnimations();
+                    startFullScreenConfetti();
                     hideFeedback();
-                }, 1500);
-            } else {
-                showFeedback('failure', 'Login Gagal', 'Username atau password salah.');
-                setTimeout(hideFeedback, 2500);
+                    return true; // Login berhasil
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Login Gagal', text: 'Username atau password salah.' });
+                    hideFeedback();
+                    return false; // Login gagal
+                }
+            } catch (error) {
+                console.error("Error during guest login:", error);
+                Swal.fire({ icon: 'error', title: 'Terjadi Kesalahan', text: 'Gagal login. Silakan coba lagi.' });
+                hideFeedback();
+                return false; // Error saat login
             }
         }
         
-        function calculateAndDisplayAge(birthDate) {
-            const birthDateObj = new Date(birthDate), today = new Date();
-            let age = today.getFullYear() - birthDateObj.getFullYear();
-            const monthDiff = today.getMonth() - birthDateObj.getMonth();
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) { age--; }
-            document.getElementById("ageDisplay").innerText = `Hari ini usiamu genap ${age} tahun. Selamat!`;
-        }
-
         function showFeedback(state, title, message = '') {
-            const feedbackModal = document.getElementById('feedbackModal'), feedbackTitle = document.getElementById('feedbackTitle'), feedbackMessage = document.getElementById('feedbackMessage'), loader = document.getElementById('feedbackLoader'), successIcon = document.getElementById('successIcon'), failureIcon = document.getElementById('failureIcon');
-            loader.classList.add('hidden'); successIcon.classList.add('hidden'); failureIcon.classList.add('hidden');
+            const feedbackModal = document.getElementById('feedbackModal');
+            document.getElementById('feedbackLoader').style.display = (state === 'loading' ? 'block' : 'none');
+            document.getElementById('feedbackTitle').textContent = title;
+            document.getElementById('feedbackMessage').textContent = message;
             feedbackModal.style.display = 'flex';
-            feedbackTitle.textContent = title; feedbackMessage.textContent = message;
-            if (state === 'loading') loader.classList.remove('hidden');
-            else if (state === 'success') successIcon.classList.remove('hidden');
-            else if (state === 'failure') failureIcon.classList.remove('hidden');
         }
         function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
         
+        togglePassword.addEventListener("click", function() {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            this.classList.toggle("fa-eye"); this.classList.toggle("fa-eye-slash");
+        });
+
+        musicToggleBtn.addEventListener('click', () => {
+            const icon = musicToggleBtn.querySelector('i');
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().catch(e => console.error("Music play failed:", e));
+                icon.classList.remove('fa-volume-off');
+                icon.classList.add('fa-volume-high');
+            } else {
+                backgroundMusic.pause();
+                icon.classList.remove('fa-volume-high');
+                icon.classList.add('fa-volume-off');
+            }
+        });
+
+        function calculateAndDisplayAge(birthDate) {
+            // Mengikuti permintaan "sudah berapa lama kamu bertahan?" dan tanggal lahir 2005-09-28
+            const fixedBirthDate = '2005-09-28'; 
+            const birthDateObj = new Date(fixedBirthDate);
+            const today = new Date();
+            
+            let years = today.getFullYear() - birthDateObj.getFullYear();
+            let months = today.getMonth() - birthDateObj.getMonth();
+            let days = today.getDate() - birthDateObj.getDate();
+
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); // Days in previous month
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const birthDateFormatted = birthDateObj.toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'});
+            
+            document.getElementById("ageDisplay").innerText = `Sudah berapa lama kamu bertahan? Yaitu, ${years} tahun, ${months} bulan, dan ${days} hari. Selamat!`;
+        }
+        
+        function initScrollAnimations() {
+            const cards = document.querySelectorAll('.message-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    } else {
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.1 });
+
+            cards.forEach((card, index) => {
+                card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-20deg' : '20deg');
+                card.style.transitionDelay = `${index * 150}ms`;
+                observer.observe(card);
+            });
+        }
+
         function openGift() { giftModal.style.display = "flex"; }
-        function openCard() { giftBox.style.display = "none"; giftCard.style.display = "block"; }
-        function closeGiftModal() { giftModal.style.display = "none"; giftCard.style.display = "none"; giftBox.style.display = "block"; }
+        
+        function openCard() {
+            giftBox.style.display = "none";
+            giftCard.style.display = "block";
+            document.getElementById("giftCardName").textContent = pageData.birthdayName;
+            const qrImg = document.getElementById("qrCodeImg");
+            qrImg.src = pageData.qrImageUrl || `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`Selamat Ulang Tahun ${pageData.birthdayName}!`)}`;
+            qrMessageText.textContent = pageData.qrMessage || '"mungkin hadiahku ga seberapa semoga bermanfaat, dan selamat bertambah usia, dilancarkan disemua hal, dan menjadi pribadi yang lebih baik dari sebelum nya ✨"';
+            
+            createConfettiExplosion(150);
+            setTimeout(() => {
+                startParticleFall();
+            }, 500);
+        }
+
+        function closeGiftModal() { 
+            giftModal.style.display = "none"; 
+            clearInterval(particleInterval);
+            setTimeout(() => { 
+                giftCard.style.display = "none"; 
+                giftBox.style.display = "block"; 
+            }, 500);
+        }
         giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
+
+        function startFullScreenConfetti() {
+            const colors = [ 'var(--primary)', 'var(--success)', 'var(--text-color)'];
+            setInterval(() => {
+                const confettiEl = document.createElement('div');
+                confettiEl.classList.add('falling-confetti');
+                confettiEl.style.left = Math.random() * 100 + 'vw';
+                confettiEl.style.width = `${Math.random() * 8 + 6}px`;
+                confettiEl.style.height = confettiEl.style.width;
+                confettiEl.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confettiEl.style.opacity = Math.random() * 0.7 + 0.3;
+                document.body.appendChild(confettiEl);
+                confettiEl.animate([
+                    { transform: 'translateY(0px) rotate(0deg)' },
+                    { transform: `translateY(110vh) rotate(${Math.random() * 360}deg)` }
+                ], { duration: 4000 + Math.random() * 3000, easing: 'linear' })
+                .onfinish = () => confettiEl.remove();
+            }, 200);
+        }
+
+        function createConfettiExplosion(numberOfPieces) {
+            const colors = ['var(--primary)', 'var(--success)', 'var(--text-color)', '#ffffff'];
+            for (let i = 0; i < numberOfPieces; i++) {
+                const piece = document.createElement('div');
+                piece.classList.add('confetti-piece');
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.width = `${Math.random() * 12 + 5}px`;
+                piece.style.height = `${piece.style.width * 0.6}px`;
+                document.body.appendChild(piece);
+                const angle = Math.random() * 360, distance = Math.random() * (window.innerWidth / 2.5) + 50;
+                const x = Math.cos(angle * Math.PI / 180) * distance;
+                const y = Math.sin(angle * Math.PI / 180) * distance - (distance/2);
+                piece.animate([
+                    { transform: 'translate(-50%, -50%) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(${x}px, ${y}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], { duration: 1500 + Math.random() * 1000, easing: 'cubic-bezier(0.1, 0.9, 0.2, 1)', fill: 'forwards' })
+                .onfinish = () => piece.remove();
+            }
+        }
+        
+        function startParticleFall() {
+            const colors = ['var(--primary)', 'var(--success)', 'var(--text-color)'];
+            particleInterval = setInterval(() => {
+                const particle = document.createElement('div');
+                particle.classList.add('particle-fall');
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.width = `${Math.random() * 6 + 4}px`;
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(particle);
+                particle.animate([
+                    { transform: 'translateY(0px) translateX(0px)' },
+                    { transform: `translateY(110vh) translateX(${Math.random() * 40 - 20}px)` }
+                ], { duration: 5000 + Math.random() * 5000, easing: 'linear' })
+                .onfinish = () => particle.remove();
+            }, 300);
+        }
+
+        // --- Initial Load Logic on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.body.classList.add("no-scroll"); // Pertahankan ini untuk mencegah scrolling sampai login
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageId = urlParams.get('id');
+            const authParam = urlParams.get('auth'); // Parameter otentikasi dari super admin
+
+            if (!pageId) {
+                showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap.");
+                return;
+            }
+
+            // Muat data halaman terlebih dahulu untuk memastikan data tersedia
+            const snapshot = await database.ref('birthday_pages/' + pageId).once('value');
+            if (!snapshot.exists()) {
+                showErrorPage("Konten Tidak Tersedia", "Halaman ini ada, namun kontennya belum diatur oleh pemilik atau tidak ditemukan.");
+                return;
+            }
+            pageData = snapshot.val(); // Simpan data yang dimuat ke pageData
+
+            // Jika ada parameter 'auth', coba auto-login
+            if (authParam) {
+                try {
+                    const decoded = JSON.parse(atob(authParam)); // Dekode Base64
+                    const username = decoded.user;
+                    const password = decoded.pass;
+
+                    // Lakukan auto-login
+                    const loginSuccess = await performGuestLogin(username, password, pageId);
+                    if (!loginSuccess) {
+                        // Jika auto-login gagal, tampilkan form login manual
+                        Swal.fire({ icon: 'info', title: 'Akses Otomatis Gagal', text: 'Kredensial otomatis tidak valid. Silakan login manual.' });
+                        loginContainer.style.display = 'block';
+                        document.body.classList.remove("no-scroll"); // Izinkan scrolling di halaman login
+                    }
+                    // Jika loginSuccess true, performGuestLogin sudah mengatur tampilan
+                } catch (e) {
+                    console.error("Error decoding or parsing auth parameter:", e);
+                    Swal.fire({ icon: 'error', title: 'Link Tidak Valid', text: 'Terjadi kesalahan pada link akses otomatis.' });
+                    loginContainer.style.display = 'block'; // Tampilkan form login
+                    document.body.classList.remove("no-scroll"); // Izinkan scrolling di halaman login
+                }
+            } else {
+                // Jika tidak ada parameter 'auth', tampilkan form login manual
+                loginContainer.style.display = 'block';
+                document.body.classList.remove("no-scroll"); // Izinkan scrolling di halaman login
+            }
+        });
     </script>
 </body>
 </html>
