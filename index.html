@@ -213,11 +213,11 @@
         <div class="birthday-content">
             <h1 class="main-title">Happy Birthday, <span></span></h1>
             <div class="card-grid">
-                <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">Spesial Untukmu</h2><p class="card-text" id="ageDisplay"></p></div>
+                <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">New Level Unlocked!</h2><p class="card-text" id="ageDisplay"></p></div>
                 <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text" id="bestWishesText"></p></div>
                 <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Jadilah Kuat</h2><p class="card-text" id="stayStrongQuoteText"></p></div>
             </div>
-            <div class="message-card" style="margin-top: 30px;">
+            <div class="message-card" style="margin-top: 30px; display: flex; flex-direction: column; align-items: center;">
                 <h2 class="card-title">Ada Sesuatu Untukmu...</h2>
                 <button class="btn gift-btn" onclick="openGift()"><i class="fas fa-gift"></i> Klaim Hadiahmu</button>
             </div>
@@ -311,7 +311,7 @@
 
         // --- Fungsi inti untuk memverifikasi dan menampilkan halaman ---
         async function performGuestLogin(username, password, pageId) {
-            showFeedback('loading', 'Mengecek Kredensial...', 'Harap tunggu sebentar.');
+            showFeedback('loading', 'Verifikasi data...', 'Harap tunggu sebentar.');
 
             try {
                 const snapshot = await database.ref(`birthday_pages/${pageId}`).once('value');
@@ -335,7 +335,14 @@
                     document.body.classList.remove("no-scroll");
 
                     document.querySelector(".main-title span").textContent = pageData.birthdayName;
-                    calculateAndDisplayAge(pageData.birthDate);
+                    // Memastikan pageData.birthDate tersedia sebelum memanggil fungsi
+                    if (pageData.birthDate) {
+                        calculateAndDisplayAge(pageData.birthDate);
+                    } else {
+                        // Opsional: tampilkan pesan jika tanggal lahir tidak ditemukan
+                        document.getElementById("ageDisplay").innerText = "Tanggal lahir tidak ditemukan.";
+                    }
+
                     bestWishesText.textContent = pageData.bestWishes || 'semoga hal baik selalu beriringan denganmu, semoga semesta senantiasa berpihak padamu, semoga jalanmu untuk mencapai masa depan yang cerah di permudahkan, teruslah tumbuh, teruslah melangkah & berbahagia . aku akan selalu bangga atas setiap proses yang sudah kamu lalui. selamat berkelana, i will always support u from afar';
                     stayStrongQuoteText.textContent = pageData.stayStrongQuote || '"untuk segala hal yang membuat mu patah. it\'s okay, just say: Allah itu baik"';
                     
@@ -384,10 +391,10 @@
             }
         });
 
+        // --- FUNGSI calculateAndDisplayAge YANG SUDAH DIPERBAIKI ---
         function calculateAndDisplayAge(birthDate) {
-            // Mengikuti permintaan "sudah berapa lama kamu bertahan?" dan tanggal lahir 2005-09-28
-            const fixedBirthDate = '2005-09-28'; 
-            const birthDateObj = new Date(fixedBirthDate);
+            // Pastikan birthDate yang diterima adalah string valid (e.g., "YYYY-MM-DD")
+            const birthDateObj = new Date(birthDate); 
             const today = new Date();
             
             let years = today.getFullYear() - birthDateObj.getFullYear();
@@ -396,17 +403,17 @@
 
             if (days < 0) {
                 months--;
-                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); // Days in previous month
+                // Mendapatkan jumlah hari di bulan sebelumnya
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
             }
             if (months < 0) {
                 years--;
                 months += 12;
             }
-
-            const birthDateFormatted = birthDateObj.toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'});
             
-            document.getElementById("ageDisplay").innerText = `Sudah berapa lama kamu bertahan? Yaitu, ${years} tahun, ${months} bulan, dan ${days} hari. Selamat!`;
+            document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru dan penuh kebahagiaan!`;
         }
+        // --- AKHIR FUNGSI calculateAndDisplayAge YANG SUDAH DIPERBAIKI ---
         
         function initScrollAnimations() {
             const cards = document.querySelectorAll('.message-card');
