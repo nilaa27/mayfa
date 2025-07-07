@@ -368,7 +368,7 @@
         </div>
         
         <div class="back-button-container">
-            <a href="admin.html" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
+            <button type="button" class="btn btn-secondary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Log Out</button>
         </div>
     </div>
 
@@ -441,12 +441,10 @@
         const addAdminBtn = document.getElementById('addAdminBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const logoutBtn = document.getElementById('logoutBtn'); // Dapatkan elemen tombol logout
 
         // Initial check for password display
         document.addEventListener('DOMContentLoaded', () => {
-            // No need to remove 'password-modal' class, as the element's ID is 'passwordModal'
-            // and it already has 'login-container' class in HTML
-            // passwordModal.classList.add('login-container'); // This line is redundant if already in HTML
             document.getElementById('superAdminPassword').focus();
             createBackgroundDots(); // Create animated background dots
         });
@@ -492,36 +490,39 @@
                     icon: 'success', title: 'Akses Diberikan!',
                     toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true,
                 });
-                loadAllData(); // Modified to load all data
+
+                // --- START Real-time Listeners ---
+                loader.classList.remove('hidden');
+                userListContainer.classList.add('hidden');
+
+                // Listener for admins data
+                database.ref('admins').on('value', (snapshot) => {
+                    allAdmins = snapshot.val() || {};
+                    // Only render if birthday_pages data is also loaded, or if admins become empty
+                    if (Object.keys(allBirthdayPages).length > 0 || Object.keys(allAdmins).length === 0) {
+                         renderUsers(allAdmins);
+                         loader.classList.add('hidden');
+                         userListContainer.classList.remove('hidden');
+                    }
+                });
+
+                // Listener for birthday_pages data
+                database.ref('birthday_pages').on('value', (snapshot) => {
+                    allBirthdayPages = snapshot.val() || {};
+                    // Only render if admins data is also loaded, or if birthday_pages become empty
+                    if (Object.keys(allAdmins).length > 0 || Object.keys(allBirthdayPages).length === 0) {
+                        renderUsers(allAdmins);
+                        loader.classList.add('hidden');
+                        userListContainer.classList.remove('hidden');
+                    }
+                });
+                // --- END Real-time Listeners ---
+
             } else {
                 Swal.fire({ icon: 'error', title: 'Akses Ditolak!', text: 'Password yang kamu masukkan salah.' });
                 document.getElementById('superAdminPassword').value = '';
             }
         });
-        
-        // Modified function to load both admins and birthday_pages data
-        function loadAllData() {
-            loader.classList.remove('hidden');
-            userListContainer.classList.add('hidden');
-            
-            const adminRef = database.ref('admins');
-            const birthdayPagesRef = database.ref('birthday_pages');
-
-            Promise.all([
-                adminRef.once('value'),
-                birthdayPagesRef.once('value')
-            ]).then(snapshots => {
-                allAdmins = snapshots[0].val() || {};
-                allBirthdayPages = snapshots[1].val() || {};
-                renderUsers(allAdmins); // Render based on admin data initially
-                loader.classList.add('hidden');
-                userListContainer.classList.remove('hidden');
-            }).catch(error => {
-                console.error("Error fetching data: ", error);
-                Swal.fire({ icon: 'error', title: 'Gagal Memuat Data', text: 'Terjadi kesalahan saat memuat data dari Firebase.' });
-                loader.classList.add('hidden');
-            });
-        }
         
         function renderUsers(adminsObject) {
             userList.innerHTML = '';
@@ -762,6 +763,48 @@
         window.accessAdminPanel = (adminId) => {
             window.location.href = `admin.html?super_admin_access=true&id=${adminId}`;
         }
+
+        // --- Event Listener untuk tombol Log Out ---
+        logoutBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Konfirmasi Log Out',
+                text: 'Anda yakin ingin keluar dari panel Super Admin?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Log Out',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Unsubscribe dari Firebase listeners untuk menghindari memory leak
+                    database.ref('admins').off('value');
+                    database.ref('birthday_pages').off('value');
+
+                    // Reset UI ke kondisi login
+                    mainContent.classList.add('hidden');
+                    passwordModal.style.display = 'flex'; // Gunakan flex untuk centering
+                    document.getElementById('superAdminPassword').value = ''; // Bersihkan field password
+                    
+                    // Sesuaikan kembali styling body untuk modal login
+                    document.body.style.display = 'flex'; // <-- Pastikan ini flex
+                    document.body.style.justifyContent = 'center'; // Memusatkan secara horizontal
+                    document.body.style.alignItems = 'center';     // Memusatkan secara vertikal
+                    document.body.style.minHeight = '100vh';
+                    document.body.style.overflow = 'hidden'; // Sembunyikan scrollbar untuk layar login
+                    document.body.style.padding = '2rem';
+
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Berhasil Log Out!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
