@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Register - Neumorphic</title>
+    <title>Daftar Akun Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,220 +11,405 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <style>
-        /* CSS di sini sama persis dengan admin.html untuk konsistensi */
         :root {
-            --bg-color: #e0e5ec; --primary-accent: #4a90e2; --text-color: #5a677e;
-            --light-shadow: #ffffff; --dark-shadow: #a3b1c6; --success: #2ecc71;
-            --error: #e74c3c; --transition-fast: all 0.3s ease;
+            /* Dark Neumorphic Palette */
+            --bg-color: #2c2f36;
+            --shadow-dark: #202227;
+            --shadow-light: #383c45;
+            --text-color: #d1d5db;
+            --text-light: #8a91a0;
+            --primary: #5a7dff;
+            --primary-dark: #4a6fe0;
+            --success: #28a745;
+            --success-dark: #218838;
+            --error: #dc3545;
+            --transition-smooth: all 0.3s ease-in-out;
+            --border-radius-main: 30px;
+            --border-radius-inner: 15px;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-user-select: none; /* Prevent text selection */
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: pan-y; /* Allow vertical panning by default */
+        }
+
+        /* Allow specific elements to have text selection and auto touch-action for input */
+        input[type="text"], input[type="password"] {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+            touch-action: auto;
+        }
+
         body {
-            background: var(--bg-color); min-height: 100vh; display: flex;
-            justify-content: center; align-items: center; color: var(--text-color);
-            position: relative; overflow: hidden; padding: 10px;
-            -webkit-user-select: none; user-select: none; touch-action: pan-y;
+            background: var(--bg-color);
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--text-color);
+            padding: 20px;
         }
+
         .container {
-            width: 100%; max-width: 450px; display: flex;
-            justify-content: center; align-items: center; z-index: 5; padding: 20px;
+            width: 100%; max-width: 440px;
+            z-index: 10;
+            animation: fadeIn 0.5s ease forwards;
         }
+
         .box {
-            background: var(--bg-color); border-radius: 30px; padding: 30px;
-            width: 100%;
-            box-shadow: -9px -9px 16px var(--light-shadow), 9px 9px 16px var(--dark-shadow);
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            padding: 40px; width: 100%;
             display: flex; flex-direction: column;
         }
-        .content-wrapper { width: 100%; max-width: 350px; text-align: center; margin: 0 auto; }
-        .header { margin-bottom: 25px; }
+
+        .header { text-align: center; margin-bottom: 35px; }
         .header-icon {
-            width: 80px; height: 80px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; margin: 0 auto 20px;
-            font-size: 38px; color: var(--primary-accent);
-            box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow);
+            width: 85px; height: 85px;
+            background: var(--bg-color);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
         }
-        h1 { font-size: 2.2rem; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
-        .header p { font-size: 1rem; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; padding-left: 15px; }
+        .header-icon i { font-size: 40px; color: var(--primary); }
+        h1 { font-size: 2rem; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
+        .header p { color: var(--text-light); font-size: 1.05rem; }
+
+        /* Input Group Styles */
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; color: var(--text-light); font-size: 0.9rem; font-weight: 500; margin-bottom: 12px; padding-left: 10px; }
         .input-wrapper { position: relative; }
         .input-field {
-            width: 100%; padding: 16px 20px 16px 50px; background: var(--bg-color);
-            border: none; border-radius: 50px; color: var(--text-color); font-size: 1rem;
-            font-weight: 500; outline: none; transition: var(--transition-fast);
-            box-shadow: inset 5px 5px 8px var(--dark-shadow), inset -5px -5px 8px var(--light-shadow);
+            width: 100%; padding: 18px 55px; /* Ample padding for icons */
+            background: var(--bg-color); border: none;
+            border-radius: var(--border-radius-inner); color: var(--text-color);
+            font-size: 1rem;
+            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
+            transition: var(--transition-smooth);
         }
-        .input-field:focus { box-shadow: inset 7px 7px 12px var(--dark-shadow), inset -7px -7px 12px var(--light-shadow); }
-        .input-wrapper .icon-left, .input-wrapper .icon-right {
+        .input-field:focus {
+            outline: none;
+            box-shadow: inset 9px 9px 18px var(--shadow-dark), inset -9px -9px 18px var(--shadow-light), 0 0 0 2px var(--primary); /* Focus ring */
+        }
+        .input-field::placeholder { color: var(--text-light); }
+
+        .input-wrapper i {
             position: absolute; top: 50%; transform: translateY(-50%);
-            color: var(--text-color); opacity: 0.7; font-size: 16px; transition: var(--transition-fast);
+            color: var(--text-light); font-size: 16px; transition: all 0.2s ease-out;
+            pointer-events: none; /* Make icons not intercept clicks by default */
         }
-        .input-wrapper .icon-left { left: 20px; }
-        .input-wrapper .icon-right { right: 20px; cursor: pointer; }
-        .input-wrapper .icon-right:hover, .input-field:focus ~ .icon-left { color: var(--primary-accent); opacity: 1; }
-        #togglePass.fa-eye-slash, #toggleConfirmPass.fa-eye-slash { transform: translateY(-50%) rotate(180deg); }
+        .input-wrapper .icon-left { left: 22px; }
+        .input-wrapper .icon-right { right: 22px; left: auto; cursor: pointer; pointer-events: auto; /* Allow icon-right to be clickable */ }
+        .input-wrapper .icon-right:hover { color: var(--primary); }
+        .input-field:focus ~ .icon-left { color: var(--primary); }
+
+        /* Button Styles */
         .btn {
-            width: 100%; padding: 18px; background: var(--bg-color); border: none;
-            border-radius: 50px; color: var(--primary-accent); font-size: 1.1rem;
-            font-weight: 600; cursor: pointer; transition: var(--transition-fast);
+            width: 100%; padding: 18px;
+            background: var(--bg-color); border: none; border-radius: var(--border-radius-inner);
+            color: var(--primary); font-size: 1.05rem; font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: -5px -5px 15px var(--light-shadow), 5px 5px 15px var(--dark-shadow);
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
         }
-        .btn:hover { color: #1e77d3; }
-        .btn:active { color: #1e77d3; box-shadow: inset 5px 5px 10px var(--dark-shadow), inset -5px -5px 10px var(--light-shadow); }
-        .login-link { text-align: center; margin-top: 25px; font-size: 0.9rem; color: var(--text-color); }
-        .login-link a { color: var(--primary-accent); text-decoration: none; font-weight: 600; }
-        .login-link a:hover { text-decoration: underline; }
-        .feedback-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(224,229,236,.7);backdrop-filter:blur(4px);z-index:3000;justify-content:center;align-items:center}.feedback-content{background:var(--bg-color);border-radius:20px;padding:40px;text-align:center;width:90%;max-width:400px;box-shadow:-9px -9px 16px var(--light-shadow),9px 9px 16px var(--dark-shadow)}.icon-container{height:80px;margin-bottom:20px}.icon-container .icon{font-size:60px}.icon-container .icon.success{color:var(--success)}.icon-container .icon.failure{color:var(--error)}.loader{margin:0 auto;border:6px solid rgba(90,103,126,.2);border-top:6px solid var(--primary-accent);border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite}.hidden{display:none}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}input{font-size:16px}
+        .btn:hover:not(:disabled) { transform: translateY(-2px); color: var(--primary-dark); }
+        .btn:active:not(:disabled) {
+            transform: translateY(0px);
+            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
+            color: var(--primary);
+        }
+        .btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .back-link {
+            text-align: center; margin-top: 30px;
+            font-size: 0.95rem; color: var(--text-light);
+            text-decoration: none;
+            display: block; /* Make it a block element for proper centering */
+        }
+        .back-link:hover { text-decoration: underline; }
+        .back-link strong {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        /* --- Modal Styling --- */
+        .feedback-modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); 
+            z-index: 3000; justify-content: center; align-items: center; 
+            opacity: 0; transition: opacity 0.3s ease; 
+        }
+        .feedback-modal.visible { opacity: 1; }
+        .feedback-content {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light);
+            padding: 30px 40px; text-align: center;
+            width: 90%; max-width: 450px;
+            transform: scale(0.95); transition: transform 0.3s ease;
+        }
+        .feedback-modal.visible .feedback-content { transform: scale(1); }
+        .feedback-content h2 { 
+            font-size: 1.8rem; margin-bottom: 10px; font-weight: 600; 
+            color: var(--text-color); /* Default color for title */
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .feedback-content h2 i { font-size: 2rem; } /* Icon size in modal title */
+        .feedback-content p { font-size: 1rem; color: var(--text-light); }
+        
+        /* Success Modal Specifics */
+        #accountModal .feedback-content { border-top: 4px solid var(--success); }
+        #accountModal h2 { color: var(--success); } /* Success title color */
+        
+        .data-display {
+            background: var(--bg-color);
+            box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
+            border-radius: var(--border-radius-inner); padding: 20px;
+            margin-top: 20px; margin-bottom: 25px; text-align: left;
+        }
+        .data-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .data-item:last-child { margin-bottom: 0; }
+        .data-item span { color: var(--text-light); font-size: 1rem; }
+        .data-item strong { color: var(--text-color); font-weight: 600; font-size: 1.1rem; word-break: break-all; } /* Ensure long usernames wrap */
+
+        .feedback-actions { display: flex; gap: 15px; justify-content: center; margin-top: 10px; }
+        .feedback-btn {
+            flex-grow: 1; /* Make buttons fill space */
+            /* Inherits .btn styles, add specific colors */
+        }
+        .btn-back { color: var(--text-light); }
+        .btn-back:hover { color: var(--text-color); }
+        .btn-signin { color: var(--success); }
+        .btn-signin:hover { color: var(--success-dark); }
+        
+        /* Failure Modal Specifics */
+        #failureModal .feedback-content { border-top: 4px solid var(--error); }
+        #failureModal h2 { color: var(--error); } /* Error title color */
+
+        /* Responsive adjustments */
+        @media (max-width: 500px) {
+            .box { padding: 30px; }
+            .header h1 { font-size: 1.8rem; }
+            .header p { font-size: 0.95rem; }
+            .input-field { padding: 15px 50px; } /* Smaller padding for smaller screens */
+            .input-wrapper .icon-left { left: 18px; }
+            .input-wrapper .icon-right { right: 18px; }
+            .btn { padding: 15px; font-size: 1rem; }
+            .feedback-content { padding: 25px 30px; }
+            .feedback-content h2 { font-size: 1.5rem; }
+            .feedback-content h2 i { font-size: 1.8rem; }
+            .feedback-actions { flex-direction: column; } /* Stack buttons on small screens */
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="box">
-            <div class="content-wrapper">
-                <div class="header">
-                    <div class="header-icon"><i class="fas fa-user-plus"></i></div>
-                    <h1>Create Account</h1>
-                    <p>Join us by creating a new account</p>
-                </div>
+        <div class="box" id="registrationBox">
+            <div class="header">
+                <div class="header-icon"><i class="fas fa-user-plus"></i></div>
+                <h1>Buat Akun Baru</h1>
+                <p>Mari kita mulai!</p>
+            </div>
+            <form id="registerForm" onsubmit="event.preventDefault(); createAccount();">
                 <div class="input-group">
-                    <label for="regUser">Username</label>
+                    <label for="adminName">Nama Admin</label>
                     <div class="input-wrapper">
+                        <input type="text" id="adminName" class="input-field" placeholder="Masukkan username Anda" required>
                         <i class="fas fa-user icon-left"></i>
-                        <input type="text" id="regUser" class="input-field" placeholder="Choose a username">
                     </div>
                 </div>
                 <div class="input-group">
-                    <label for="regPass">Password</label>
+                    <label for="adminPass">Password</label>
                     <div class="input-wrapper">
-                        <i class="fas fa-lock icon-left"></i>
-                        <input type="password" id="regPass" class="input-field" placeholder="Create a password">
-                        <i class="fas fa-eye icon-right" id="togglePass"></i>
+                        <input type="password" id="adminPass" class="input-field" placeholder="Masukkan password Anda" required>
+                        <i class="fas fa-key icon-left"></i>
+                        <i class="fas fa-eye-slash icon-right" onclick="togglePasswordVisibility('adminPass', this)"></i>
                     </div>
                 </div>
                 <div class="input-group">
-                    <label for="regConfirmPass">Confirm Password</label>
+                    <label for="repeatPass">Ulangi Password</label>
                     <div class="input-wrapper">
-                        <i class="fas fa-check-double icon-left"></i>
-                        <input type="password" id="regConfirmPass" class="input-field" placeholder="Confirm your password">
-                        <i class="fas fa-eye icon-right" id="toggleConfirmPass"></i>
+                        <input type="password" id="repeatPass" class="input-field" placeholder="Ulangi password Anda" required>
+                        <i class="fas fa-key icon-left"></i>
+                        <i class="fas fa-eye-slash icon-right" onclick="togglePasswordVisibility('repeatPass', this)"></i>
                     </div>
                 </div>
-                <button class="btn" onclick="registerAdmin()"><i class="fas fa-plus-circle"></i> Register</button>
-                <p class="login-link">Already have an account? <a href="admin.html">Login here</a></p>
+                <button type="submit" class="btn"><i class="fas fa-plus-circle"></i> Daftar Sekarang</button>
+            </form>
+            <a href="admin.html" class="back-link">Sudah punya akun? <strong>Masuk di sini</strong></a>
+        </div>
+    </div>
+    
+    <div class="feedback-modal" id="accountModal">
+        <div class="feedback-content">
+            <h2><i class="fas fa-check-circle"></i> Akun Berhasil Dibuat!</h2>
+            <p>Silakan gunakan detail berikut untuk login ke panel admin Anda:</p>
+            <div class="data-display">
+                <div class="data-item">
+                    <span>Username:</span>
+                    <strong id="displayUser"></strong>
+                </div>
+                <div class="data-item">
+                    <span>Password:</span>
+                     <strong id="displayPass"></strong>
+                </div>
+            </div>
+            <div class="feedback-actions">
+                <button class="btn feedback-btn btn-back" onclick="closeModal('accountModal')"><i class="fas fa-times"></i> Oke</button>
+                <button class="btn feedback-btn btn-signin" onclick="goToAdmin()"><i class="fas fa-sign-in-alt"></i> Login ke Panel</button>
             </div>
         </div>
     </div>
     
-    <div class="feedback-modal" id="feedbackModal">
+    <div class="feedback-modal" id="failureModal">
         <div class="feedback-content">
-            <div class="icon-container">
-                <div class="loader" id="feedbackLoader"></div>
-                <i class="fas fa-check-circle icon success hidden" id="successIcon"></i>
-                <i class="fas fa-times-circle icon failure hidden" id="failureIcon"></i>
-            </div>
-            <h2 id="feedbackTitle">Checking...</h2>
-            <p id="feedbackMessage"></p>
+            <h2 id="failureTitle"><i class="fas fa-exclamation-circle"></i> Gagal Registrasi</h2>
+            <p id="failureMessage"></p>
         </div>
     </div>
 
     <script>
-        document.addEventListener('gesturestart', (e) => e.preventDefault());
-        document.addEventListener('touchmove', (e) => { if (e.scale !== 1) e.preventDefault(); }, { passive: false });
-        document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
-
-        const firebaseConfig = {
-            apiKey: "GANTI_DENGAN_API_KEY_ANDA",
-            authDomain: "mayfa-fa284.firebaseapp.com",
-            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app"
-        };
+        const firebaseConfig = { apiKey: "GANTI_DENGAN_API_KEY_ANDA", authDomain: "mayfa-fa284.firebaseapp.com", databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        function showFeedback(state, title, message = '') {
-            const modal = document.getElementById('feedbackModal'), titleEl = document.getElementById('feedbackTitle'),
-                  msgEl = document.getElementById('feedbackMessage'), loader = document.getElementById('feedbackLoader'),
-                  successIcon = document.getElementById('successIcon'), failureIcon = document.getElementById('failureIcon');
-            loader.classList.add('hidden'); successIcon.classList.add('hidden'); failureIcon.classList.add('hidden');
-            titleEl.textContent = title; msgEl.textContent = message; modal.style.display = 'flex';
-            if (state === 'loading') loader.classList.remove('hidden');
-            else if (state === 'success') successIcon.classList.remove('hidden');
-            else if (state === 'failure') failureIcon.classList.remove('hidden');
-        }
+        function createAccount() {
+            const adminName = document.getElementById('adminName').value.trim();
+            const adminPass = document.getElementById('adminPass').value;
+            const repeatPass = document.getElementById('repeatPass').value;
+            const submitBtn = document.querySelector('#registerForm button');
 
-        function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
-
-        async function registerAdmin() {
-            const user = document.getElementById('regUser').value.trim();
-            const pass = document.getElementById('regPass').value;
-            const confirmPass = document.getElementById('regConfirmPass').value;
-
-            if (!user || !pass || !confirmPass) {
-                showFeedback('failure', 'Input Required', 'All fields must be filled.');
-                setTimeout(hideFeedback, 2500); return;
-            }
-            if (pass.length < 6) {
-                showFeedback('failure', 'Weak Password', 'Password must be at least 6 characters long.');
-                setTimeout(hideFeedback, 2500); return;
-            }
-            if (pass !== confirmPass) {
-                showFeedback('failure', 'Password Mismatch', 'The passwords do not match.');
-                setTimeout(hideFeedback, 2500); return;
+            if (!adminName || !adminPass || !repeatPass) {
+                showFailureModal("Input Tidak Lengkap", "Nama Admin dan Password harus diisi.");
+                return;
             }
 
-            showFeedback('loading', 'Checking Availability...');
+            // Password length validation (min 3 characters)
+            if (adminPass.length < 3) {
+                showFailureModal("Password Terlalu Pendek", "Password minimal harus 3 karakter.");
+                return;
+            }
+            
+            if (adminPass !== repeatPass) {
+                showFailureModal("Password Tidak Cocok", "Password dan Ulangi Password tidak sama.");
+                return;
+            }
 
-            try {
-                const snapshot = await database.ref('admins').orderByChild('username').equalTo(user).once('value');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengecek...';
+            submitBtn.disabled = true;
+
+            database.ref('admins').orderByChild('username').equalTo(adminName).once('value', snapshot => {
                 if (snapshot.exists()) {
-                    showFeedback('failure', 'Username Taken', 'This username is already registered. Please choose another one.');
-                    setTimeout(hideFeedback, 3000);
-                    return;
+                    showFailureModal("Username Sudah Digunakan", "Username ini sudah terdaftar. Silakan pilih nama lain.");
+                    submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Daftar Sekarang';
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuat...';
+                    const newAdminRef = database.ref('admins').push();
+                    const newAdminId = newAdminRef.key; // Get the new ID here
+
+                    newAdminRef.set({ username: adminName, password: adminPass, createdAt: new Date().toISOString() })
+                    .then(() => {
+                        // Default data for birthday page, including requested birth date
+                        const defaultPageData = {
+                            birthdayName: adminName, // Default name is the newly registered admin's name
+                            birthDate: "2005-09-28", // Your requested default birth date
+                            guestUser: "guest", // Default guest username
+                            guestPass: "123", // Default guest password
+                            qrImageUrl: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.google.com", // Example QR
+                            // Add other empty fields if needed
+                            bestWishes: "",
+                            stayStrongQuote: "",
+                            qrMessage: "",
+                            targetWhatsappNumber: ""
+                        };
+                        return database.ref('birthday_pages/' + newAdminId).set(defaultPageData);
+                    })
+                    .then(() => {
+                        showAccountModal(adminName, adminPass); 
+                    }).catch(error => {
+                        showFailureModal('Gagal Membuat Akun', error.message);
+                    }).finally(() => {
+                        submitBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Daftar Sekarang';
+                        submitBtn.disabled = false;
+                    });
                 }
-                
-                showFeedback('loading', 'Creating Account...');
-
-                const newAdminRef = database.ref('admins').push();
-                const newAdminId = newAdminRef.key;
-                
-                // Get user's birth date from memory if available
-                const userBirthDate = '2005-09-28';
-
-                const newAdminData = { username: user, password: pass };
-                const newBirthdayPageData = {
-                    birthdayName: 'New User',
-                    birthDate: userBirthDate, // Set default from memory
-                    guestUser: 'guest',
-                    guestPass: '12345',
-                    qrImageUrl: ''
-                };
-
-                await newAdminRef.set(newAdminData);
-                await database.ref('birthday_pages/' + newAdminId).set(newBirthdayPageData);
-                
-                showFeedback('success', 'Registration Successful!', 'You will be redirected to the login page.');
-                setTimeout(() => {
-                    window.location.href = 'admin.html';
-                }, 2500);
-
-            } catch (error) {
-                showFeedback('failure', 'Database Error', error.message);
-                setTimeout(hideFeedback, 3000);
+            });
+        }
+        
+        function togglePasswordVisibility(fieldId, icon) {
+            const field = document.getElementById(fieldId);
+            if (field.type === "password") {
+                field.type = "text";
+                icon.classList.remove('fa-eye-slash'); // Change icon to fa-eye-slash
+                icon.classList.add('fa-eye'); // Add fa-eye (open eye)
+            } else {
+                field.type = "password";
+                icon.classList.remove('fa-eye'); // Change icon back to fa-eye
+                icon.classList.add('fa-eye-slash'); // Add fa-eye-slash (closed eye)
             }
         }
+        
+        function showAccountModal(user, pass) {
+            document.getElementById('displayUser').textContent = user;
+            document.getElementById('displayPass').textContent = pass;
+            const modal = document.getElementById('accountModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('visible'), 10); // Add transition class
+        }
 
+        function showFailureModal(title, message) {
+            document.getElementById('failureTitle').innerHTML = `<i class="fas fa-exclamation-circle"></i> ${title}`; // Add icon to title
+            document.getElementById('failureMessage').textContent = message;
+            const modal = document.getElementById('failureModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('visible'), 10); // Add transition class
+            setTimeout(() => closeModal('failureModal'), 3500); // Auto-close failure modal
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('visible'); // Trigger transition
+            setTimeout(() => {
+                modal.style.display = 'none';
+                if (modalId === 'accountModal') { 
+                    document.getElementById('registerForm').reset(); 
+                    document.getElementById('adminName').focus(); // Focus on username after successful registration
+                }
+            }, 300); // Wait for transition to complete
+        }
+
+        // Close modal when clicking outside content
+        document.querySelectorAll('.feedback-modal').forEach(modal => {
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) { closeModal(modal.id); }
+            });
+        });
+
+        function goToAdmin() { 
+            window.location.href = 'admin.html'; 
+        }
+
+        // Set initial icon for password visibility
         document.addEventListener('DOMContentLoaded', () => {
-            const togglePass = document.getElementById('togglePass');
-            const toggleConfirmPass = document.getElementById('toggleConfirmPass');
-
-            function togglePasswordVisibility(fieldId, toggleElement) {
-                const passField = document.getElementById(fieldId);
-                const isPassword = passField.type === 'password';
-                passField.type = isPassword ? 'text' : 'password';
-                toggleElement.classList.toggle('fa-eye-slash', isPassword);
-            }
-
-            togglePass.addEventListener('click', () => togglePasswordVisibility('regPass', togglePass));
-            toggleConfirmPass.addEventListener('click', () => togglePasswordVisibility('regConfirmPass', toggleConfirmPass));
+            document.querySelectorAll('.input-wrapper .icon-right').forEach(icon => {
+                icon.classList.add('fa-eye-slash'); // Default to closed eye
+            });
         });
     </script>
 </body>
