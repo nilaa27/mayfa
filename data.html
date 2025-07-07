@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Data Management - Super Admin</title>
+    <title>Akses Super Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,6 +38,12 @@
             to { transform: rotate(360deg); }
         }
 
+        @keyframes floatAndFade {
+            0% { transform: translateY(0) translateX(0) scale(0); opacity: 0; }
+            20% { opacity: 0.5; transform: scale(1); }
+            100% { transform: translateY(-100vh) translateX(50vw) scale(1.5); opacity: 0; }
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -49,6 +55,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 2rem;
+            overflow: hidden; /* Prevent scrollbar from background effects */
         }
 
         /* --- UTILITIES --- */
@@ -69,17 +76,17 @@
             text-decoration: none;
             background: var(--bg-color);
             box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            color: var(--primary); /* Default for primary action */
         }
-        .btn:hover:not(:disabled) { transform: translateY(-2px); }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); color: var(--primary-dark); }
         .btn:active:not(:disabled) {
             transform: translateY(0px);
             box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
         }
         .btn:disabled { cursor: not-allowed; opacity: 0.7; }
-        .btn-primary { color: var(--primary); }
-        .btn-primary:hover:not(:disabled) { color: var(--primary-dark); }
         .btn-danger { color: var(--danger); }
         .btn-secondary { color: var(--text-light); }
+
 
         .neumorphic-panel {
             background: var(--bg-color);
@@ -93,35 +100,94 @@
             border-radius: var(--border-radius-inner);
             box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
             border: none;
+            color: var(--text-color);
+            padding: 14px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition-smooth);
         }
-        
-        /* --- PASSWORD MODAL --- */
-        .password-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 5000;
+        .neumorphic-inset::placeholder {
+            color: var(--text-light);
         }
-        .password-box {
-            text-align: center;
-            width: 90%; max-width: 400px;
-            animation: fadeIn 0.4s ease forwards;
+        .neumorphic-inset:focus {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 2px var(--primary);
         }
-        .password-box h2 { margin-bottom: 1rem; font-size: 1.5rem; }
-        .password-box p { margin-bottom: 2rem; color: var(--text-secondary); }
-        .password-box input {
-            width: 100%; padding: 14px;
-            color: var(--text-color); font-size: 1rem;
-            margin-bottom: 1.5rem; outline: none;
-        }
-        .password-box .btn { width: 100%; }
 
-        /* --- KONTEN UTAMA --- */
-        .container { width: 100%; max-width: 1200px; animation: fadeIn 0.5s ease forwards; }
+        /* --- Login Page Styling --- */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            animation: fadeIn 0.8s ease forwards;
+            padding: 3rem; /* Increased padding for better spacing */
+        }
+        .login-container h1 {
+            font-size: 2.2rem; /* Larger heading */
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            letter-spacing: 0.5px;
+        }
+        .login-container p {
+            margin-bottom: 2.5rem; /* More space below subtitle */
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Space between input and button */
+        }
+        .login-container input {
+            width: 100%;
+        }
+        .login-container .btn {
+            width: 100%;
+            padding: 15px; /* Taller button */
+            font-size: 1.1rem; /* Larger font for button */
+        }
+
+        /* --- Background Animation --- */
+        .background-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .dot {
+            position: absolute;
+            background: rgba(90, 125, 255, 0.1); /* Primary color with transparency */
+            border-radius: 50%;
+            animation: floatAndFade 15s infinite ease-in-out;
+        }
+
+        /* --- Main Content Styling (after login) --- */
+        /* Ensure the main container behaves like a regular flex item for centering */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            animation: fadeIn 0.5s ease forwards;
+            /* Added for proper centering after login */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: auto; /* Center the container itself */
+        }
+
         .header { text-align: center; margin-bottom: 2rem; }
         .header h1 { font-size: 2rem; font-weight: 700; }
-        .header p { color: var(--text-secondary); font-size: 1rem; }
+        .header p { color: var(--text-light); font-size: 1rem; }
+
+        .main-content-panel { /* This panel now wraps the toolbar and user list */
+            width: 100%; /* Ensure it takes full width of its parent */
+            margin-bottom: 2rem;
+        }
 
         .toolbar {
             display: flex; justify-content: space-between; align-items: center;
@@ -130,11 +196,11 @@
         .search-wrapper { position: relative; flex-grow: 1; min-width: 250px; }
         .search-wrapper i {
             position: absolute; left: 18px; top: 50%;
-            transform: translateY(-50%); color: var(--text-secondary);
+            transform: translateY(-50%); color: var(--text-light);
         }
         #searchInput {
             width: 100%; padding: 14px 15px 14px 50px;
-            color: var(--text-primary); font-size: 1rem;
+            color: var(--text-color); font-size: 1rem;
             transition: all var(--transition-smooth);
         }
         #searchInput:focus { outline: none; }
@@ -171,10 +237,10 @@
             display: flex; justify-content: center; align-items: center;
         }
         .user-info h3 { font-size: 1.1rem; font-weight: 600; }
-        .user-info p { font-size: 0.9rem; color: var(--text-secondary); overflow-wrap: break-word; }
+        .user-info p { font-size: 0.9rem; color: var(--text-light); overflow-wrap: break-word; }
         .user-card-body { display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem; }
         .user-card-body div { display: flex; justify-content: space-between; }
-        .user-card-body .label { color: var(--text-secondary); }
+        .user-card-body .label { color: var(--text-light); }
         .user-card-body .value { font-weight: 500; }
         .password-value { font-family: monospace; letter-spacing: 1px; }
 
@@ -184,12 +250,12 @@
             flex-wrap: wrap; /* Added for responsive buttons */
         }
         .user-card-actions .btn { flex-grow: 1; padding: 8px 10px; font-size: 0.85rem; }
-        .btn-edit { color: var(--text-secondary); }
+        .btn-edit { color: var(--text-light); }
         .btn-edit:hover { color: var(--text-color); }
-        .btn-access { color: var(--primary); } /* New style for access button */
+        .btn-access { color: var(--primary); }
         .btn-access:hover { color: var(--primary-dark); }
         
-        .no-data-message { text-align: center; padding: 3rem; color: var(--text-secondary); }
+        .no-data-message { text-align: center; padding: 3rem; color: var(--text-light); }
 
         /* --- ADD/EDIT MODAL --- */
         .modal {
@@ -209,7 +275,7 @@
         .modal-header h2 { font-size: 1.5rem; }
         .close-button {
             background: none; border: none; font-size: 1.8rem;
-            color: var(--text-secondary); cursor: pointer;
+            color: var(--text-light); cursor: pointer;
             transition: color var(--transition-smooth);
         }
         .close-button:hover { color: var(--text-color); }
@@ -219,7 +285,7 @@
         .modal-footer { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
         
         /* --- BACK BUTTON STYLING --- */
-        .back-button-container { display: flex; justify-content: center; margin-top: 2rem; }
+        .back-button-container { display: flex; justify-content: center; margin-top: 2rem; width: 100%; }
         
         /* --- Kustomisasi SweetAlert2 --- */
         .swal2-popup {
@@ -229,13 +295,16 @@
             box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important;
         }
         .swal2-title { color: var(--text-color) !important; }
-        .swal2-html-container { color: var(--text-secondary) !important; }
+        .swal2-html-container { color: var(--text-light) !important; }
         .swal2-confirm, .swal2-cancel {
              box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light) !important;
              border: none !important;
+             font-weight: 600;
         }
         .swal2-confirm { background-color: var(--bg-color) !important; color: var(--primary) !important; }
+        .swal2-confirm:hover { color: var(--primary-dark) !important; }
         .swal2-cancel { background-color: var(--bg-color) !important; color: var(--text-light) !important;}
+        .swal2-cancel:hover { color: var(--text-color) !important;}
         .swal2-icon.swal2-success .swal2-success-ring { border-color: var(--success) !important; }
         .swal2-icon.swal2-error { border-color: var(--danger) !important; }
         .swal2-icon.swal2-warning { border-color: var(--warning) !important; color: var(--warning) !important; }
@@ -243,6 +312,9 @@
         /* --- Responsive --- */
         @media (max-width: 600px) {
             body { padding: 1rem; }
+            .login-container { padding: 2rem; }
+            .login-container h1 { font-size: 1.8rem; }
+            .login-container p { font-size: 0.9rem; }
             .toolbar { flex-direction: column; align-items: stretch; }
             .main-content-panel { padding: 1.5rem; }
             .user-list { grid-template-columns: 1fr; }
@@ -254,16 +326,15 @@
     </style>
 </head>
 <body>
+    <div class="background-dots"></div>
 
-    <div class="password-modal" id="passwordModal">
-        <div class="password-box neumorphic-panel">
-            <h2><i class="fas fa-user-shield"></i> Akses Super Admin</h2>
-            <p>Masukkan password untuk melanjutkan ke panel manajemen.</p>
-            <form id="passwordForm">
-                <input type="password" id="superAdminPassword" class="neumorphic-inset" placeholder="••••••••" required autocomplete="current-password">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-arrow-right-to-bracket"></i> Masuk</button>
-            </form>
-        </div>
+    <div class="login-container neumorphic-panel" id="passwordModal">
+        <h1><i class="fas fa-unlock-alt"></i> Akses Panel Admin</h1>
+        <p>Silakan masukkan password admin untuk melanjutkan.</p>
+        <form id="passwordForm">
+            <input type="password" id="superAdminPassword" class="neumorphic-inset" placeholder="Masukkan password Anda" required autocomplete="current-password">
+            <button type="submit" class="btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </form>
     </div>
 
     <div class="container hidden" id="mainContent">
@@ -278,7 +349,7 @@
             <div class="toolbar">
                 <div class="search-wrapper">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" class="neumorphic-inset" placeholder="Cari admin berdasarkan username...">
+                    <input type="text" id="searchInput" class="neumorphic-inset" placeholder="Cari admin berdasarkan nama...">
                 </div>
                 <button class="btn btn-primary" id="addAdminBtn"><i class="fas fa-plus"></i> Tambah Admin Baru</button>
             </div>
@@ -371,10 +442,32 @@
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
+        // Initial check for password display
         document.addEventListener('DOMContentLoaded', () => {
-            passwordModal.classList.add('show');
+            // No need to remove 'password-modal' class, as the element's ID is 'passwordModal'
+            // and it already has 'login-container' class in HTML
+            // passwordModal.classList.add('login-container'); // This line is redundant if already in HTML
             document.getElementById('superAdminPassword').focus();
+            createBackgroundDots(); // Create animated background dots
         });
+
+        // Function to create animated background dots
+        function createBackgroundDots() {
+            const backgroundDots = document.querySelector('.background-dots');
+            const numberOfDots = 30; // Adjust as needed
+            for (let i = 0; i < numberOfDots; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                dot.style.width = `${Math.random() * 20 + 10}px`; // Random size between 10px and 30px
+                dot.style.height = dot.style.width;
+                dot.style.left = `${Math.random() * 100}vw`;
+                dot.style.top = `${Math.random() * 100}vh`;
+                dot.style.animationDelay = `${Math.random() * -10}s`; // Start at random points in animation
+                dot.style.animationDuration = `${Math.random() * 10 + 10}s`; // Random duration between 10s and 20s
+                backgroundDots.appendChild(dot);
+            }
+        }
+
 
         passwordForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -382,13 +475,26 @@
             if (password === SUPER_ADMIN_PASSWORD) {
                 passwordModal.style.display = 'none';
                 mainContent.classList.remove('hidden');
+                // Ensure body's min-height is reset for the main content to allow scrolling if needed
+                document.body.style.minHeight = '100vh';
+                document.body.style.overflow = 'auto'; // Allow scrolling
+                document.body.style.display = 'block'; // Or 'flex' with proper alignment for main content
+                document.body.style.alignItems = 'flex-start'; // Align content to top
+                document.body.style.padding = '2rem'; // Restore padding
+                
+                // For the mainContent, adjust its display for proper layout
+                mainContent.style.display = 'flex';
+                mainContent.style.flexDirection = 'column';
+                mainContent.style.alignItems = 'center';
+                mainContent.style.margin = 'auto'; // Centering it
+
                 Swal.fire({
                     icon: 'success', title: 'Akses Diberikan!',
                     toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true,
                 });
                 loadAllData(); // Modified to load all data
             } else {
-                Swal.fire({ icon: 'error', title: 'Akses Ditolak!', text: 'Password salah.' });
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak!', text: 'Password yang kamu masukkan salah.' });
                 document.getElementById('superAdminPassword').value = '';
             }
         });
@@ -488,7 +594,7 @@
                             <span class="label">Link Halaman:</span>
                             <span class="value">
                                 <a href="${shareableLink}" target="_blank" style="color: var(--primary); text-decoration: none;">
-                                    Lihat Halaman (Auto Login) <i class="fas fa-external-link-alt"></i>
+                                    Lihat Halaman <i class="fas fa-external-link-alt"></i>
                                 </a>
                             </span>
                         </div>
