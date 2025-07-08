@@ -28,8 +28,8 @@
             --border-radius-inner: 15px;
         }
 
-        /* Keyframe Animations */
-        @keyframes fadeIn {
+        /* MODIFIED: Renamed 'fadeIn' to a more descriptive 'slideUpFadeIn' */
+        @keyframes slideUpFadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
@@ -38,14 +38,13 @@
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
-            -webkit-user-select: none; /* Prevent text selection */
+            -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            touch-action: pan-y; /* Allow vertical panning by default */
+            touch-action: pan-y;
         }
 
-        /* Allow specific elements to have text selection and auto touch-action for input */
         input[type="text"], input[type="password"] {
             -webkit-user-select: text;
             -moz-user-select: text;
@@ -65,18 +64,30 @@
         .container {
             width: 100%; max-width: 440px;
             z-index: 10;
-            animation: fadeIn 0.5s ease forwards;
         }
 
         .box {
             background: var(--bg-color);
             border-radius: var(--border-radius-main);
             box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
-            padding: 40px; width: 100%;
+            /* MODIFIED: Adjusted padding for a more compact look */
+            padding: 35px 40px; 
+            width: 100%;
             display: flex; flex-direction: column;
         }
+        
+        /* --- MODIFICATION: Staggered Entry Animation for Registration Box --- */
+        .box > * {
+            opacity: 0; /* Initially hidden */
+            animation: slideUpFadeIn 0.6s ease-out forwards;
+        }
+        .box .header { animation-delay: 0.1s; }
+        .box #registerForm { animation-delay: 0.2s; }
+        .box .back-link { animation-delay: 0.7s; }
+        /* --- END MODIFICATION --- */
 
-        .header { text-align: center; margin-bottom: 35px; }
+
+        .header { text-align: center; margin-bottom: 30px; } /* MODIFIED: Reduced margin */
         .header-icon {
             width: 85px; height: 85px;
             background: var(--bg-color);
@@ -89,7 +100,7 @@
         .header p { color: var(--text-light); font-size: 1.05rem; }
 
         /* Input Group Styles */
-        .input-group { margin-bottom: 25px; }
+        .input-group { margin-bottom: 22px; } /* MODIFIED: Reduced margin */
         .input-group label { display: block; color: var(--text-light); font-size: 0.9rem; font-weight: 500; margin-bottom: 12px; padding-left: 10px; }
         .input-wrapper { position: relative; }
         .input-field {
@@ -109,10 +120,10 @@
         .input-wrapper i {
             position: absolute; top: 50%; transform: translateY(-50%);
             color: var(--text-light); font-size: 16px; transition: all 0.2s ease-out;
-            pointer-events: none; /* Make icons not intercept clicks by default */
+            pointer-events: none;
         }
         .input-wrapper .icon-left { left: 22px; }
-        .input-wrapper .icon-right { right: 22px; left: auto; cursor: pointer; pointer-events: auto; /* Allow icon-right to be clickable */ }
+        .input-wrapper .icon-right { right: 22px; left: auto; cursor: pointer; pointer-events: auto; }
         .input-wrapper .icon-right:hover { color: var(--primary); }
         .input-field:focus ~ .icon-left { color: var(--primary); }
 
@@ -136,10 +147,10 @@
         .btn:disabled { cursor: not-allowed; opacity: 0.7; }
         
         .back-link {
-            text-align: center; margin-top: 30px;
+            text-align: center; margin-top: 25px; /* MODIFIED: Reduced margin */
             font-size: 0.95rem; color: var(--text-light);
             text-decoration: none;
-            display: block; /* Make it a block element for proper centering */
+            display: block;
         }
         .back-link:hover { text-decoration: underline; }
         .back-link strong {
@@ -166,15 +177,15 @@
         .feedback-modal.visible .feedback-content { transform: scale(1); }
         .feedback-content h2 { 
             font-size: 1.8rem; margin-bottom: 10px; font-weight: 600; 
-            color: var(--text-color); /* Default color for title */
+            color: var(--text-color);
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .feedback-content h2 i { font-size: 2rem; } /* Icon size in modal title */
+        .feedback-content h2 i { font-size: 2rem; }
         .feedback-content p { font-size: 1rem; color: var(--text-light); }
         
         /* Success Modal Specifics */
         #accountModal .feedback-content { border-top: 4px solid var(--success); }
-        #accountModal h2 { color: var(--success); } /* Success title color */
+        #accountModal h2 { color: var(--success); }
         
         .data-display {
             background: var(--bg-color);
@@ -185,13 +196,10 @@
         .data-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .data-item:last-child { margin-bottom: 0; }
         .data-item span { color: var(--text-light); font-size: 1rem; }
-        .data-item strong { color: var(--text-color); font-weight: 600; font-size: 1.1rem; word-break: break-all; } /* Ensure long usernames wrap */
+        .data-item strong { color: var(--text-color); font-weight: 600; font-size: 1.1rem; word-break: break-all; }
 
         .feedback-actions { display: flex; gap: 15px; justify-content: center; margin-top: 10px; }
-        .feedback-btn {
-            flex-grow: 1; /* Make buttons fill space */
-            /* Inherits .btn styles, add specific colors */
-        }
+        .feedback-btn { flex-grow: 1; }
         .btn-back { color: var(--text-light); }
         .btn-back:hover { color: var(--text-color); }
         .btn-signin { color: var(--success); }
@@ -199,21 +207,21 @@
         
         /* Failure Modal Specifics */
         #failureModal .feedback-content { border-top: 4px solid var(--error); }
-        #failureModal h2 { color: var(--error); } /* Error title color */
+        #failureModal h2 { color: var(--error); }
 
         /* Responsive adjustments */
         @media (max-width: 500px) {
             .box { padding: 30px; }
             .header h1 { font-size: 1.8rem; }
             .header p { font-size: 0.95rem; }
-            .input-field { padding: 15px 50px; } /* Smaller padding for smaller screens */
+            .input-field { padding: 15px 50px; }
             .input-wrapper .icon-left { left: 18px; }
             .input-wrapper .icon-right { right: 18px; }
             .btn { padding: 15px; font-size: 1rem; }
             .feedback-content { padding: 25px 30px; }
             .feedback-content h2 { font-size: 1.5rem; }
             .feedback-content h2 i { font-size: 1.8rem; }
-            .feedback-actions { flex-direction: column; } /* Stack buttons on small screens */
+            .feedback-actions { flex-direction: column; }
         }
     </style>
 </head>
@@ -223,28 +231,28 @@
             <div class="header">
                 <div class="header-icon"><i class="fas fa-user-plus"></i></div>
                 <h1>Buat Akun Baru</h1>
-                <p>Mari kita mulai!</p>
+                <p>lest go the party!</p>
             </div>
             <form id="registerForm" onsubmit="event.preventDefault(); createAccount();">
                 <div class="input-group">
-                    <label for="adminName">Nama Admin</label>
+                    <label for="adminName">Your name</label>
                     <div class="input-wrapper">
-                        <input type="text" id="adminName" class="input-field" placeholder="Masukkan username Anda" required>
+                        <input type="text" id="adminName" class="input-field" placeholder="username" required>
                         <i class="fas fa-user icon-left"></i>
                     </div>
                 </div>
                 <div class="input-group">
                     <label for="adminPass">Password</label>
                     <div class="input-wrapper">
-                        <input type="password" id="adminPass" class="input-field" placeholder="Masukkan password Anda" required>
+                        <input type="password" id="adminPass" class="input-field" placeholder=" password anda" required>
                         <i class="fas fa-key icon-left"></i>
                         <i class="fas fa-eye-slash icon-right" onclick="togglePasswordVisibility('adminPass', this)"></i>
                     </div>
                 </div>
                 <div class="input-group">
-                    <label for="repeatPass">Ulangi Password</label>
+                    <label for="repeatPass">Repeat Password</label>
                     <div class="input-wrapper">
-                        <input type="password" id="repeatPass" class="input-field" placeholder="Ulangi password Anda" required>
+                        <input type="password" id="repeatPass" class="input-field" placeholder="ulangi password anda" required>
                         <i class="fas fa-key icon-left"></i>
                         <i class="fas fa-eye-slash icon-right" onclick="togglePasswordVisibility('repeatPass', this)"></i>
                     </div>
@@ -299,7 +307,6 @@
                 return;
             }
 
-            // Password length validation (min 3 characters)
             if (adminPass.length < 3) {
                 showFailureModal("Password Terlalu Pendek", "Password minimal harus 3 karakter.");
                 return;
@@ -321,18 +328,16 @@
                 } else {
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuat...';
                     const newAdminRef = database.ref('admins').push();
-                    const newAdminId = newAdminRef.key; // Get the new ID here
+                    const newAdminId = newAdminRef.key;
 
                     newAdminRef.set({ username: adminName, password: adminPass, createdAt: new Date().toISOString() })
                     .then(() => {
-                        // Default data for birthday page, including requested birth date
                         const defaultPageData = {
-                            birthdayName: adminName, // Default name is the newly registered admin's name
-                            birthDate: "2005-09-28", // Your requested default birth date
-                            guestUser: "guest", // Default guest username
-                            guestPass: "123", // Default guest password
-                            qrImageUrl: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.google.com", // Example QR
-                            // Add other empty fields if needed
+                            birthdayName: adminName,
+                            birthDate: "2005-09-28",
+                            guestUser: "guest",
+                            guestPass: "123",
+                            qrImageUrl: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.google.com",
                             bestWishes: "",
                             stayStrongQuote: "",
                             qrMessage: "",
@@ -352,17 +357,13 @@
             });
         }
         
+        // MODIFIED: Simplified the password toggle function for better efficiency
         function togglePasswordVisibility(fieldId, icon) {
             const field = document.getElementById(fieldId);
-            if (field.type === "password") {
-                field.type = "text";
-                icon.classList.remove('fa-eye-slash'); // Change icon to fa-eye-slash
-                icon.classList.add('fa-eye'); // Add fa-eye (open eye)
-            } else {
-                field.type = "password";
-                icon.classList.remove('fa-eye'); // Change icon back to fa-eye
-                icon.classList.add('fa-eye-slash'); // Add fa-eye-slash (closed eye)
-            }
+            const isPassword = field.type === "password";
+            field.type = isPassword ? "text" : "password";
+            icon.classList.toggle('fa-eye', isPassword);
+            icon.classList.toggle('fa-eye-slash', !isPassword);
         }
         
         function showAccountModal(user, pass) {
@@ -370,31 +371,30 @@
             document.getElementById('displayPass').textContent = pass;
             const modal = document.getElementById('accountModal');
             modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('visible'), 10); // Add transition class
+            setTimeout(() => modal.classList.add('visible'), 10);
         }
 
         function showFailureModal(title, message) {
-            document.getElementById('failureTitle').innerHTML = `<i class="fas fa-exclamation-circle"></i> ${title}`; // Add icon to title
+            document.getElementById('failureTitle').innerHTML = `<i class="fas fa-exclamation-circle"></i> ${title}`;
             document.getElementById('failureMessage').textContent = message;
             const modal = document.getElementById('failureModal');
             modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('visible'), 10); // Add transition class
-            setTimeout(() => closeModal('failureModal'), 3500); // Auto-close failure modal
+            setTimeout(() => modal.classList.add('visible'), 10);
+            setTimeout(() => closeModal('failureModal'), 3500);
         }
         
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
-            modal.classList.remove('visible'); // Trigger transition
+            modal.classList.remove('visible');
             setTimeout(() => {
                 modal.style.display = 'none';
                 if (modalId === 'accountModal') { 
                     document.getElementById('registerForm').reset(); 
-                    document.getElementById('adminName').focus(); // Focus on username after successful registration
+                    document.getElementById('adminName').focus();
                 }
-            }, 300); // Wait for transition to complete
+            }, 300);
         }
 
-        // Close modal when clicking outside content
         document.querySelectorAll('.feedback-modal').forEach(modal => {
             modal.addEventListener('click', (event) => {
                 if (event.target === modal) { closeModal(modal.id); }
@@ -405,12 +405,12 @@
             window.location.href = 'admin.html'; 
         }
 
-        // Set initial icon for password visibility
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.input-wrapper .icon-right').forEach(icon => {
-                icon.classList.add('fa-eye-slash'); // Default to closed eye
-            });
-        });
+        // MODIFIED: No longer needed as toggle function handles both cases
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     document.querySelectorAll('.input-wrapper .icon-right').forEach(icon => {
+        //         icon.classList.add('fa-eye-slash');
+        //     });
+        // });
     </script>
 </body>
 </html>
