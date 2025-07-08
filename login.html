@@ -595,21 +595,24 @@
         }
         // --- AKHIR FUNGSI calculateAndDisplayAge YANG SUDAH DIPERBAIKI ---
         
+        // ==========================================================
+        // === BAGIAN YANG DIPERBAIKI ADA DI FUNGSI DI BAWAH INI ===
+        // ==========================================================
         function initScrollAnimations() {
-            const cards = document.querySelectorAll('.message-card, .gift-section-card'); // Include gift section card
+            const cards = document.querySelectorAll('.message-card, .gift-section-card');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
                     } else {
-                        // Optional: remove is-visible when not intersecting if you want re-animation on scroll back up
-                        // entry.target.classList.remove('is-visible'); 
+                        // KODE INI DIAKTIFKAN AGAR ANIMASI DAPAT BERULANG
+                        entry.target.classList.remove('is-visible'); 
                     }
                 });
             }, { root: null, rootMargin: '0px', threshold: 0.1 });
 
             cards.forEach((card, index) => {
-                card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg'); // Slightly less rotation for subtlety
+                card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg');
                 card.style.transitionDelay = `${index * 150}ms`;
                 observer.observe(card);
             });
