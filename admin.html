@@ -38,6 +38,19 @@
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
+    
+    /* MODIFIED: Added new animation for staggered entry */
+    @keyframes slideUpFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(25px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
 
     /* Base Styles */
     * {
@@ -77,7 +90,7 @@
     #auth-container {
         position: relative; width: 100%;
         max-width: 440px; 
-        height: 620px; /* Height for login box */
+        height: 580px; /* MODIFIED: Height reduced from 620px for a more compact login box */
         transition: max-width 0.8s ease, height 0.8s ease;
     }
     #auth-container.is-active {
@@ -116,6 +129,18 @@
     h1 { font-size: 2rem; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
     .header p { color: var(--text-light); font-size: 1.05rem; }
 
+    /* --- MODIFICATION: Staggered Entry Animation for Login --- */
+    .login-content > * {
+        opacity: 0; /* Initially hidden */
+        animation: slideUpFadeIn 0.6s ease-out forwards;
+    }
+    .login-content .header { animation-delay: 0.2s; }
+    .login-content .input-group:nth-of-type(1) { animation-delay: 0.4s; }
+    .login-content .input-group:nth-of-type(2) { animation-delay: 0.5s; }
+    .login-content .btn { animation-delay: 0.7s; }
+    /* --- END MODIFICATION --- */
+
+
     /* Input Group Styles */
     .input-group { margin-bottom: 25px; text-align: left; }
     .input-group label { display: block; color: var(--text-light); font-size: 0.9rem; font-weight: 500; margin-bottom: 12px; padding-left: 10px; }
@@ -147,13 +172,11 @@
     .input-wrapper .icon-right:hover { color: var(--primary); }
     .input-field:focus ~ .icon-left { color: var(--primary); }
     
-    /* --- REVISED FIX: Textarea specific styles (removed icon-related adjustments) --- */
     textarea.input-field {
         min-height: 100px;
         resize: vertical;
-        padding: 18px 22px; /* Standard padding for textareas now that icons are removed */
+        padding: 18px 22px;
     }
-    /* --- END REVISED FIX --- */
 
     /* Button Styles */
     .btn {
@@ -178,23 +201,6 @@
     .btn.btn-save { color: var(--success); }
     .btn.btn-save:hover { color: #32c256; }
     
-    .register-link {
-        text-align: center;
-        margin-top: 30px;
-        font-size: 0.95rem;
-        color: var(--text-light);
-    }
-    .register-link a {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.2s ease-out;
-    }
-    .register-link a:hover {
-        text-decoration: underline;
-        color: var(--primary-dark);
-    }
-
     /* --- PROFESSIONAL PANEL LAYOUT --- */
     .panel-header {
         display: flex; justify-content: space-between; align-items: center;
@@ -211,11 +217,9 @@
         overflow-x: hidden;
         width: 100%;
         padding: 10px 5px; /* Small padding for scroll area */
-        /* Custom scrollbar for better aesthetics */
         scrollbar-width: thin; /* Firefox */
         scrollbar-color: var(--primary) var(--shadow-dark); /* Firefox */
     }
-    /* Webkit (Chrome, Safari) scrollbar styling */
     .panel-form::-webkit-scrollbar { width: 8px; }
     .panel-form::-webkit-scrollbar-track { background: var(--shadow-dark); border-radius: 10px; }
     .panel-form::-webkit-scrollbar-thumb { background-color: var(--primary); border-radius: 10px; border: 2px solid var(--shadow-dark); }
@@ -259,12 +263,6 @@
         padding-top: 30px; margin-top: auto; /* Push actions to the bottom */
         flex-shrink: 0; /* Prevent actions from shrinking */
     }
-    .back-link {
-        color: var(--text-light); text-decoration: none; font-weight: 500;
-        display: flex; align-items: center; gap: 8px;
-        transition: color 0.2s ease-out;
-    }
-    .back-link:hover { color: var(--primary); }
     
     /* Mobile Layout: Stack columns and sections */
     @media (max-width: 991px) {
@@ -281,8 +279,14 @@
             padding-right: 0; /* Remove scrollbar padding on mobile */
         }
         .layout-column { gap: 25px; }
-        .panel-actions { flex-direction: column-reverse; align-items: stretch; gap: 20px; }
-        .btn-save { width: 100%; }
+        .panel-actions { 
+            flex-direction: column-reverse; /* Stack buttons with save on top */
+            align-items: stretch; 
+            gap: 20px; 
+        }
+        .btn-save, .btn.logout-btn { /* Both buttons take full width on mobile */
+            width: 100%; 
+        }
         .section-title { font-size: 1.15rem; }
         .section-title i { font-size: 1.4rem; }
     }
@@ -351,28 +355,26 @@
                         <label>Username</label>
                         <div class="input-wrapper">
                             <i class="fas fa-user icon-left"></i>
-                            <input type="text" id="adminUser" class="input-field" placeholder="Masukkan username Anda">
+                            <input type="text" id="adminUser" class="input-field" placeholder="Username">
                         </div>
                     </div>
                     <div class="input-group">
                         <label>Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-key icon-left"></i>
-                            <input type="password" id="adminPass" class="input-field" placeholder="Masukkan password Anda">
+                            <input type="password" id="adminPass" class="input-field" placeholder="••••••••••">
                             <i class="fas fa-eye-slash icon-right" id="togglePassword"></i>
                         </div>
                     </div>
                     <button class="btn" onclick="adminLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
                     
-                    <p class="register-link">Belum punya akun? <a href="register.html">Buat akun di sini</a></p>
-                </div>
+                    </div>
             </div>
 
             <div class="box" id="adminPanelBox">
                 <div class="panel-header">
-                    <h1><i class="fas fa-cogs"></i> Panel Kontrol</h1>
-                    <button class="btn logout-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
-                </div>
+                    <h1><i class="fas fa-cogs"></i> Setting Panel</h1>
+                    </div>
                 
                 <form id="editForm" onsubmit="event.preventDefault(); saveData();" class="panel-form">
                     <div class="panel-layout">
@@ -386,7 +388,7 @@
                                     <div class="input-wrapper"><textarea id="bestWishesInput" class="input-field" rows="4" placeholder="Masukkan harapan terbaik..."></textarea></div>
                                 </div>
                                 <div class="input-group">
-                                    <label for="stayStrongQuoteInput">Jadilah Kuat (Quote)</label>
+                                    <label for="stayStrongQuoteInput">Kesan kesan atau quotes</label>
                                     <div class="input-wrapper"><textarea id="stayStrongQuoteInput" class="input-field" rows="3" placeholder="Masukkan quote jadilah kuat..."></textarea></div>
                                 </div>
                             </div>
@@ -430,7 +432,7 @@
                 </form>
 
                 <div class="panel-actions">
-                    <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Halaman Utama</a>
+                    <button class="btn logout-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i> Log Out</button>
                     <button type="submit" form="editForm" class="btn btn-save"><i class="fas fa-save"></i> Simpan Perubahan</button>
                 </div>
             </div>
@@ -518,10 +520,12 @@
                 }
 
                 let isValid = false;
+                let adminName = ''; // Variable untuk menyimpan username admin
                 s.forEach(cs => {
                     if (cs.val().password === pass) {
                         isValid = true;
                         currentAdminId = cs.key;
+                        adminName = cs.val().username; // Ambil username admin yang login
                     }
                 });
 
@@ -531,6 +535,16 @@
                         hideFeedback();
                         authContainer.classList.add('is-active');
                         loadDataToForm();
+                        // Tampilkan notifikasi SweetAlert "Selamat datang, [Username Admin]!"
+                        Swal.fire({
+                            icon: 'success',
+                            title: `Selamat datang, ${adminName}!`,
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                        });
                     }, 1500);
                 } else {
                     showFeedback('failure', 'Login Gagal', 'Username atau password salah.');
@@ -544,25 +558,36 @@
 
         // --- Logout Logic ---
         function logout() {
-            currentAdminId = null;
-            authContainer.classList.remove('is-active');
-            document.getElementById('editForm').reset();
-            document.getElementById('adminUser').value = '';
-            document.getElementById('adminPass').value = '';
-            // Clear QR preview on logout
-            updateQrPreview(); 
-            // Remove 'super_admin_access' parameter from URL on logout
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
             Swal.fire({
-                icon: 'info',
-                title: 'Berhasil Logout',
-                text: 'Anda telah keluar dari panel admin.',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
+                title: 'Konfirmasi Log Out',
+                text: 'Anda yakin ingin keluar dari panel admin?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Log Out',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    currentAdminId = null; // Clear current admin ID
+                    document.getElementById('editForm').reset(); // Clear form fields
+                    document.getElementById('adminUser').value = ''; // Clear login username
+                    document.getElementById('adminPass').value = ''; // Clear login password
+                    updateQrPreview(); // Clear QR preview on logout
+
+                    // Redirect to data.html after a short toast
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Berhasil Log Out!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 1500, // Durasi lebih singkat karena akan redirect
+                        timerProgressBar: true,
+                        didClose: () => { // Fungsi ini akan dijalankan setelah SweetAlert tertutup
+                            window.location.href = 'admin.html'; // Langsung redirect
+                        }
+                    });
+                }
             });
         }
 
@@ -582,7 +607,7 @@
                 document.getElementById('qrMessageInput').value = data.qrMessage || '';
                 document.getElementById('targetWhatsappNumber').value = data.targetWhatsappNumber || '';
 
-                document.getElementById('shareableLink').value = `${window.location.origin}/index.html?id=${currentAdminId}`;
+                document.getElementById('shareableLink').value = `${window.location.origin}/login.html?id=${currentAdminId}`;
                 updateQrPreview(); // Update QR preview after loading data
                 hideFeedback();
             }).catch(e => {
