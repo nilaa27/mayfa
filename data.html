@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Akses Super Admin</title>
+    <title>Manajemen Panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -50,9 +50,9 @@
             background-color: var(--bg-color);
             font-family: 'Poppins', sans-serif;
             color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; /* Kunci untuk centering awal */
+            justify-content: center; /* Kunci untuk centering awal */
+            align-items: center;     /* Kunci untuk centering awal */
             min-height: 100vh;
             padding: 2rem;
             overflow: hidden; /* Prevent scrollbar from background effects */
@@ -139,12 +139,13 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem; /* Space between input and button */
+            align-items: stretch; /* PENTING: Membuat children mengisi lebar penuh */
         }
         .login-container input {
-            width: 100%;
+            width: 100%; /* Pastikan input mengambil lebar penuh dari container flex-nya */
         }
         .login-container .btn {
-            width: 100%;
+            width: 100%; /* Pastikan button mengambil lebar penuh dari container flex-nya */
             padding: 15px; /* Taller button */
             font-size: 1.1rem; /* Larger font for button */
         }
@@ -476,8 +477,10 @@
                 // Ensure body's min-height is reset for the main content to allow scrolling if needed
                 document.body.style.minHeight = '100vh';
                 document.body.style.overflow = 'auto'; // Allow scrolling
-                document.body.style.display = 'block'; // Or 'flex' with proper alignment for main content
+                // body diubah ke display: block agar konten utama bisa mengalir normal
+                document.body.style.display = 'block'; 
                 document.body.style.alignItems = 'flex-start'; // Align content to top
+                document.body.style.justifyContent = 'flex-start'; // Align content to top-left
                 document.body.style.padding = '2rem'; // Restore padding
                 
                 // For the mainContent, adjust its display for proper layout
@@ -499,10 +502,23 @@
                 database.ref('admins').on('value', (snapshot) => {
                     allAdmins = snapshot.val() || {};
                     // Only render if birthday_pages data is also loaded, or if admins become empty
+                    // Tambahan cek, jika searchInput ada isinya, panggil filter
                     if (Object.keys(allBirthdayPages).length > 0 || Object.keys(allAdmins).length === 0) {
-                         renderUsers(allAdmins);
-                         loader.classList.add('hidden');
-                         userListContainer.classList.remove('hidden');
+                        if (searchInput.value.trim() !== '') {
+                            const searchTerm = searchInput.value.toLowerCase();
+                            const filteredAdmins = Object.keys(allAdmins)
+                                .filter(key => allAdmins[key].username.toLowerCase().includes(searchTerm) || 
+                                                (allBirthdayPages[key] && allBirthdayPages[key].birthdayName && allBirthdayPages[key].birthdayName.toLowerCase().includes(searchTerm)))
+                                .reduce((obj, key) => {
+                                    obj[key] = allAdmins[key];
+                                    return obj;
+                                }, {});
+                            renderUsers(filteredAdmins);
+                        } else {
+                            renderUsers(allAdmins);
+                        }
+                        loader.classList.add('hidden');
+                        userListContainer.classList.remove('hidden');
                     }
                 });
 
@@ -510,8 +526,21 @@
                 database.ref('birthday_pages').on('value', (snapshot) => {
                     allBirthdayPages = snapshot.val() || {};
                     // Only render if admins data is also loaded, or if birthday_pages become empty
+                    // Tambahan cek, jika searchInput ada isinya, panggil filter
                     if (Object.keys(allAdmins).length > 0 || Object.keys(allBirthdayPages).length === 0) {
-                        renderUsers(allAdmins);
+                        if (searchInput.value.trim() !== '') {
+                            const searchTerm = searchInput.value.toLowerCase();
+                            const filteredAdmins = Object.keys(allAdmins)
+                                .filter(key => allAdmins[key].username.toLowerCase().includes(searchTerm) || 
+                                                (allBirthdayPages[key] && allBirthdayPages[key].birthdayName && allBirthdayPages[key].birthdayName.toLowerCase().includes(searchTerm)))
+                                .reduce((obj, key) => {
+                                    obj[key] = allAdmins[key];
+                                    return obj;
+                                }, {});
+                            renderUsers(filteredAdmins);
+                        } else {
+                            renderUsers(allAdmins);
+                        }
                         loader.classList.add('hidden');
                         userListContainer.classList.remove('hidden');
                     }
@@ -780,27 +809,17 @@
                     database.ref('admins').off('value');
                     database.ref('birthday_pages').off('value');
 
-                    // Reset UI ke kondisi login
-                    mainContent.classList.add('hidden');
-                    passwordModal.style.display = 'flex'; // Gunakan flex untuk centering
-                    document.getElementById('superAdminPassword').value = ''; // Bersihkan field password
-                    
-                    // Sesuaikan kembali styling body untuk modal login
-                    document.body.style.display = 'flex'; // <-- Pastikan ini flex
-                    document.body.style.justifyContent = 'center'; // Memusatkan secara horizontal
-                    document.body.style.alignItems = 'center';     // Memusatkan secara vertikal
-                    document.body.style.minHeight = '100vh';
-                    document.body.style.overflow = 'hidden'; // Sembunyikan scrollbar untuk layar login
-                    document.body.style.padding = '2rem';
-
                     Swal.fire({
                         icon: 'info',
                         title: 'Berhasil Log Out!',
                         toast: true,
                         position: 'top-end',
                         showConfirmButton: false,
-                        timer: 3000,
+                        timer: 1500, // Durasi lebih singkat karena akan redirect
                         timerProgressBar: true,
+                        didClose: () => { // Fungsi ini akan dijalankan setelah SweetAlert tertutup
+                            window.location.href = 'data.html'; // Langsung redirect ke data.html
+                        }
                     });
                 }
             });
