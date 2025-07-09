@@ -265,31 +265,217 @@
             }
         }
         
-        // --- GAME LOGIC (ADDED) ---
+        // --- GAME LOGIC (PERBAIKAN) ---
         const gridElement = document.getElementById('word-search-grid');
         const wordsContainer = document.getElementById('words-to-find-container');
         const wordFoundSound = document.getElementById('word-found-sound');
-        let wordsToFind = [], grid = [], isDragging = false, selection = [], foundWords = [];
         const gridSize = 10;
+        let wordsToFind = [], grid = [], isDragging = false, selection = [], foundWords = [];
 
         function initWordSearch() {
-            wordsToFind = [ (pageData.puzzleWord1 || 'ULTAH'), (pageData.puzzleWord2 || 'KADO'), (pageData.puzzleWord3 || 'DOA') ];
+            // Mengambil kata dari Firebase atau menggunakan default
+            wordsToFind = [
+                (pageData.puzzleWord1 || 'ULTAH').toUpperCase(),
+                (pageData.puzzleWord2 || 'KADO').toUpperCase(),
+                (pageData.puzzleWord3 || 'DOA').toUpperCase()
+            ];
             foundWords = [];
-            grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
-            placeWord(wordsToFind[0], 1, 1, 'horizontal'); placeWord(wordsToFind[1], 3, 7, 'vertical'); placeWord(wordsToFind[2], 8, 2, 'diagonal-up');
+            
+            // 1. Membuat grid kosong
+            grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
+
+            // 2. Menempatkan kata-kata secara acak
+            const directions = ['horizontal', 'vertical', 'diagonal-down', 'diagonal-up'];
+            wordsToFind.forEach(word => {
+                let placed = false;
+                while (!placed) {
+                    const dir = directions[Math.floor(Math.random() * directions.length)];
+                    const r = Math.floor(Math.random() * gridSize);
+                    const c = Math.floor(Math.random() * gridSize);
+                    if (canPlaceWord(word, r, c, dir)) {
+                        placeWord(word, r, c, dir);
+                        placed = true;
+                    }
+                }
+            });
+
+            // 3. Mengisi sisa grid dengan huruf acak
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            for (let r = 0; r < gridSize; r++) { for (let c = 0; c < gridSize; c++) { if (grid[r][c] === '') grid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)]; } }
-            renderGrid(); renderWordList(); addGridEventListeners();
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    if (grid[r][c] === null) {
+                        grid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                    }
+                }
+            }
+            
+            renderGrid();
+            renderWordList();
+            addGridEventListeners();
         }
-        function placeWord(word, row, col, direction) { for (let i = 0; i < word.length; i++) { if(col + i >= gridSize || row + i >= gridSize || row - i < 0) continue; if (direction === 'horizontal') grid[row][col + i] = word[i].toUpperCase(); if (direction === 'vertical') grid[row + i][col] = word[i].toUpperCase(); if (direction === 'diagonal-up') grid[row - i][col + i] = word[i].toUpperCase(); } }
-        function renderGrid() { gridElement.innerHTML = ''; for (let r = 0; r < gridSize; r++) { for (let c = 0; c < gridSize; c++) { const cell = document.createElement('div'); cell.className = 'letter-cell'; cell.textContent = grid[r][c]; cell.dataset.row = r; cell.dataset.col = c; gridElement.appendChild(cell); } } }
-        function renderWordList() { wordsContainer.innerHTML = ''; wordsToFind.forEach(word => { const wordItem = document.createElement('span'); wordItem.className = 'word-item'; wordItem.id = `word-${word}`; wordItem.textContent = word; wordsContainer.appendChild(wordItem); }); }
-        function addGridEventListeners() { gridElement.addEventListener('mousedown', startDrag); gridElement.addEventListener('mouseover', duringDrag); document.addEventListener('mouseup', endDrag); gridElement.addEventListener('touchstart', startDrag, { passive: false }); gridElement.addEventListener('touchmove', duringDrag, { passive: false }); document.addEventListener('touchend', endDrag); }
-        function getCellFromEvent(e) { if (e.touches) e = e.touches[0]; return document.elementFromPoint(e.clientX, e.clientY); }
-        function startDrag(e) { e.preventDefault(); isDragging = true; selection = []; const cell = getCellFromEvent(e); if (cell && cell.classList.contains('letter-cell')) { selection.push(cell); cell.classList.add('selected'); } }
-        function duringDrag(e) { if (!isDragging) return; e.preventDefault(); const cell = getCellFromEvent(e); if (cell && cell.classList.contains('letter-cell') && !selection.includes(cell)) { selection.forEach(c => c.classList.remove('selected')); selection = [selection[0], cell]; highlightPath(selection[0], selection[1]); } }
-        function highlightPath(startCell, endCell) { selection = []; const start = { r: parseInt(startCell.dataset.row), c: parseInt(startCell.dataset.col) }; const end = { r: parseInt(endCell.dataset.row), c: parseInt(endCell.dataset.col) }; const dr = Math.sign(end.r - start.r), dc = Math.sign(end.c - start.c); let r = start.r, c = start.c; while (true) { const currentCell = gridElement.querySelector(`[data-row='${r}'][data-col='${c}']`); if (currentCell) { currentCell.classList.add('selected'); selection.push(currentCell); } if (r === end.r && c === end.c) break; r += dr; c += dc; } }
-        function endDrag() { if (!isDragging) return; isDragging = false; const selectedWord = selection.map(cell => cell.textContent).join(''); const reversedWord = selectedWord.split('').reverse().join(''); wordsToFind.forEach(word => { if ((selectedWord === word || reversedWord === word) && !foundWords.includes(word)) { foundWords.push(word); selection.forEach(cell => cell.classList.add('found')); document.getElementById(`word-${word}`).classList.add('found'); wordFoundSound.play(); } }); selection.forEach(cell => cell.classList.remove('selected')); if (foundWords.length === wordsToFind.length) { setTimeout(completeGame, 500); } }
+
+        function canPlaceWord(word, r, c, dir) {
+            for (let i = 0; i < word.length; i++) {
+                let newR = r, newC = c;
+                if (dir === 'horizontal') newC += i;
+                else if (dir === 'vertical') newR += i;
+                else if (dir === 'diagonal-down') { newR += i; newC += i; }
+                else if (dir === 'diagonal-up') { newR -= i; newC += i; }
+
+                if (newR < 0 || newR >= gridSize || newC < 0 || newC >= gridSize) return false; // Keluar batas
+                if (grid[newR][newC] !== null && grid[newR][newC] !== word[i]) return false; // Sudah terisi huruf lain
+            }
+            return true;
+        }
+
+        function placeWord(word, r, c, dir) {
+            for (let i = 0; i < word.length; i++) {
+                if (dir === 'horizontal') grid[r][c + i] = word[i];
+                else if (dir === 'vertical') grid[r + i][c] = word[i];
+                else if (dir === 'diagonal-down') grid[r + i][c + i] = word[i];
+                else if (dir === 'diagonal-up') grid[r - i][c + i] = word[i];
+            }
+        }
+
+        function renderGrid() {
+            gridElement.innerHTML = '';
+            for (let r = 0; r < gridSize; r++) {
+                for (let c = 0; c < gridSize; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'letter-cell';
+                    cell.textContent = grid[r][c];
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+        
+        function renderWordList() {
+            wordsContainer.innerHTML = '';
+            wordsToFind.forEach(word => {
+                const wordItem = document.createElement('span');
+                wordItem.className = 'word-item';
+                wordItem.id = `word-${word}`;
+                wordItem.textContent = word;
+                wordsContainer.appendChild(wordItem);
+            });
+        }
+        
+        function addGridEventListeners() {
+            // Hapus event listener lama untuk mencegah duplikasi
+            gridElement.removeEventListener('mousedown', startDrag);
+            document.removeEventListener('mouseup', endDrag);
+            gridElement.removeEventListener('touchstart', startDrag);
+            document.removeEventListener('touchend', endDrag);
+            
+            gridElement.addEventListener('mousedown', startDrag);
+            document.addEventListener('mouseup', endDrag);
+            
+            gridElement.addEventListener('touchstart', startDrag, { passive: false });
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function getCellFromEvent(e) {
+            let target;
+            if (e.touches && e.touches.length > 0) {
+                target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+                 target = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+            } else {
+                target = e.target;
+            }
+            return target && target.closest('.letter-cell');
+        }
+
+        function startDrag(e) {
+            e.preventDefault();
+            const startCell = getCellFromEvent(e);
+            if (!startCell) return;
+            
+            isDragging = true;
+            selection = [startCell];
+            startCell.classList.add('selected');
+            
+            // Tambahkan event listener untuk mousemove/touchmove hanya saat dragging
+            gridElement.addEventListener('mouseover', duringDrag);
+            gridElement.addEventListener('touchmove', duringDrag, { passive: false });
+        }
+        
+        function duringDrag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const currentCell = getCellFromEvent(e);
+            
+            if (currentCell && !selection.includes(currentCell)) {
+                // Hapus highlight lama dan buat path baru
+                selection.forEach(c => c.classList.remove('selected'));
+                highlightPath(selection[0], currentCell);
+            }
+        }
+
+        function highlightPath(startCell, endCell) {
+            selection = [];
+            const start = { r: parseInt(startCell.dataset.row), c: parseInt(startCell.dataset.col) };
+            const end = { r: parseInt(endCell.dataset.row), c: parseInt(endCell.dataset.col) };
+
+            const dr = end.r - start.r;
+            const dc = end.c - start.c;
+
+            // Hanya izinkan garis lurus (horizontal, vertikal, diagonal)
+            if (dr !== 0 && dc !== 0 && Math.abs(dr) !== Math.abs(dc)) {
+                 selection = [startCell];
+                 startCell.classList.add('selected');
+                 return;
+            }
+
+            const stepR = Math.sign(dr);
+            const stepC = Math.sign(dc);
+            const steps = Math.max(Math.abs(dr), Math.abs(dc));
+
+            for(let i = 0; i <= steps; i++) {
+                const r = start.r + i * stepR;
+                const c = start.c + i * stepC;
+                const cell = gridElement.querySelector(`[data-row='${r}'][data-col='${c}']`);
+                if (cell) {
+                    cell.classList.add('selected');
+                    selection.push(cell);
+                }
+            }
+        }
+
+        function endDrag(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // Hapus event listener move agar tidak berjalan saat tidak diperlukan
+            gridElement.removeEventListener('mouseover', duringDrag);
+            gridElement.removeEventListener('touchmove', duringDrag);
+
+            const selectedWord = selection.map(cell => cell.textContent).join('');
+            const reversedWord = selectedWord.split('').reverse().join('');
+
+            wordsToFind.forEach(word => {
+                if (!foundWords.includes(word) && (selectedWord === word || reversedWord === word)) {
+                    foundWords.push(word);
+                    selection.forEach(cell => {
+                        cell.classList.remove('selected');
+                        cell.classList.add('found');
+                    });
+                    document.getElementById(`word-${word}`).classList.add('found');
+                    wordFoundSound.play().catch(e => console.log("Sound play prevented"));
+                }
+            });
+
+            // Selalu hapus kelas 'selected' di akhir, kecuali jika kata ditemukan
+            if (selection.length > 0 && !selection[0].classList.contains('found')) {
+               selection.forEach(cell => cell.classList.remove('selected'));
+            }
+
+            if (foundWords.length === wordsToFind.length) {
+                setTimeout(completeGame, 500);
+            }
+        }
         
         async function completeGame() {
             await Swal.fire({ icon: 'success', title: 'Kamu Hebat!', html: 'Semua kata berhasil ditemukan.<br>Siap melihat kejutanmu?', confirmButtonText: 'Lihat Kejutan <i class="fas fa-arrow-right"></i>', allowOutsideClick: false, allowEscapeKey: false, });
