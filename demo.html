@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday For You! (Demo)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
+    <style>
+        :root {
+            --bg-color: #2c2f36;
+            --shadow-dark: #202227;
+            --shadow-light: #383c45;
+            --text-color: #d1d5db;
+            --text-light: #8a91a0;
+            --primary: #5a7dff;
+            --success: #28a745;
+            --found: #ffc107; /* Warna untuk kata yang ditemukan */
+            --transition-smooth: all 0.3s ease-in-out;
+            --border-radius-main: 24px;
+            --border-radius-inner: 15px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow: hidden; position: relative; color: var(--text-color); }
+        body.scroll-allowed { overflow: auto; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(0.95); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes wobble-gift { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+        @keyframes fadeInCard-anim { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .game-container { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 1s ease-out; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        .game-container h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin-bottom: 5px; }
+        .game-container p { font-size: clamp(0.9rem, 3vw, 1rem); color: var(--text-light); margin-bottom: 25px; }
+        #word-search-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; background: var(--bg-color); padding: 15px; border-radius: var(--border-radius-inner); box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); margin-bottom: 25px; }
+        .letter-cell { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 600; background-color: var(--bg-color); border-radius: 8px; box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light); cursor: pointer; transition: all 0.2s ease; color: var(--text-light); }
+        .letter-cell.selected { background-color: var(--primary); color: white; box-shadow: none; }
+        .letter-cell.found { background-color: var(--found); color: #333; font-weight: 700; box-shadow: none; }
+        #words-to-find-container { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .word-item { font-size: 1.2rem; font-weight: 500; color: var(--text-light); position: relative; transition: color 0.3s ease; }
+        .word-item.found { color: var(--text-color); }
+        .word-item.found::after { content: ''; position: absolute; left: -5%; top: 55%; width: 110%; height: 3px; background-color: var(--found); transform: rotate(-5deg); animation: fadeIn 0.3s; }
+        .birthday-page-container { display: none; flex-direction: column; align-items: center; padding-top: 8vh; padding-bottom: 8vh; width: 100%; max-width: 1000px; overflow-y: auto; height: 95vh; }
+        .birthday-content { width: 100%; text-align: center; z-index: 10; padding: 0 15px; }
+        .main-title { font-family: 'Pacifico', cursive; font-size: clamp(3rem, 10vw, 6rem); line-height: 1.2; color: var(--text-color); text-shadow: 0 0 20px rgba(255,255,255,0.1); animation: fadeInDown 1s ease-out forwards; margin-bottom: 40px; }
+        .main-title span { color: var(--primary); }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; padding-bottom: 30px; }
+        .message-card { background: var(--bg-color); border-radius: var(--border-radius-main); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); padding: 30px; color: var(--text-color); opacity: 0; filter: blur(5px); transform: perspective(800px) rotateY(var(--initial-rotation, -20deg)) scale(0.9); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.8s ease-out, opacity 0.6s ease-out; }
+        .message-card.is-visible { opacity: 1; filter: blur(0); transform: perspective(800px) rotateY(0) scale(1); }
+        .card-icon { font-size: 2.5rem; margin-bottom: 15px; color: var(--primary); }
+        .card-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 10px; }
+        .card-text { font-size: 1rem; line-height: 1.6; font-weight: 300; color: var(--text-light); white-space: pre-wrap; }
+        .gift-section-card { margin-top: 30px; display: flex; flex-direction: column; align-items: center; }
+        .btn { padding: 16px; background: var(--bg-color); border: none; border-radius: var(--border-radius-inner); color: var(--primary); font-size: 1.05rem; font-weight: 600; cursor: pointer; width: 100%; transition: var(--transition-smooth); box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); color: var(--primary-dark); }
+        .btn:active:not(:disabled) { transform: translateY(0px); box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light); }
+        .gift-btn { margin-top: 20px; color: var(--success); width: auto; padding: 15px 40px; font-size: 1.2rem; min-width: 200px; }
+        .gift-btn:hover { color: #32c256; }
+        .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; padding: 15px; animation: fadeIn 0.3s ease-out forwards; }
+        .gift-box { width: 250px; height: 250px; cursor: pointer; animation: wobble-gift 2s ease-in-out infinite alternate; }
+        .gift-box img { width: 100%; height: 100%; object-fit: contain; }
+        .gift-card { display: none; background: var(--bg-color); border-radius: var(--border-radius-main); padding: 30px; text-align: center; width: 100%; max-width: 320px; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); animation: fadeInCard-anim 0.5s ease-out forwards; color: var(--text-color); }
+        #qrCodeImg { width: 180px; height: 180px; margin: 15px auto; border-radius: var(--border-radius-inner); background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 15px var(--shadow-dark), inset -5px -5px 15px var(--shadow-light); object-fit: contain; }
+        
+        /* --- Gaya untuk Tombol Restart --- */
+        .restart-prompt { margin-top: 25px; border-top: 1px solid var(--shadow-light); padding-top: 20px; }
+        .restart-prompt p { margin-bottom: 15px; font-size: 1rem; color: var(--text-light); }
+        #restartBtn { font-size: 1rem; padding: 12px 25px; width: auto; color: var(--success); }
+
+        .particle-fall, .falling-confetti, .confetti-piece { position: fixed; pointer-events: none; border-radius: 50%; z-index: 100; }
+        @keyframes fall-loop { 0% { transform: translateY(-10vh) } 100% { transform: translateY(110vh) } }
+        .music-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; z-index: 1000; padding: 0; border-radius: 50%; }
+        .swal2-popup { background-color: var(--bg-color) !important; border-radius: var(--border-radius-main) !important; color: var(--text-color) !important; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important; }
+        .swal2-title { color: var(--text-color) !important; }
+        .swal2-html-container { color: var(--text-light) !important; }
+        .swal2-confirm { background-color: var(--primary) !important; color: white !important; }
+        .swal2-confirm:hover { background-color: var(--primary-dark) !important; }
+        .swal2-icon.swal2-success .swal2-success-ring { border-color: var(--success) !important; }
+        @media (max-width: 480px) {
+            #word-search-grid { grid-template-columns: repeat(10, 1fr); gap: 4px; padding: 10px; }
+            .letter-cell { width: 28px; height: 28px; font-size: 0.9rem; border-radius: 6px; }
+            #words-to-find-container { gap: 10px; }
+            .word-item { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
+    <audio id="word-found-sound" src="https://assets.codepen.io/217233/chime.mp3"></audio>
+    <button id="musicToggleBtn" class="btn music-toggle"><i class="fas fa-volume-off"></i></button>
+
+    <div class="game-container" id="gameContainer">
+        <h1>Temukan Kata Tersembunyi</h1>
+        <p>Tahan & seret untuk menghubungkan huruf dan temukan kata-kata spesial!</p>
+        <div id="word-search-grid"></div>
+        <div id="words-to-find-container"></div>
+    </div>
+    
+    <div class="birthday-page-container" id="birthdayPage">
+        <div class="birthday-content">
+            <h1 class="main-title">Selamat Ulang Tahun, <span></span>!</h1>
+            <div class="card-grid">
+                <div class="message-card"><i class="fas fa-calendar-check card-icon"></i><h2 class="card-title">Level Baru Terbuka!</h2><p class="card-text" id="ageDisplay"></p></div>
+                <div class="message-card"><i class="fas fa-star card-icon"></i><h2 class="card-title">Harapan Terbaik</h2><p class="card-text" id="bestWishesText"></p></div>
+                <div class="message-card"><i class="fas fa-heart card-icon"></i><h2 class="card-title">Teruntuk kamu di hari yang istimewa</h2><p class="card-text" id="stayStrongQuoteText"></p></div>
+            </div>
+            <div class="gift-section-card message-card" id="giftSectionCard">
+                <h2 class="card-title">waitt, there's a gift for you...</h2>
+                <button class="btn gift-btn"><i class="fas fa-gift"></i> claim your gift!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="gift-modal" id="giftModal">
+        <div class="gift-box"><img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
+        <div class="gift-card" id="giftCard">
+            <h2 style="font-weight: 600;">Hai, <span id="giftCardName"></span>!</h2>
+            <p>Scan QR ini untuk klaim hadiahmu!</p>
+            <img id="qrCodeImg" alt="QR Code Hadiah">
+            <p id="qrMessageText"></p>
+            <div class="restart-prompt">
+                <p>Suka dengan web ini?</p>
+                <a href="#" id="restartBtn" class="btn">Mulai Ulang</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
+    <script>
+        // --- DATA & ELEMEN ---
+        const pageData = {
+            birthdayName: "Ayang", birthDate: "2005-09-28", 
+            bestWishes: 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan. Teruslah bersinar, dan raih semua impianmu. Selamat menikmati hari spesial ini!',
+            stayStrongQuote: '"Untuk segala hal yang membuatmu patah, ingatlah bahwa Allah itu baik. Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."',
+            qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('Selamat Ulang Tahun Ayang!')}`,
+            qrMessage: '"Mungkin hadiahku ga seberapa, semoga bermanfaat. Selamat bertambah usia, dilancarkan di semua hal, dan menjadi pribadi yang lebih baik dari sebelumnya. ✨"'
+        };
+        
+        const gameContainer = document.getElementById("gameContainer");
+        const birthdayPage = document.getElementById("birthdayPage");
+        const musicToggleBtn = document.getElementById('musicToggleBtn');
+        const backgroundMusic = document.getElementById("background-music");
+        const wordFoundSound = document.getElementById('word-found-sound');
+        const gridElement = document.getElementById('word-search-grid');
+        const wordsContainer = document.getElementById('words-to-find-container');
+        const wordsToFind = ['I', 'LOVE', 'YOU', 'FROM', 'AFAR'];
+        const gridSize = 10;
+        let grid = [], foundWords = [];
+
+        function initWordSearch() {
+            grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
+            placeWord('LOVE', 2, 1, 'horizontal'); placeWord('YOU', 4, 6, 'vertical'); placeWord('FROM', 9, 0, 'horizontal');
+            placeWord('AFAR', 8, 5, 'diagonal-up'); placeWord('I', 0, 9, 'vertical');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let r = 0; r < gridSize; r++) for (let c = 0; c < gridSize; c++) if (grid[r][c] === '') grid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+            renderGrid(); renderWordList();
+        }
+        function placeWord(word, row, col, direction) {
+            for (let i = 0; i < word.length; i++) {
+                if (direction === 'horizontal') grid[row][col + i] = word[i];
+                if (direction === 'vertical') grid[row + i][col] = word[i];
+                if (direction === 'diagonal-up') grid[row - i][col + i] = word[i];
+            }
+        }
+        function renderGrid() {
+            gridElement.innerHTML = '';
+            for (let r = 0; r < gridSize; r++) for (let c = 0; c < gridSize; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'letter-cell'; cell.textContent = grid[r][c];
+                cell.dataset.row = r; cell.dataset.col = c;
+                gridElement.appendChild(cell);
+            }
+        }
+        function renderWordList() {
+            wordsContainer.innerHTML = '';
+            wordsToFind.forEach(word => {
+                const wordItem = document.createElement('span');
+                wordItem.className = 'word-item'; wordItem.id = `word-${word}`;
+                wordItem.textContent = word; wordsContainer.appendChild(wordItem);
+            });
+        }
+        function highlightPath(startCell, endCell) {
+            const selection = [];
+            const start = { r: parseInt(startCell.dataset.row), c: parseInt(startCell.dataset.col) };
+            const end = { r: parseInt(endCell.dataset.row), c: parseInt(endCell.dataset.col) };
+            const dr = Math.sign(end.r - start.r), dc = Math.sign(end.c - start.c);
+            let r = start.r, c = start.c;
+            while(true) {
+                const currentCell = gridElement.querySelector(`[data-row='${r}'][data-col='${c}']`);
+                if(currentCell) selection.push(currentCell);
+                if(r === end.r && c === end.c) break;
+                r += dr; c += dc;
+            }
+            return selection;
+        }
+
+        async function completeGame() {
+            await Swal.fire({ icon: 'success', title: 'Kamu Hebat!', html: 'Semua kata tersembunyi berhasil ditemukan. <br>Siap melihat kejutanmu?', confirmButtonText: 'Lihat Kejutan <i class="fas fa-arrow-right"></i>', allowOutsideClick: false, allowEscapeKey: false });
+            gameContainer.style.animation = 'fadeOut 0.5s ease-out forwards';
+            gameContainer.addEventListener('animationend', () => {
+                gameContainer.style.display = 'none';
+                showBirthdayPage();
+                autoClickGiftSequence();
+            }, { once: true });
+        }
+        function showBirthdayPage() {
+            birthdayPage.style.display = "flex"; birthdayPage.style.animation = "fadeIn 1s ease-out forwards";
+            document.body.classList.add('scroll-allowed'); 
+            document.querySelector(".main-title span").textContent = pageData.birthdayName || 'Kamu';
+            if (pageData.birthDate) calculateAndDisplayAge(pageData.birthDate);
+            document.getElementById('bestWishesText').textContent = pageData.bestWishes;
+            document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote;
+            initScrollAnimations(); startFullScreenConfetti();
+        }
+        function calculateAndDisplayAge(birthDate) {
+            const birthDateObj = new Date(birthDate + 'T00:00:00'); const today = new Date();
+            let years = today.getFullYear() - birthDateObj.getFullYear(); let months = today.getMonth() - birthDateObj.getMonth(); let days = today.getDate() - birthDateObj.getDate();
+            if (days < 0) { months--; days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); }
+            if (months < 0) { years--; months += 12; }
+            document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru dan penuh kebahagiaan!`;
+        }
+        function initScrollAnimations() {
+            const cards = document.querySelectorAll('.message-card, .gift-section-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => entry.target.classList.toggle('is-visible', entry.isIntersecting));
+            }, { root: null, rootMargin: '0px', threshold: 0.1 });
+            cards.forEach((card, index) => {
+                card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg');
+                card.style.transitionDelay = `${index * 150}ms`;
+                observer.observe(card);
+            });
+        }
+        function openGift() {
+            document.querySelector('.gift-modal').style.display = "flex";
+            document.body.classList.remove("scroll-allowed"); document.body.style.overflow = "hidden";
+        }
+        function openCard() {
+            document.querySelector('.gift-box').style.display = "none";
+            const giftCard = document.querySelector('.gift-card');
+            giftCard.style.display = "block";
+            giftCard.querySelector("#giftCardName").textContent = pageData.birthdayName || 'Teman';
+            giftCard.querySelector("#qrCodeImg").src = pageData.qrImageUrl;
+            giftCard.querySelector('#qrMessageText').textContent = pageData.qrMessage;
+        }
+        let confettiInterval;
+        function startFullScreenConfetti() {
+            if (confettiInterval) clearInterval(confettiInterval);
+            const colors = [ 'var(--primary)', 'var(--success)', 'var(--text-color)', '#FFD700', '#FF69B4', '#ADFF2F'];
+            confettiInterval = setInterval(() => {
+                const confettiEl = document.createElement('div');
+                confettiEl.classList.add('falling-confetti');
+                confettiEl.style.cssText = `position:fixed; z-index:100; border-radius:50%; left:${Math.random()*100}vw; width:${Math.random()*8+6}px; height:${confettiEl.style.width}; background-color:${colors[Math.floor(Math.random()*colors.length)]}; opacity:${Math.random()*0.7+0.3};`;
+                document.body.appendChild(confettiEl);
+                confettiEl.animate([ { transform: 'translateY(0px) rotate(0deg)' }, { transform: `translateY(110vh) rotate(${Math.random()*360}deg)` }], { duration: 4000 + Math.random() * 3000, easing: 'linear' }).onfinish = () => confettiEl.remove();
+            }, 100);
+        }
+        function stopConfetti() {
+            clearInterval(confettiInterval);
+            document.querySelectorAll('.falling-confetti').forEach(el => el.remove());
+        }
+        musicToggleBtn.addEventListener('click', () => {
+            const icon = musicToggleBtn.querySelector('i');
+            if (backgroundMusic.paused) { backgroundMusic.play().catch(e=>console.error(e)); icon.className = 'fas fa-volume-high'; } 
+            else { backgroundMusic.pause(); icon.className = 'fas fa-volume-off'; }
+        });
+
+        const wordLocations = [
+            { word: 'I', start: { r: 0, c: 9 }, end: { r: 0, c: 9 } },
+            { word: 'LOVE', start: { r: 2, c: 1 }, end: { r: 2, c: 4 } },
+            { word: 'YOU', start: { r: 4, c: 6 }, end: { r: 6, c: 6 } },
+            { word: 'FROM', start: { r: 9, c: 0 }, end: { r: 9, c: 3 } },
+            { word: 'AFAR', start: { r: 8, c: 5 }, end: { r: 5, c: 8 } }
+        ];
+
+        async function autoSolveGame() {
+            for (const item of wordLocations) {
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                const startCell = gridElement.querySelector(`[data-row='${item.start.r}'][data-col='${item.start.c}']`);
+                const endCell = gridElement.querySelector(`[data-row='${item.end.r}'][data-col='${item.end.c}']`);
+                const path = highlightPath(startCell, endCell);
+                path.forEach(cell => cell.classList.add('selected'));
+                await new Promise(resolve => setTimeout(resolve, 500));
+                path.forEach(cell => { cell.classList.remove('selected'); cell.classList.add('found'); });
+                document.getElementById(`word-${item.word}`).classList.add('found');
+                wordFoundSound.play();
+                foundWords.push(item.word);
+            }
+            if (foundWords.length === wordsToFind.length) setTimeout(completeGame, 500);
+        }
+
+        function autoClickGiftSequence() {
+            const giftCardElement = document.getElementById('giftSectionCard');
+            const giftButton = giftCardElement.querySelector('.btn.gift-btn');
+            const giftModal = document.getElementById('giftModal');
+            const giftBox = giftModal.querySelector('.gift-box');
+            setTimeout(() => giftCardElement.scrollIntoView({ behavior: 'smooth', block: 'center' }), 2000);
+            setTimeout(() => giftButton.click(), 4000);
+            setTimeout(() => giftBox.click(), 5500);
+            // Loop otomatis dihapus dari sini
+        }
+
+        // --- FUNGSI UNTUK RESET SECARA MANUAL ---
+        function resetAndLoop() {
+            birthdayPage.style.animation = 'fadeOut 0.5s ease-out forwards';
+            stopConfetti();
+
+            setTimeout(() => {
+                birthdayPage.style.display = 'none';
+                birthdayPage.style.animation = '';
+                
+                const giftModal = document.getElementById('giftModal');
+                giftModal.style.display = 'none';
+                giftModal.querySelector('.gift-box').style.display = "block";
+                giftModal.querySelector('.gift-card').style.display = "none";
+
+                document.body.classList.remove("scroll-allowed");
+                document.body.style.overflow = "hidden";
+                window.scrollTo(0, 0);
+
+                foundWords = [];
+                initWordSearch();
+
+                gameContainer.style.display = 'flex';
+                gameContainer.style.animation = 'fadeIn 1s ease-out forwards';
+
+                autoSolveGame();
+            }, 500);
+        }
+        
+        function startAutoDemo(){
+            initWordSearch();
+            if(backgroundMusic.paused) musicToggleBtn.click();
+            autoSolveGame();
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', startAutoDemo);
+        document.querySelector('.btn.gift-btn').addEventListener('click', openGift);
+        document.querySelector('.gift-box').addEventListener('click', openCard);
+        // Event listener untuk tombol restart manual
+        document.getElementById('restartBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            resetAndLoop();
+        });
+    </script>
+</body>
+</html>
