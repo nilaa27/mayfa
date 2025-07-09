@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BirthDay Panel</title>
+    <title>xlordcode - Birthday Wishes</title>
     
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E🎂%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E✨%3C/text%3E%3C/svg%3E">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,66 +20,81 @@
         --text-color: #d1d5db;
         --text-light: #8a91a0;
         --primary: #5a7dff;
-        --primary-dark: #4a6fe0;
-        --pink: #ff69b4; /* A festive color */
+        --pink: #ff69b4;
         --transition-smooth: all 0.3s ease-in-out;
         --border-radius-main: 30px;
         --border-radius-inner: 15px;
     }
 
+    /* --- Animasi --- */
     @keyframes slideUpFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
-    /* --- ANIMASI IKON BARU --- */
-    @keyframes swing-icon {
-        15% { transform: rotate(15deg); }
-        30% { transform: rotate(-10deg); }
-        45% { transform: rotate(5deg); }
-        60% { transform: rotate(-5deg); }
-        75% { transform: rotate(2deg); }
-        100% { transform: rotate(0deg); }
-    }
-    /* --- AKHIR ANIMASI IKON BARU --- */
-
+    /* --- Gaya Dasar --- */
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
         font-family: 'Poppins', sans-serif;
     }
-    
     body {
         background: var(--bg-color);
         color: var(--text-color);
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
         min-height: 100vh;
         padding: 2rem;
-        overflow: hidden;
+        overflow-y: auto;
     }
 
+    /* --- Panel Utama (Neumorphic) --- */
     .welcome-panel {
         width: 100%;
         max-width: 480px;
         background: var(--bg-color);
         border-radius: var(--border-radius-main);
-        padding: 40px;
+        padding: 30px 40px 40px 40px;
         text-align: center;
         box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+        animation: slideUpFadeIn 0.7s ease-out forwards;
     }
 
-    .welcome-panel > * {
-        opacity: 0;
-        animation: slideUpFadeIn 0.7s ease-out forwards;
+    /* --- Header di dalam Panel --- */
+    .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--shadow-dark);
+        box-shadow: 0 1px 0 var(--shadow-light);
+    }
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--text-color);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .logo img, .logo svg {
+        width: 28px;
+        height: 28px;
+    }
+    .sign-in-link {
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: color var(--transition-smooth);
+        cursor: pointer;
+    }
+    .sign-in-link:hover {
+        color: var(--text-color);
     }
 
     .panel-icon {
@@ -94,33 +109,25 @@
         font-size: 3rem;
         color: var(--pink);
         box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
-        animation-delay: 0.1s;
     }
-
     h1 {
-        font-family: 'Pacifico', cursive;
-        font-size: 2.8rem;
-        font-weight: 500;
+        font-size: 2.5rem;
+        font-weight: 700;
         margin-bottom: 15px;
         color: var(--text-color);
-        animation-delay: 0.2s;
+        line-height: 1.3;
     }
-
     p {
         color: var(--text-light);
         font-size: 1.1rem;
         line-height: 1.6;
         margin-bottom: 35px;
-        animation-delay: 0.3s;
     }
-
     .button-group {
         display: flex;
         flex-direction: column;
         gap: 20px;
-        animation-delay: 0.4s;
     }
-    
     .btn {
         display: flex;
         align-items: center;
@@ -137,171 +144,44 @@
         transition: var(--transition-smooth);
         box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
     }
-    
-    .btn.primary {
-        color: var(--primary);
-    }
-    
-    .btn.primary:hover {
-        color: var(--primary-dark);
-        transform: translateY(-2px);
-    }
-
-    .btn.secondary {
-        color: var(--text-light);
-    }
-    
-    .btn.secondary:hover {
-        color: var(--text-color);
-        transform: translateY(-2px);
-    }
-
+    .btn.primary { color: var(--primary); }
+    .btn.primary:hover { transform: translateY(-2px); }
+    .btn.secondary { color: var(--text-light); }
+    .btn.secondary:hover { color: var(--text-color); transform: translateY(-2px); }
     .btn:active {
         transform: translateY(0);
         box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
     }
 
-    .support-section {
-        margin-top: 40px;
-        padding-top: 25px;
-        border-top: 1px solid var(--shadow-dark);
-        animation-delay: 0.5s;
-    }
-
-    .support-title {
-        font-size: 0.9rem;
-        color: var(--text-light);
-        margin-bottom: 20px;
-        font-weight: 500;
-    }
-
-    .social-icons {
-        display: flex;
-        justify-content: center;
-        gap: 25px;
-    }
-
-    .social-icons a {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        background: var(--bg-color);
-        color: var(--text-light);
-        border-radius: 50%;
-        font-size: 1.2rem;
-        box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-        transition: var(--transition-smooth);
-        position: relative; 
-        overflow: hidden; 
-    }
-
-    /* MODIFIKASI: Menambahkan transisi pada ikon di dalam tombol */
-    .social-icons a i {
-        transition: transform 0.3s ease;
-    }
-
-    .social-icons a:hover {
-        color: var(--pink);
-        transform: translateY(-3px);
-        box-shadow: 7px 7px 15px var(--shadow-dark), -7px -7px 15px var(--shadow-light);
-    }
-    
-    /* MODIFIKASI: Memicu animasi pada ikon saat tombol di-hover */
-    .social-icons a:hover i {
-        animation: swing-icon 0.8s ease-out forwards;
-    }
-
-    .social-icons a:active {
-        transform: translateY(0);
-        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-    }
-
-    .ripple {
-        position: absolute;
-        border-radius: 50%;
-        background-color: var(--pink);
-        transform: scale(0);
-        opacity: 0.75;
-        animation: ripple-effect 0.6s linear;
-    }
-
-    @keyframes ripple-effect {
-        to {
-            transform: scale(2.5);
-            opacity: 0;
-        }
+    @media (max-width: 520px) {
+        body { padding: 1.5rem 1rem; align-items: flex-start; }
+        .welcome-panel { padding: 25px; margin-top: 1rem; }
+        .panel-header { margin-bottom: 25px; padding-bottom: 15px; }
+        h1 { font-size: 2.2rem; }
+        p { font-size: 1rem; }
     }
 </style>
 </head>
 <body>
 
-    <div class="welcome-panel">
-        <div class="panel-icon">
-            <i class="fas fa-birthday-cake"></i>
-        </div>
-        <h1>Hi, There✨</h1>
-        <p>Ciptakan dan luncurkan halaman ulang tahun yang elegan hanya dalam beberapa menit.</p>
+    <div class="welcome-panel" id="landing-page">
+        <header class="panel-header">
+            <a href="#" class="logo">
+                <img src="/logoku.png" alt="Logo xlordcode">
+                <span>xlordcode</span>
+            </a>
+            <a href="register.html" class="sign-in-link">Sign In</a>
+        </header>
+
+        <div class="panel-icon">🎉</div>
+        <h1>Create Magical Digital Wishes That Spark Joy</h1>
+        <p>Design beautiful, animated wishes and share them with your loved ones. No technical knowledge required.</p>
         
         <div class="button-group">
-            <a href="admin.html" class="btn primary">
-                <i class="fas fa-user-shield"></i>
-                Login Admin
-            </a>
-            <a href="register.html" class="btn secondary">
-                <i class="fas fa-user-plus"></i>
-                Daftar Akun Baru
-            </a>
-        </div>
-
-        <div class="support-section">
-            <p class="support-title">Support Me</p>
-            <div class="social-icons">
-                <a href="#" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                <a href="#" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-            </div>
+            <a href="register.html" class="btn primary">Start Creating Wishes</a>
+            <a href="demo.html" class="btn secondary"><i class="fas fa-eye"></i> Preview Demo</a>
         </div>
     </div>
 
-    <script>
-        document.querySelectorAll('.social-icons a').forEach(icon => {
-            icon.addEventListener('click', function(e) {
-                // Mencegah link terbuka jika href="#" agar tidak loncat ke atas halaman
-                if (this.getAttribute('href') === '#') {
-                    e.preventDefault();
-                }
-
-                // Hapus riak yang ada sebelumnya
-                const existingRipple = this.querySelector('.ripple');
-                if (existingRipple) {
-                    existingRipple.remove();
-                }
-
-                // Buat elemen riak baru
-                const circle = document.createElement('span');
-                const diameter = Math.max(this.clientWidth, this.clientHeight);
-                const radius = diameter / 2;
-                
-                // Atur posisi dan ukuran riak
-                circle.style.width = circle.style.height = `${diameter}px`;
-                // Hitung posisi klik relatif terhadap ikon
-                const rect = this.getBoundingClientRect();
-                circle.style.left = `${e.clientX - rect.left - radius}px`;
-                circle.style.top = `${e.clientY - rect.top - radius}px`;
-                circle.classList.add('ripple');
-                
-                // Tambahkan elemen riak ke dalam ikon
-                this.appendChild(circle);
-
-                // Hapus elemen riak setelah animasi selesai untuk menjaga DOM tetap bersih
-                setTimeout(() => {
-                    circle.remove();
-                }, 600); // Sesuai dengan durasi animasi
-            });
-        });
-    </script>
     </body>
 </html>
