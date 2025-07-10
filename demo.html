@@ -61,7 +61,7 @@
         .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; padding: 15px; animation: fadeIn 0.3s ease-out forwards; }
         .gift-box { width: 250px; height: 250px; cursor: pointer; animation: wobble-gift 2s ease-in-out infinite alternate; }
         .gift-box img { width: 100%; height: 100%; object-fit: contain; }
-        .gift-card { display: none; background: var(--bg-color); border-radius: var(--border-radius-main); padding: 30px; text-align: center; width: 100%; max-width: 320px; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); animation: fadeInCard-anim 0.5s ease-out forwards; color: var(--text-color); }
+        .gift-card { display: none; background: var(--bg-color); border-radius: var(--border-radius-main); padding: 30px; text-align: center; width: 100%; max-width: 320px; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--light); animation: fadeInCard-anim 0.5s ease-out forwards; color: var(--text-color); }
         #qrCodeImg { width: 180px; height: 180px; margin: 15px auto; border-radius: var(--border-radius-inner); background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 15px var(--shadow-dark), inset -5px -5px 15px var(--shadow-light); object-fit: contain; }
         
         /* --- Gaya untuk Tombol Restart --- */
@@ -69,8 +69,8 @@
         .restart-prompt p { margin-bottom: 15px; font-size: 1rem; color: var(--text-light); }
         #restartBtn { font-size: 1rem; padding: 12px 25px; width: auto; color: var(--success); }
 
-        .particle-fall, .falling-confetti, .confetti-piece { position: fixed; pointer-events: none; border-radius: 50%; z-index: 100; }
-        @keyframes fall-loop { 0% { transform: translateY(-10vh) } 100% { transform: translateY(110vh) } }
+        .snow-particle, .confetti-piece { position: fixed; pointer-events: none; z-index: 2100; }
+        .snow-particle { top: -10px; border-radius: 50%; z-index: 5; }
         .music-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; z-index: 1000; padding: 0; border-radius: 50%; }
         .swal2-popup { background-color: var(--bg-color) !important; border-radius: var(--border-radius-main) !important; color: var(--text-color) !important; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important; }
         .swal2-title { color: var(--text-color) !important; }
@@ -89,6 +89,7 @@
 <body>
     <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
     <audio id="word-found-sound" src="https://assets.codepen.io/217233/chime.mp3"></audio>
+    <audio id="confetti-sound" src="https://assets.codepen.io/217233/confetti.mp3"></audio>
     <button id="musicToggleBtn" class="btn music-toggle"><i class="fas fa-volume-off"></i></button>
 
     <div class="game-container" id="gameContainer">
@@ -131,7 +132,8 @@
     <script>
         // --- DATA & ELEMEN ---
         const pageData = {
-            birthdayName: "Ayang", birthDate: "2005-09-28", 
+            birthdayName: "Ayang",
+            birthDate: "2005-09-28",
             bestWishes: 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan. Teruslah bersinar, dan raih semua impianmu. Selamat menikmati hari spesial ini!',
             stayStrongQuote: '"Untuk segala hal yang membuatmu patah, ingatlah bahwa Allah itu baik. Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."',
             qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent('Selamat Ulang Tahun Ayang!')}`,
@@ -143,6 +145,7 @@
         const musicToggleBtn = document.getElementById('musicToggleBtn');
         const backgroundMusic = document.getElementById("background-music");
         const wordFoundSound = document.getElementById('word-found-sound');
+        const confettiSound = document.getElementById('confetti-sound');
         const gridElement = document.getElementById('word-search-grid');
         const wordsContainer = document.getElementById('words-to-find-container');
         const wordsToFind = ['I', 'LOVE', 'YOU', 'FROM', 'AFAR'];
@@ -212,14 +215,24 @@
             if (pageData.birthDate) calculateAndDisplayAge(pageData.birthDate);
             document.getElementById('bestWishesText').textContent = pageData.bestWishes;
             document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote;
-            initScrollAnimations(); startFullScreenConfetti();
+            initScrollAnimations();
+            startSnowfallEffect();
         }
         function calculateAndDisplayAge(birthDate) {
-            const birthDateObj = new Date(birthDate + 'T00:00:00'); const today = new Date();
-            let years = today.getFullYear() - birthDateObj.getFullYear(); let months = today.getMonth() - birthDateObj.getMonth(); let days = today.getDate() - birthDateObj.getDate();
-            if (days < 0) { months--; days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); }
-            if (months < 0) { years--; months += 12; }
-            document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru dan penuh kebahagiaan!`;
+            const birthDateObj = new Date(birthDate + 'T00:00:00');
+            const today = new Date();
+            let years = today.getFullYear() - birthDateObj.getFullYear();
+            let months = today.getMonth() - birthDateObj.getMonth();
+            let days = today.getDate() - birthDateObj.getDate();
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. sudah berapa lama kamu bertahan?`;
         }
         function initScrollAnimations() {
             const cards = document.querySelectorAll('.message-card, .gift-section-card');
@@ -237,6 +250,7 @@
             document.body.classList.remove("scroll-allowed"); document.body.style.overflow = "hidden";
         }
         function openCard() {
+            launchVideoConfetti(); // <-- PANGGIL FUNGSI KONFETI BARU DI SINI
             document.querySelector('.gift-box').style.display = "none";
             const giftCard = document.querySelector('.gift-card');
             giftCard.style.display = "block";
@@ -244,22 +258,52 @@
             giftCard.querySelector("#qrCodeImg").src = pageData.qrImageUrl;
             giftCard.querySelector('#qrMessageText').textContent = pageData.qrMessage;
         }
-        let confettiInterval;
-        function startFullScreenConfetti() {
-            if (confettiInterval) clearInterval(confettiInterval);
-            const colors = [ 'var(--primary)', 'var(--success)', 'var(--text-color)', '#FFD700', '#FF69B4', '#ADFF2F'];
-            confettiInterval = setInterval(() => {
-                const confettiEl = document.createElement('div');
-                confettiEl.classList.add('falling-confetti');
-                confettiEl.style.cssText = `position:fixed; z-index:100; border-radius:50%; left:${Math.random()*100}vw; width:${Math.random()*8+6}px; height:${confettiEl.style.width}; background-color:${colors[Math.floor(Math.random()*colors.length)]}; opacity:${Math.random()*0.7+0.3};`;
-                document.body.appendChild(confettiEl);
-                confettiEl.animate([ { transform: 'translateY(0px) rotate(0deg)' }, { transform: `translateY(110vh) rotate(${Math.random()*360}deg)` }], { duration: 4000 + Math.random() * 3000, easing: 'linear' }).onfinish = () => confettiEl.remove();
-            }, 100);
+        
+        // --- EFEK VISUAL BARU ---
+        let snowfallInterval;
+        function startSnowfallEffect() {
+            if (snowfallInterval) clearInterval(snowfallInterval);
+            const colors = ['#FFFFFF', '#E0EFFF', '#D4E6F1'];
+            snowfallInterval = setInterval(() => {
+                const particle = document.createElement('div');
+                particle.classList.add('snow-particle');
+                const size = Math.random() * 5 + 2;
+                particle.style.cssText = `left: ${Math.random() * 100}vw; width: ${size}px; height: ${size}px; background-color: ${colors[Math.floor(Math.random() * colors.length)]}; opacity: ${Math.random() * 0.7 + 0.3};`;
+                document.body.appendChild(particle);
+                particle.animate([
+                    { transform: 'translateY(0) translateX(0)' },
+                    { transform: `translateY(110vh) translateX(${Math.random() * 60 - 30}px)` }
+                ], { duration: 6000 + Math.random() * 8000, easing: 'linear' }).onfinish = () => particle.remove();
+            }, 250);
         }
-        function stopConfetti() {
-            clearInterval(confettiInterval);
-            document.querySelectorAll('.falling-confetti').forEach(el => el.remove());
+
+        function stopSnowfallEffect() {
+            clearInterval(snowfallInterval);
+            document.querySelectorAll('.snow-particle, .confetti-piece').forEach(el => el.remove());
         }
+
+        function launchVideoConfetti() {
+            confettiSound.play();
+            const count = 150;
+            const defaults = { origin: { y: 0.9 } };
+            const colors = ['#5a7dff', '#28a745', '#ffc107', '#dc3545', '#17a2b8'];
+
+            function fire(particleRatio, opts) {
+                const a = Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                });
+                a.colors = colors;
+                confetti(a);
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+        
+        // --- KONTROL MUSIK & DEMO ---
         musicToggleBtn.addEventListener('click', () => {
             const icon = musicToggleBtn.querySelector('i');
             if (backgroundMusic.paused) { backgroundMusic.play().catch(e=>console.error(e)); icon.className = 'fas fa-volume-high'; } 
@@ -267,10 +311,8 @@
         });
 
         const wordLocations = [
-            { word: 'I', start: { r: 0, c: 9 }, end: { r: 0, c: 9 } },
-            { word: 'LOVE', start: { r: 2, c: 1 }, end: { r: 2, c: 4 } },
-            { word: 'YOU', start: { r: 4, c: 6 }, end: { r: 6, c: 6 } },
-            { word: 'FROM', start: { r: 9, c: 0 }, end: { r: 9, c: 3 } },
+            { word: 'I', start: { r: 0, c: 9 }, end: { r: 0, c: 9 } }, { word: 'LOVE', start: { r: 2, c: 1 }, end: { r: 2, c: 4 } },
+            { word: 'YOU', start: { r: 4, c: 6 }, end: { r: 6, c: 6 } }, { word: 'FROM', start: { r: 9, c: 0 }, end: { r: 9, c: 3 } },
             { word: 'AFAR', start: { r: 8, c: 5 }, end: { r: 5, c: 8 } }
         ];
 
@@ -284,8 +326,7 @@
                 await new Promise(resolve => setTimeout(resolve, 500));
                 path.forEach(cell => { cell.classList.remove('selected'); cell.classList.add('found'); });
                 document.getElementById(`word-${item.word}`).classList.add('found');
-                wordFoundSound.play();
-                foundWords.push(item.word);
+                wordFoundSound.play(); foundWords.push(item.word);
             }
             if (foundWords.length === wordsToFind.length) setTimeout(completeGame, 500);
         }
@@ -298,33 +339,22 @@
             setTimeout(() => giftCardElement.scrollIntoView({ behavior: 'smooth', block: 'center' }), 2000);
             setTimeout(() => giftButton.click(), 4000);
             setTimeout(() => giftBox.click(), 5500);
-            // Loop otomatis dihapus dari sini
         }
 
-        // --- FUNGSI UNTUK RESET SECARA MANUAL ---
         function resetAndLoop() {
+            stopSnowfallEffect();
             birthdayPage.style.animation = 'fadeOut 0.5s ease-out forwards';
-            stopConfetti();
-
             setTimeout(() => {
-                birthdayPage.style.display = 'none';
-                birthdayPage.style.animation = '';
-                
+                birthdayPage.style.display = 'none'; birthdayPage.style.animation = '';
                 const giftModal = document.getElementById('giftModal');
                 giftModal.style.display = 'none';
                 giftModal.querySelector('.gift-box').style.display = "block";
                 giftModal.querySelector('.gift-card').style.display = "none";
-
-                document.body.classList.remove("scroll-allowed");
-                document.body.style.overflow = "hidden";
-                window.scrollTo(0, 0);
-
-                foundWords = [];
+                document.body.classList.remove("scroll-allowed"); document.body.style.overflow = "hidden";
+                window.scrollTo(0, 0); foundWords = [];
                 initWordSearch();
-
                 gameContainer.style.display = 'flex';
                 gameContainer.style.animation = 'fadeIn 1s ease-out forwards';
-
                 autoSolveGame();
             }, 500);
         }
@@ -339,11 +369,11 @@
         document.addEventListener('DOMContentLoaded', startAutoDemo);
         document.querySelector('.btn.gift-btn').addEventListener('click', openGift);
         document.querySelector('.gift-box').addEventListener('click', openCard);
-        // Event listener untuk tombol restart manual
         document.getElementById('restartBtn').addEventListener('click', (e) => {
             e.preventDefault();
             resetAndLoop();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </body>
 </html>
