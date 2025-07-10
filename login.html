@@ -122,6 +122,10 @@
         .gift-card { display: none; background: var(--bg-color); border-radius: var(--border-radius-main); padding: 30px; text-align: center; width: 100%; max-width: 320px; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); animation: fadeInCard-anim 0.5s ease-out forwards; color: var(--text-color); }
         #qrCodeImg { width: 180px; height: 180px; margin: 15px auto; border-radius: var(--border-radius-inner); background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 15px var(--shadow-dark), inset -5px -5px 15px var(--shadow-light); object-fit: contain; }
         .music-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; z-index: 1000; padding: 0; border-radius: 50%; }
+        
+        /* CSS untuk Salju Warna-warni */
+        .snow-particle { position: fixed; top: -10px; border-radius: 50%; z-index: 5; pointer-events: none; }
+
         .swal2-popup { background-color: var(--bg-color) !important; border-radius: var(--border-radius-main) !important; color: var(--text-color) !important; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important; }
         .swal2-title { color: var(--text-color) !important; } .swal2-html-container { color: var(--text-light) !important; }
         .swal2-confirm { background-color: var(--primary) !important; color: white !important; } .swal2-confirm:hover { background-color: var(--primary-dark) !important; }
@@ -208,6 +212,7 @@
         const database = firebase.database();
         let pageData = {};
         let particleInterval;
+        let snowfallInterval; // Variabel untuk interval salju
 
         // --- DOM ELEMENTS ---
         const loginContainer = document.getElementById("loginContainer"), 
@@ -267,7 +272,7 @@
             }
         }
         
-        // --- GAME LOGIC (PERBAIKAN) ---
+        // --- GAME LOGIC ---
         const gridElement = document.getElementById('word-search-grid');
         const wordsContainer = document.getElementById('words-to-find-container');
         const wordFoundSound = document.getElementById('word-found-sound');
@@ -275,18 +280,9 @@
         let wordsToFind = [], grid = [], isDragging = false, selection = [], foundWords = [];
 
         function initWordSearch() {
-            // Mengambil kata dari Firebase atau menggunakan default
-            wordsToFind = [
-                (pageData.puzzleWord1 || 'ULTAH').toUpperCase(),
-                (pageData.puzzleWord2 || 'KADO').toUpperCase(),
-                (pageData.puzzleWord3 || 'DOA').toUpperCase()
-            ];
+            wordsToFind = [ (pageData.puzzleWord1 || 'ULTAH').toUpperCase(), (pageData.puzzleWord2 || 'KADO').toUpperCase(), (pageData.puzzleWord3 || 'DOA').toUpperCase() ];
             foundWords = [];
-            
-            // 1. Membuat grid kosong
             grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
-
-            // 2. Menempatkan kata-kata secara acak
             const directions = ['horizontal', 'vertical', 'diagonal-down', 'diagonal-up'];
             wordsToFind.forEach(word => {
                 let placed = false;
@@ -300,17 +296,8 @@
                     }
                 }
             });
-
-            // 3. Mengisi sisa grid dengan huruf acak
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            for (let r = 0; r < gridSize; r++) {
-                for (let c = 0; c < gridSize; c++) {
-                    if (grid[r][c] === null) {
-                        grid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
-                    }
-                }
-            }
-            
+            for (let r = 0; r < gridSize; r++) { for (let c = 0; c < gridSize; c++) { if (grid[r][c] === null) { grid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)]; } } }
             renderGrid();
             renderWordList();
             addGridEventListeners();
@@ -323,9 +310,8 @@
                 else if (dir === 'vertical') newR += i;
                 else if (dir === 'diagonal-down') { newR += i; newC += i; }
                 else if (dir === 'diagonal-up') { newR -= i; newC += i; }
-
-                if (newR < 0 || newR >= gridSize || newC < 0 || newC >= gridSize) return false; // Keluar batas
-                if (grid[newR][newC] !== null && grid[newR][newC] !== word[i]) return false; // Sudah terisi huruf lain
+                if (newR < 0 || newR >= gridSize || newC < 0 || newC >= gridSize) return false;
+                if (grid[newR][newC] !== null && grid[newR][newC] !== word[i]) return false;
             }
             return true;
         }
@@ -365,28 +351,21 @@
         }
         
         function addGridEventListeners() {
-            // Hapus event listener lama untuk mencegah duplikasi
             gridElement.removeEventListener('mousedown', startDrag);
             document.removeEventListener('mouseup', endDrag);
             gridElement.removeEventListener('touchstart', startDrag);
             document.removeEventListener('touchend', endDrag);
-            
             gridElement.addEventListener('mousedown', startDrag);
             document.addEventListener('mouseup', endDrag);
-            
             gridElement.addEventListener('touchstart', startDrag, { passive: false });
             document.addEventListener('touchend', endDrag);
         }
 
         function getCellFromEvent(e) {
             let target;
-            if (e.touches && e.touches.length > 0) {
-                target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-            } else if (e.changedTouches && e.changedTouches.length > 0) {
-                 target = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-            } else {
-                target = e.target;
-            }
+            if (e.touches && e.touches.length > 0) { target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY); } 
+            else if (e.changedTouches && e.changedTouches.length > 0) { target = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY); } 
+            else { target = e.target; }
             return target && target.closest('.letter-cell');
         }
 
@@ -394,12 +373,9 @@
             e.preventDefault();
             const startCell = getCellFromEvent(e);
             if (!startCell) return;
-            
             isDragging = true;
             selection = [startCell];
             startCell.classList.add('selected');
-            
-            // Tambahkan event listener untuk mousemove/touchmove hanya saat dragging
             gridElement.addEventListener('mouseover', duringDrag);
             gridElement.addEventListener('touchmove', duringDrag, { passive: false });
         }
@@ -408,9 +384,7 @@
             if (!isDragging) return;
             e.preventDefault();
             const currentCell = getCellFromEvent(e);
-            
             if (currentCell && !selection.includes(currentCell)) {
-                // Hapus highlight lama dan buat path baru
                 selection.forEach(c => c.classList.remove('selected'));
                 highlightPath(selection[0], currentCell);
             }
@@ -420,63 +394,33 @@
             selection = [];
             const start = { r: parseInt(startCell.dataset.row), c: parseInt(startCell.dataset.col) };
             const end = { r: parseInt(endCell.dataset.row), c: parseInt(endCell.dataset.col) };
-
-            const dr = end.r - start.r;
-            const dc = end.c - start.c;
-
-            // Hanya izinkan garis lurus (horizontal, vertikal, diagonal)
-            if (dr !== 0 && dc !== 0 && Math.abs(dr) !== Math.abs(dc)) {
-                 selection = [startCell];
-                 startCell.classList.add('selected');
-                 return;
-            }
-
-            const stepR = Math.sign(dr);
-            const stepC = Math.sign(dc);
-            const steps = Math.max(Math.abs(dr), Math.abs(dc));
-
+            const dr = end.r - start.r; const dc = end.c - start.c;
+            if (dr !== 0 && dc !== 0 && Math.abs(dr) !== Math.abs(dc)) { selection = [startCell]; startCell.classList.add('selected'); return; }
+            const stepR = Math.sign(dr); const stepC = Math.sign(dc); const steps = Math.max(Math.abs(dr), Math.abs(dc));
             for(let i = 0; i <= steps; i++) {
-                const r = start.r + i * stepR;
-                const c = start.c + i * stepC;
+                const r = start.r + i * stepR; const c = start.c + i * stepC;
                 const cell = gridElement.querySelector(`[data-row='${r}'][data-col='${c}']`);
-                if (cell) {
-                    cell.classList.add('selected');
-                    selection.push(cell);
-                }
+                if (cell) { cell.classList.add('selected'); selection.push(cell); }
             }
         }
 
         function endDrag(e) {
             if (!isDragging) return;
             isDragging = false;
-            
-            // Hapus event listener move agar tidak berjalan saat tidak diperlukan
             gridElement.removeEventListener('mouseover', duringDrag);
             gridElement.removeEventListener('touchmove', duringDrag);
-
             const selectedWord = selection.map(cell => cell.textContent).join('');
             const reversedWord = selectedWord.split('').reverse().join('');
-
             wordsToFind.forEach(word => {
                 if (!foundWords.includes(word) && (selectedWord === word || reversedWord === word)) {
                     foundWords.push(word);
-                    selection.forEach(cell => {
-                        cell.classList.remove('selected');
-                        cell.classList.add('found');
-                    });
+                    selection.forEach(cell => { cell.classList.remove('selected'); cell.classList.add('found'); });
                     document.getElementById(`word-${word}`).classList.add('found');
                     wordFoundSound.play().catch(e => console.log("Sound play prevented"));
                 }
             });
-
-            // Selalu hapus kelas 'selected' di akhir, kecuali jika kata ditemukan
-            if (selection.length > 0 && !selection[0].classList.contains('found')) {
-               selection.forEach(cell => cell.classList.remove('selected'));
-            }
-
-            if (foundWords.length === wordsToFind.length) {
-                setTimeout(completeGame, 500);
-            }
+            if (selection.length > 0 && !selection[0].classList.contains('found')) { selection.forEach(cell => cell.classList.remove('selected')); }
+            if (foundWords.length === wordsToFind.length) { setTimeout(completeGame, 500); }
         }
         
         async function completeGame() {
@@ -485,7 +429,7 @@
             gameContainer.addEventListener('animationend', () => { gameContainer.style.display = 'none'; showBirthdayPage(); }, { once: true });
         }
         
-        // --- BIRTHDAY PAGE LOGIC ---
+        // --- BIRTHDAY PAGE & VISUAL EFFECTS LOGIC ---
         function showBirthdayPage() {
             birthdayPage.style.display = "flex";
             document.body.classList.add("scroll-allowed");
@@ -494,6 +438,7 @@
             document.getElementById('bestWishesText').textContent = pageData.bestWishes || 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan.';
             document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote || '"Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."';
             initScrollAnimations();
+            startSnowfallEffect(); // Memulai efek salju
         }
 
         function calculateAndDisplayAge(birthDate) {
@@ -508,7 +453,13 @@
         }
 
         function initScrollAnimations() { const cards = document.querySelectorAll('.message-card, .gift-section-card'); const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } else { entry.target.classList.remove('is-visible'); } }); }, { root: null, rootMargin: '0px', threshold: 0.1 }); cards.forEach((card, index) => { card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg'); card.style.transitionDelay = `${index * 150}ms`; observer.observe(card); }); }
-        function openGift() { giftModal.style.display = "flex"; document.body.classList.remove("scroll-allowed"); document.body.style.overflow = "hidden"; }
+        
+        function openGift() { 
+            stopSnowfallEffect(); // Menghentikan salju saat modal hadiah dibuka
+            giftModal.style.display = "flex"; 
+            document.body.classList.remove("scroll-allowed"); 
+            document.body.style.overflow = "hidden"; 
+        }
         
         function openCard() { 
             giftBox.style.display = "none"; 
@@ -523,33 +474,46 @@
         function closeGiftModal() { 
             giftModal.style.display = "none"; 
             document.body.classList.add("scroll-allowed"); 
-            clearInterval(particleInterval); // Menghentikan confetti saat modal ditutup
+            clearInterval(particleInterval);
             setTimeout(() => { 
                 giftCard.style.display = "none"; 
                 giftBox.style.display = "block"; 
             }, 500); 
         }
+        
+        function startSnowfallEffect() {
+            if (snowfallInterval) clearInterval(snowfallInterval);
+            const colors = ['#FF6F61', '#FFD700', '#6A5ACD', '#7FFF00', '#00CED1', '#FF1493'];
+            snowfallInterval = setInterval(() => {
+                const particle = document.createElement('div');
+                particle.classList.add('snow-particle');
+                const size = Math.random() * 8 + 3;
+                particle.style.cssText = `left: ${Math.random() * 100}vw; width: ${size}px; height: ${size}px; background-color: ${colors[Math.floor(Math.random() * colors.length)]}; opacity: ${Math.random() * 0.8 + 0.4};`;
+                document.body.appendChild(particle);
+                particle.animate([
+                    { transform: 'translateY(0) translateX(0)', opacity: 0.8 },
+                    { transform: `translateY(110vh) translateX(${Math.random() * 60 - 30}px)`, opacity: 0 }
+                ], { duration: 6000 + Math.random() * 8000, easing: 'linear' }).onfinish = () => particle.remove();
+            }, 150);
+        }
+
+        function stopSnowfallEffect() {
+            clearInterval(snowfallInterval);
+            document.querySelectorAll('.snow-particle').forEach(el => el.remove());
+        }
 
         function startFullScreenConfetti() { 
             confettiSound.play().catch(e => console.log("Sound play prevented"));
-
             const duration = 15 * 1000;
             const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2100 }; // Z-INDEX TINGGI
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2100 };
             const colors = ["#FF6F61", "#FFD700", "#6A5ACD", "#7FFF00", "#00CED1", "#FF1493", "#FFFFFF", "#E0EFFF"];
-
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
             if (particleInterval) clearInterval(particleInterval);
-
             particleInterval = setInterval(function() {
                 const timeLeft = animationEnd - Date.now();
                 if (timeLeft <= 0) return clearInterval(particleInterval);
-
                 const particleCount = 50 * (timeLeft / duration);
-                // Menembakkan dari dua sisi
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: colors }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: colors }));
             }, 250);
@@ -566,14 +530,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
             const authParam = urlParams.get('auth');
-
             if (!pageId) { showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap."); return; }
-            
             try {
                 const snapshot = await database.ref('birthday_pages/' + pageId).once('value');
                 if (!snapshot.exists() || !snapshot.val().birthdayName) { showErrorPage("Konten Belum Tersedia", "Halaman ini sedang disiapkan. Coba lagi nanti ya!"); return; }
-                pageData = snapshot.val(); // Pre-load data
-
+                pageData = snapshot.val();
                 if (authParam) {
                     const decoded = JSON.parse(atob(authParam));
                     const loginSuccess = await performGuestLogin(decoded.user, decoded.pass, pageId);
