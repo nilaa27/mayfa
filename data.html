@@ -341,7 +341,7 @@
     <div class="container hidden" id="mainContent">
         <div class="header">
             <div class="header-title">
-                <h1>Manajemen Data Admin</h1>
+                <h1>Setting manajemen akun</h1>
                 <p>Tambah, edit, atau hapus akun admin.</p>
             </div>
         </div>
@@ -581,8 +581,8 @@
 
                 // Construct the shareable link for the birthday page with encoded credentials
                 // Tambahkan parameter 'auth' ke URL untuk auto-login tamu
-                const shareableLink = `${window.location.origin}/index.html?id=${id}&auth=${encodedGuestCredentials}`;
-                const adminPanelLink = `${window.location.origin}/admin.html?id=${id}`; // Link ke panel admin individu
+                const shareableLink = `${window.location.origin}/login.html?id=${id}&auth=${encodedGuestCredentials}`;
+                const adminPanelLink = `${window.location.origin}/register.html?id=${id}`; // Link ke panel admin individu
 
                 const card = document.createElement('div');
                 card.className = 'user-card neumorphic-panel';
@@ -790,14 +790,14 @@
 
         // New function to directly access an admin's panel (remains the same)
         window.accessAdminPanel = (adminId) => {
-            window.location.href = `admin.html?super_admin_access=true&id=${adminId}`;
+            window.location.href = `register.html?super_admin_access=true&id=${adminId}`;
         }
 
         // --- Event Listener untuk tombol Log Out ---
         logoutBtn.addEventListener('click', () => {
             Swal.fire({
                 title: 'Konfirmasi Log Out',
-                text: 'Anda yakin ingin keluar dari panel Super Admin?',
+                text: 'Anda yakin ingin keluar dari manajemen setting?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Log Out',
