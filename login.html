@@ -134,6 +134,7 @@
 <body>
     <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
     <audio id="word-found-sound" src="https://assets.codepen.io/217233/chime.mp3"></audio>
+    <audio id="confetti-sound" src="https://assets.codepen.io/217233/confetti.mp3"></audio>
     <button id="musicToggleBtn" class="btn music-toggle"><i class="fas fa-volume-off"></i></button>
 
     <div class="login-container" id="loginContainer">
@@ -216,7 +217,8 @@
               giftModal = document.getElementById("giftModal"), 
               giftBox = document.querySelector(".gift-box"), 
               giftCard = document.getElementById("giftCard"), 
-              backgroundMusic = document.getElementById("background-music"), 
+              backgroundMusic = document.getElementById("background-music"),
+              confettiSound = document.getElementById('confetti-sound'), 
               togglePassword = document.getElementById("togglePassword"), 
               passwordInput = document.getElementById("password"),
               musicToggleBtn = document.getElementById('musicToggleBtn');
@@ -491,7 +493,7 @@
             if (pageData.birthDate) { calculateAndDisplayAge(pageData.birthDate); } else { document.getElementById("ageDisplay").innerText = "Tanggal lahir belum diatur."; }
             document.getElementById('bestWishesText').textContent = pageData.bestWishes || 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan.';
             document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote || '"Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."';
-            initScrollAnimations(); startFullScreenConfetti();
+            initScrollAnimations();
         }
 
         function calculateAndDisplayAge(birthDate) {
@@ -507,9 +509,51 @@
 
         function initScrollAnimations() { const cards = document.querySelectorAll('.message-card, .gift-section-card'); const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } else { entry.target.classList.remove('is-visible'); } }); }, { root: null, rootMargin: '0px', threshold: 0.1 }); cards.forEach((card, index) => { card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg'); card.style.transitionDelay = `${index * 150}ms`; observer.observe(card); }); }
         function openGift() { giftModal.style.display = "flex"; document.body.classList.remove("scroll-allowed"); document.body.style.overflow = "hidden"; }
-        function openCard() { giftBox.style.display = "none"; giftCard.style.display = "block"; document.getElementById("giftCardName").textContent = pageData.birthdayName || 'Teman'; const qrImg = document.getElementById("qrCodeImg"); qrImg.src = pageData.qrImageUrl || `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Default-QR`; document.getElementById('qrMessageText').textContent = pageData.qrMessage || 'Semoga bermanfaat ya!'; }
-        function closeGiftModal() { giftModal.style.display = "none"; document.body.classList.add("scroll-allowed"); clearInterval(particleInterval); setTimeout(() => { giftCard.style.display = "none"; giftBox.style.display = "block"; }, 500); }
-        function startFullScreenConfetti() { /* ... full confetti logic ... */ }
+        
+        function openCard() { 
+            giftBox.style.display = "none"; 
+            giftCard.style.display = "block"; 
+            document.getElementById("giftCardName").textContent = pageData.birthdayName || 'Teman'; 
+            const qrImg = document.getElementById("qrCodeImg"); 
+            qrImg.src = pageData.qrImageUrl || `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Default-QR`; 
+            document.getElementById('qrMessageText').textContent = pageData.qrMessage || 'Semoga bermanfaat ya!'; 
+            startFullScreenConfetti();
+        }
+
+        function closeGiftModal() { 
+            giftModal.style.display = "none"; 
+            document.body.classList.add("scroll-allowed"); 
+            clearInterval(particleInterval); // Menghentikan confetti saat modal ditutup
+            setTimeout(() => { 
+                giftCard.style.display = "none"; 
+                giftBox.style.display = "block"; 
+            }, 500); 
+        }
+
+        function startFullScreenConfetti() { 
+            confettiSound.play().catch(e => console.log("Sound play prevented"));
+
+            const duration = 15 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2100 }; // Z-INDEX TINGGI
+            const colors = ["#FF6F61", "#FFD700", "#6A5ACD", "#7FFF00", "#00CED1", "#FF1493", "#FFFFFF", "#E0EFFF"];
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            if (particleInterval) clearInterval(particleInterval);
+
+            particleInterval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(particleInterval);
+
+                const particleCount = 50 * (timeLeft / duration);
+                // Menembakkan dari dua sisi
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: colors }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: colors }));
+            }, 250);
+        }
         
         // --- EVENT LISTENERS ---
         togglePassword.addEventListener("click", function() { const type = passwordInput.getAttribute("type") === "password" ? "text" : "password"; passwordInput.setAttribute("type", type); this.classList.toggle("fa-eye"); this.classList.toggle("fa-eye-slash"); });
@@ -545,5 +589,6 @@
             }
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </body>
 </html>
