@@ -6,6 +6,7 @@
     <title>Happy Birthday For You!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="shortcut icon" type="image/png" href="/favicon.PNG" />
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -178,7 +179,7 @@
             </div>
             <div class="gift-section-card message-card" id="giftSectionCard">
                 <h2 class="card-title">waitt, there's a gift for you...</h2>
-                <button class="btn gift-btn" onclick="openGift()"><i class="fas fa-gift"></i> Accept your gift!</button>
+                <button class="btn gift-btn" onclick="openGift()"><i class="fas fa-gift"></i> claim ur gift!</button>
             </div>
         </div>
     </div>
@@ -229,7 +230,6 @@
               musicToggleBtn = document.getElementById('musicToggleBtn');
         
         // --- LOGIN & DATA FETCHING ---
-        function getUrlParameter(name) { name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'); var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'); var results = regex.exec(location.search); return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' ')); }
         function showErrorPage(title, message) { loginContainer.style.display = 'none'; birthdayPage.style.display = 'none'; gameContainer.style.display = 'none'; document.getElementById('errorTitle').textContent = title; document.getElementById('errorMessage').textContent = message; errorPage.style.display = 'block'; document.body.classList.remove("no-scroll"); }
         function showFeedback(state, title, message = '') { const modal = document.getElementById('feedbackModal'); document.getElementById('feedbackLoader').style.display = (state === 'loading' ? 'block' : 'none'); document.getElementById('feedbackTitle').textContent = title; document.getElementById('feedbackMessage').textContent = message; modal.style.display = 'flex'; }
         function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
@@ -237,7 +237,8 @@
         async function login() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
-            const pageId = getUrlParameter('id');
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageId = urlParams.get('id');
             if (!username || !password) { Swal.fire({ icon: 'warning', title: 'Input Tidak Lengkap', text: 'Mohon isi Username dan Password.' }); return; }
             if (!pageId) { showErrorPage("Link Tidak Valid", "ID halaman tidak ditemukan di URL."); return; }
             await performGuestLogin(username, password, pageId);
@@ -272,7 +273,7 @@
             }
         }
         
-        // --- GAME LOGIC ---
+        // --- GAME LOGIC (Unchanged) ---
         const gridElement = document.getElementById('word-search-grid');
         const wordsContainer = document.getElementById('words-to-find-container');
         const wordFoundSound = document.getElementById('word-found-sound');
@@ -429,7 +430,7 @@
             gameContainer.addEventListener('animationend', () => { gameContainer.style.display = 'none'; showBirthdayPage(); }, { once: true });
         }
         
-        // --- BIRTHDAY PAGE & VISUAL EFFECTS LOGIC ---
+        // --- BIRTHDAY PAGE & VISUAL EFFECTS LOGIC (Unchanged) ---
         function showBirthdayPage() {
             birthdayPage.style.display = "flex";
             document.body.classList.add("scroll-allowed");
@@ -530,24 +531,48 @@
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
             const authParam = urlParams.get('auth');
-            if (!pageId) { showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap."); return; }
+
+            // --- FIX: Logic untuk Akses Otomatis via URL ---
+            if (!pageId) {
+                showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap (termasuk ID).");
+                return;
+            }
+
             try {
+                // Pre-fetch data untuk memeriksa apakah halaman ada
                 const snapshot = await database.ref('birthday_pages/' + pageId).once('value');
-                if (!snapshot.exists() || !snapshot.val().birthdayName) { showErrorPage("Konten Belum Tersedia", "Halaman ini sedang disiapkan. Coba lagi nanti ya!"); return; }
-                pageData = snapshot.val();
+                if (!snapshot.exists() || !snapshot.val().birthdayName) {
+                    showErrorPage("Konten Belum Tersedia", "Halaman ini sedang disiapkan. Coba lagi nanti ya!");
+                    return;
+                }
+                
+                // Jika ada parameter 'auth', coba login otomatis
                 if (authParam) {
-                    const decoded = JSON.parse(atob(authParam));
+                    let decoded;
+                    try {
+                        decoded = JSON.parse(atob(authParam));
+                    } catch (e) {
+                        console.error("Gagal decode auth parameter:", e);
+                        Swal.fire({ icon: 'error', title: 'Link Tidak Valid', text: 'Link akses otomatis rusak. Silakan login manual.' });
+                        loginContainer.style.display = 'block'; // Tampilkan login manual jika decode gagal
+                        return; // Hentikan eksekusi lebih lanjut
+                    }
+
                     const loginSuccess = await performGuestLogin(decoded.user, decoded.pass, pageId);
                     if (!loginSuccess) {
-                        Swal.fire({ icon: 'info', title: 'Akses Otomatis Gagal', text: 'Silakan login manual.' });
+                        // Jika login otomatis gagal (misal pass sudah diganti), beri tahu pengguna dan tampilkan form
+                        Swal.fire({ icon: 'info', title: 'Akses Otomatis Gagal', text: 'Kredensial tidak cocok. Silakan login manual.' });
                         loginContainer.style.display = 'block';
                     }
                 } else {
+                    // Jika tidak ada parameter 'auth', tampilkan form login manual
                     loginContainer.style.display = 'block';
                 }
-            } catch(e) {
-                showErrorPage("Link Tidak Valid", "Terjadi kesalahan pada link akses otomatis.");
+            } catch (error) {
+                console.error("Error saat memuat halaman:", error);
+                showErrorPage("Terjadi Kesalahan", "Gagal memuat data halaman. Coba refresh halaman.");
             }
+            // --- END FIX ---
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
