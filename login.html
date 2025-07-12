@@ -458,11 +458,13 @@
             document.getElementById('bestWishesText').textContent = pageData.bestWishes || 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan.';
             document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote || '"Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."';
             
-            // --- MODIFIED: Set background music based on saved data ---
+            // --- UPDATED: Set background music based on saved data ---
             if (pageData.musicUrl) {
                 const musicSource = backgroundMusic.querySelector('source');
-                musicSource.src = pageData.musicUrl;
-                backgroundMusic.load(); // Reload the audio element to apply the new source
+                if (musicSource.src !== pageData.musicUrl) {
+                    musicSource.src = pageData.musicUrl;
+                    backgroundMusic.load(); // Reload the audio element to apply the new source
+                }
             }
 
             initScrollAnimations();
@@ -470,15 +472,29 @@
         }
 
         function calculateAndDisplayAge(birthDate) {
-            const birthDateObj = new Date(birthDate + 'T00:00:00');
+            const birthDateObj = new Date(birthDate);
+            // Adjust for timezone to get correct date
             const today = new Date();
-            let years = today.getFullYear() - birthDateObj.getFullYear();
-            let months = today.getMonth() - birthDateObj.getMonth();
-            let days = today.getDate() - birthDateObj.getDate();
-            if (days < 0) { months--; days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); }
-            if (months < 0) { years--; months += 12; }
-            document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru!`;
+            const birthDateUTC = new Date(birthDateObj.getUTCFullYear(), birthDateObj.getUTCMonth(), birthDateObj.getUTCDate());
+            
+            let years = today.getFullYear() - birthDateUTC.getFullYear();
+            let months = today.getMonth() - birthDateUTC.getMonth();
+            let days = today.getDate() - birthDateUTC.getDate();
+
+            if (days < 0) {
+                months--;
+                // Get the last day of the previous month
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            // Menggunakan informasi yang Anda berikan
+            const customAgeMessage = `sudah berapa lama kamu bertahan?`;
+            document.getElementById("ageDisplay").innerText = `${customAgeMessage} ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru!`;
         }
+
 
         function initScrollAnimations() { const cards = document.querySelectorAll('.message-card, .gift-section-card'); const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } else { entry.target.classList.remove('is-visible'); } }); }, { root: null, rootMargin: '0px', threshold: 0.1 }); cards.forEach((card, index) => { card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg'); card.style.transitionDelay = `${index * 150}ms`; observer.observe(card); }); }
         
@@ -549,7 +565,21 @@
         
         // --- EVENT LISTENERS ---
         togglePassword.addEventListener("click", function() { const type = passwordInput.getAttribute("type") === "password" ? "text" : "password"; passwordInput.setAttribute("type", type); this.classList.toggle("fa-eye"); this.classList.toggle("fa-eye-slash"); });
-        musicToggleBtn.addEventListener('click', () => { const icon = musicToggleBtn.querySelector('i'); if (backgroundMusic.paused) { backgroundMusic.play().catch(e => { console.error("Music play failed:", e); Swal.fire('Autoplay Gagal', 'Browser Anda memblokir pemutaran otomatis. Klik tombol musik lagi.', 'info')}); icon.classList.remove('fa-volume-off'); icon.classList.add('fa-volume-high'); } else { backgroundMusic.pause(); icon.classList.remove('fa-volume-high'); icon.classList.add('fa-volume-off'); } });
+        musicToggleBtn.addEventListener('click', () => { 
+            const icon = musicToggleBtn.querySelector('i'); 
+            if (backgroundMusic.paused) { 
+                backgroundMusic.play().catch(e => {
+                    console.error("Music play failed:", e);
+                    Swal.fire('Autoplay Gagal', 'Browser Anda memblokir pemutaran otomatis. Klik tombol musik lagi untuk memulai.', 'info');
+                }); 
+                icon.classList.remove('fa-volume-off'); 
+                icon.classList.add('fa-volume-high'); 
+            } else { 
+                backgroundMusic.pause(); 
+                icon.classList.remove('fa-volume-high'); 
+                icon.classList.add('fa-volume-off'); 
+            } 
+        });
         giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
 
         // --- INITIAL LOAD LOGIC ---
@@ -587,7 +617,8 @@
                             loginContainer.style.display = 'block';
                         }
                     } catch(e) {
-                        loginContainer.style.display = 'block';
+                         console.error("Auth param error: ", e);
+                         loginContainer.style.display = 'block';
                     }
                 } else {
                     loginContainer.style.display = 'block';
