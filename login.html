@@ -190,7 +190,7 @@
         <p id="errorMessage">Pastikan link yang Anda masukkan sudah benar dan lengkap.</p>
     </div>
     <div class="gift-modal" id="giftModal">
-        <div class="gift-box" onclick="openCard()"><img src="IMG_1316.png" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
+        <div class="gift-box" onclick="openCard()"><img src="nir.gif" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
         <div class="gift-card" id="giftCard">
             <h2 style="font-weight: 600;">Hai, <span id="giftCardName"></span>!</h2>
             <p>Scan QR ini untuk klaim hadiahmu!</p>
@@ -213,7 +213,7 @@
         const database = firebase.database();
         let pageData = {};
         let particleInterval;
-        let snowfallInterval; // Variabel untuk interval salju
+        let snowfallInterval;
 
         // --- DOM ELEMENTS ---
         const loginContainer = document.getElementById("loginContainer"), 
@@ -230,6 +230,7 @@
               musicToggleBtn = document.getElementById('musicToggleBtn');
         
         // --- LOGIN & DATA FETCHING ---
+        function getUrlParameter(name) { name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'); var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'); var results = regex.exec(location.search); return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' ')); }
         function showErrorPage(title, message) { loginContainer.style.display = 'none'; birthdayPage.style.display = 'none'; gameContainer.style.display = 'none'; document.getElementById('errorTitle').textContent = title; document.getElementById('errorMessage').textContent = message; errorPage.style.display = 'block'; document.body.classList.remove("no-scroll"); }
         function showFeedback(state, title, message = '') { const modal = document.getElementById('feedbackModal'); document.getElementById('feedbackLoader').style.display = (state === 'loading' ? 'block' : 'none'); document.getElementById('feedbackTitle').textContent = title; document.getElementById('feedbackMessage').textContent = message; modal.style.display = 'flex'; }
         function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
@@ -237,11 +238,29 @@
         async function login() {
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
-            const urlParams = new URLSearchParams(window.location.search);
-            const pageId = urlParams.get('id');
+            const pageId = getUrlParameter('id');
             if (!username || !password) { Swal.fire({ icon: 'warning', title: 'Input Tidak Lengkap', text: 'Mohon isi Username dan Password.' }); return; }
             if (!pageId) { showErrorPage("Link Tidak Valid", "ID halaman tidak ditemukan di URL."); return; }
             await performGuestLogin(username, password, pageId);
+        }
+        
+        async function performAdminBypass(pageId) {
+            showFeedback('loading', 'Memuat Halaman...');
+            try {
+                const snapshot = await database.ref(`birthday_pages/${pageId}`).once('value');
+                if (snapshot.exists()) {
+                    pageData = snapshot.val();
+                    loginContainer.style.display = "none";
+                    gameContainer.style.display = 'none';
+                    showBirthdayPage();
+                    hideFeedback();
+                } else {
+                     showErrorPage("Konten Belum Tersedia", "Halaman ini sedang disiapkan. Coba lagi nanti ya!");
+                }
+            } catch (error) {
+                console.error("Error during admin bypass:", error);
+                showErrorPage("Terjadi Kesalahan", "Gagal memuat data halaman.");
+            }
         }
 
         async function performGuestLogin(username, password, pageId) {
@@ -273,7 +292,7 @@
             }
         }
         
-        // --- GAME LOGIC (Unchanged) ---
+        // --- GAME LOGIC ---
         const gridElement = document.getElementById('word-search-grid');
         const wordsContainer = document.getElementById('words-to-find-container');
         const wordFoundSound = document.getElementById('word-found-sound');
@@ -430,7 +449,7 @@
             gameContainer.addEventListener('animationend', () => { gameContainer.style.display = 'none'; showBirthdayPage(); }, { once: true });
         }
         
-        // --- BIRTHDAY PAGE & VISUAL EFFECTS LOGIC (Unchanged) ---
+        // --- BIRTHDAY PAGE & VISUAL EFFECTS LOGIC ---
         function showBirthdayPage() {
             birthdayPage.style.display = "flex";
             document.body.classList.add("scroll-allowed");
@@ -438,8 +457,16 @@
             if (pageData.birthDate) { calculateAndDisplayAge(pageData.birthDate); } else { document.getElementById("ageDisplay").innerText = "Tanggal lahir belum diatur."; }
             document.getElementById('bestWishesText').textContent = pageData.bestWishes || 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan.';
             document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote || '"Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."';
+            
+            // --- MODIFIED: Set background music based on saved data ---
+            if (pageData.musicUrl) {
+                const musicSource = backgroundMusic.querySelector('source');
+                musicSource.src = pageData.musicUrl;
+                backgroundMusic.load(); // Reload the audio element to apply the new source
+            }
+
             initScrollAnimations();
-            startSnowfallEffect(); // Memulai efek salju
+            startSnowfallEffect();
         }
 
         function calculateAndDisplayAge(birthDate) {
@@ -456,7 +483,7 @@
         function initScrollAnimations() { const cards = document.querySelectorAll('.message-card, .gift-section-card'); const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } else { entry.target.classList.remove('is-visible'); } }); }, { root: null, rootMargin: '0px', threshold: 0.1 }); cards.forEach((card, index) => { card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg'); card.style.transitionDelay = `${index * 150}ms`; observer.observe(card); }); }
         
         function openGift() { 
-            stopSnowfallEffect(); // Menghentikan salju saat modal hadiah dibuka
+            stopSnowfallEffect();
             giftModal.style.display = "flex"; 
             document.body.classList.remove("scroll-allowed"); 
             document.body.style.overflow = "hidden"; 
@@ -522,7 +549,7 @@
         
         // --- EVENT LISTENERS ---
         togglePassword.addEventListener("click", function() { const type = passwordInput.getAttribute("type") === "password" ? "text" : "password"; passwordInput.setAttribute("type", type); this.classList.toggle("fa-eye"); this.classList.toggle("fa-eye-slash"); });
-        musicToggleBtn.addEventListener('click', () => { const icon = musicToggleBtn.querySelector('i'); if (backgroundMusic.paused) { backgroundMusic.play().catch(e => console.error("Music play failed:", e)); icon.classList.remove('fa-volume-off'); icon.classList.add('fa-volume-high'); } else { backgroundMusic.pause(); icon.classList.remove('fa-volume-high'); icon.classList.add('fa-volume-off'); } });
+        musicToggleBtn.addEventListener('click', () => { const icon = musicToggleBtn.querySelector('i'); if (backgroundMusic.paused) { backgroundMusic.play().catch(e => { console.error("Music play failed:", e); Swal.fire('Autoplay Gagal', 'Browser Anda memblokir pemutaran otomatis. Klik tombol musik lagi.', 'info')}); icon.classList.remove('fa-volume-off'); icon.classList.add('fa-volume-high'); } else { backgroundMusic.pause(); icon.classList.remove('fa-volume-high'); icon.classList.add('fa-volume-off'); } });
         giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
 
         // --- INITIAL LOAD LOGIC ---
@@ -531,48 +558,44 @@
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
             const authParam = urlParams.get('auth');
+            const superAdminAccess = urlParams.get('super_admin_access');
 
-            // --- FIX: Logic untuk Akses Otomatis via URL ---
             if (!pageId) {
-                showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap (termasuk ID).");
+                showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap.");
+                return;
+            }
+            if (superAdminAccess === 'true') {
+                performAdminBypass(pageId);
                 return;
             }
 
             try {
-                // Pre-fetch data untuk memeriksa apakah halaman ada
                 const snapshot = await database.ref('birthday_pages/' + pageId).once('value');
                 if (!snapshot.exists() || !snapshot.val().birthdayName) {
                     showErrorPage("Konten Belum Tersedia", "Halaman ini sedang disiapkan. Coba lagi nanti ya!");
                     return;
                 }
                 
-                // Jika ada parameter 'auth', coba login otomatis
+                pageData = snapshot.val();
+                
                 if (authParam) {
-                    let decoded;
                     try {
-                        decoded = JSON.parse(atob(authParam));
-                    } catch (e) {
-                        console.error("Gagal decode auth parameter:", e);
-                        Swal.fire({ icon: 'error', title: 'Link Tidak Valid', text: 'Link akses otomatis rusak. Silakan login manual.' });
-                        loginContainer.style.display = 'block'; // Tampilkan login manual jika decode gagal
-                        return; // Hentikan eksekusi lebih lanjut
-                    }
-
-                    const loginSuccess = await performGuestLogin(decoded.user, decoded.pass, pageId);
-                    if (!loginSuccess) {
-                        // Jika login otomatis gagal (misal pass sudah diganti), beri tahu pengguna dan tampilkan form
-                        Swal.fire({ icon: 'info', title: 'Akses Otomatis Gagal', text: 'Kredensial tidak cocok. Silakan login manual.' });
+                        const decoded = JSON.parse(atob(authParam));
+                        const loginSuccess = await performGuestLogin(decoded.user, decoded.pass, pageId);
+                        if (!loginSuccess) {
+                            Swal.fire({ icon: 'info', title: 'Akses Otomatis Gagal', text: 'Silakan login manual.' });
+                            loginContainer.style.display = 'block';
+                        }
+                    } catch(e) {
                         loginContainer.style.display = 'block';
                     }
                 } else {
-                    // Jika tidak ada parameter 'auth', tampilkan form login manual
                     loginContainer.style.display = 'block';
                 }
-            } catch (error) {
-                console.error("Error saat memuat halaman:", error);
-                showErrorPage("Terjadi Kesalahan", "Gagal memuat data halaman. Coba refresh halaman.");
+            } catch(e) {
+                console.error("Error on page load: ", e);
+                showErrorPage("Link Tidak Valid", "Terjadi kesalahan pada link akses.");
             }
-            // --- END FIX ---
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
