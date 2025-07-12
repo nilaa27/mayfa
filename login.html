@@ -137,7 +137,7 @@
     </style>
 </head>
 <body>
-    <audio id="background-music" loop><source src="mayfa.mp3"></source></audio>
+    <audio id="background-music" loop src="mayfa.mp3"></audio>
     <audio id="word-found-sound" src="https://assets.codepen.io/217233/chime.mp3"></audio>
     <audio id="confetti-sound" src="https://assets.codepen.io/217233/confetti.mp3"></audio>
     <button id="musicToggleBtn" class="btn music-toggle"><i class="fas fa-volume-off"></i></button>
@@ -229,6 +229,15 @@
               passwordInput = document.getElementById("password"),
               musicToggleBtn = document.getElementById('musicToggleBtn');
         
+        // --- DITAMBAHKAN: Fungsi untuk mengatur musik latar ---
+        function setBackgroundMusic(data) {
+            const musicPlayer = document.getElementById('background-music');
+            if (data && data.musicUrl) {
+                musicPlayer.src = data.musicUrl;
+            }
+            // Jika tidak ada data.musicUrl, audio akan menggunakan src default dari HTML ('mayfa.mp3')
+        }
+
         // --- LOGIN & DATA FETCHING ---
         function getUrlParameter(name) { name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'); var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'); var results = regex.exec(location.search); return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' ')); }
         function showErrorPage(title, message) { loginContainer.style.display = 'none'; birthdayPage.style.display = 'none'; gameContainer.style.display = 'none'; document.getElementById('errorTitle').textContent = title; document.getElementById('errorMessage').textContent = message; errorPage.style.display = 'block'; document.body.classList.remove("no-scroll"); }
@@ -244,12 +253,15 @@
             await performGuestLogin(username, password, pageId);
         }
         
+        // --- MODIFIED: Fungsi baru untuk bypass login admin ---
         async function performAdminBypass(pageId) {
             showFeedback('loading', 'Memuat Halaman...');
             try {
                 const snapshot = await database.ref(`birthday_pages/${pageId}`).once('value');
                 if (snapshot.exists()) {
                     pageData = snapshot.val();
+                    setBackgroundMusic(pageData); // <-- DIPANGGIL DI SINI
+                    // Langsung tampilkan halaman ultah, tanpa game
                     loginContainer.style.display = "none";
                     gameContainer.style.display = 'none';
                     showBirthdayPage();
@@ -270,6 +282,7 @@
                 const data = snapshot.val();
                 if (data && data.guestUser === username && data.guestPass === password) {
                     pageData = data;
+                    setBackgroundMusic(pageData); // <-- DIPANGGIL DI SINI
                     await Swal.fire({ icon: 'success', title: 'Login Berhasil!', text: 'Selamat datang, ayo main game dulu!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, timerProgressBar: true, });
                     
                     loginContainer.style.animation = 'fadeOut 0.5s ease-out forwards';
@@ -454,65 +467,23 @@
             birthdayPage.style.display = "flex";
             document.body.classList.add("scroll-allowed");
             document.querySelector(".main-title span").textContent = pageData.birthdayName || 'Kamu';
-            
-            // Periksa apakah tanggal lahir adalah 2005-09-28
-            if (pageData.birthDate === "2005-09-28") {
-                calculateAndDisplayAge("2005-09-28");
-            } else if (pageData.birthDate) {
-                // Logika fallback jika tanggal lahir bukan yang spesifik
-                const birthDateObj = new Date(pageData.birthDate);
-                const today = new Date();
-                let years = today.getFullYear() - birthDateObj.getFullYear();
-                let months = today.getMonth() - birthDateObj.getMonth();
-                let days = today.getDate() - birthDateObj.getDate();
-                if (days < 0) { months--; days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); }
-                if (months < 0) { years--; months += 12; }
-                document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru!`;
-            } else {
-                document.getElementById("ageDisplay").innerText = "Tanggal lahir belum diatur.";
-            }
-
+            if (pageData.birthDate) { calculateAndDisplayAge(pageData.birthDate); } else { document.getElementById("ageDisplay").innerText = "Tanggal lahir belum diatur."; }
             document.getElementById('bestWishesText').textContent = pageData.bestWishes || 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan.';
             document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote || '"Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."';
-            
-            // --- UPDATED AND VERIFIED MUSIC LOGIC ---
-            if (pageData.musicUrl) {
-                const musicSource = backgroundMusic.querySelector('source');
-                // Only update and reload if the source is different
-                if (musicSource.src !== pageData.musicUrl) {
-                    musicSource.src = pageData.musicUrl;
-                    backgroundMusic.load();
-                }
-            }
-
             initScrollAnimations();
             startSnowfallEffect();
         }
 
         function calculateAndDisplayAge(birthDate) {
-            const birthDateObj = new Date(birthDate);
+            const birthDateObj = new Date(birthDate + 'T00:00:00');
             const today = new Date();
-             // Adjust for timezone to prevent off-by-one day errors
-            const userTimezoneOffset = birthDateObj.getTimezoneOffset() * 60000;
-            const birthDateUTC = new Date(birthDateObj.getTime() + userTimezoneOffset);
-
-            let years = today.getFullYear() - birthDateUTC.getFullYear();
-            let months = today.getMonth() - birthDateUTC.getMonth();
-            let days = today.getDate() - birthDateUTC.getDate();
-
-            if (days < 0) {
-                months--;
-                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
-            }
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
-            // Menggunakan informasi yang Anda berikan
-            const customAgeMessage = `sudah berapa lama kamu bertahan?`;
-            document.getElementById("ageDisplay").innerText = `${customAgeMessage} ${years} tahun, ${months} bulan, dan ${days} hari.`;
+            let years = today.getFullYear() - birthDateObj.getFullYear();
+            let months = today.getMonth() - birthDateObj.getMonth();
+            let days = today.getDate() - birthDateObj.getDate();
+            if (days < 0) { months--; days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); }
+            if (months < 0) { years--; months += 12; }
+            document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru!`;
         }
-
 
         function initScrollAnimations() { const cards = document.querySelectorAll('.message-card, .gift-section-card'); const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); } else { entry.target.classList.remove('is-visible'); } }); }, { root: null, rootMargin: '0px', threshold: 0.1 }); cards.forEach((card, index) => { card.style.setProperty('--initial-rotation', index % 2 === 0 ? '-15deg' : '15deg'); card.style.transitionDelay = `${index * 150}ms`; observer.observe(card); }); }
         
@@ -583,21 +554,7 @@
         
         // --- EVENT LISTENERS ---
         togglePassword.addEventListener("click", function() { const type = passwordInput.getAttribute("type") === "password" ? "text" : "password"; passwordInput.setAttribute("type", type); this.classList.toggle("fa-eye"); this.classList.toggle("fa-eye-slash"); });
-        musicToggleBtn.addEventListener('click', () => { 
-            const icon = musicToggleBtn.querySelector('i'); 
-            if (backgroundMusic.paused) { 
-                backgroundMusic.play().catch(e => {
-                    console.error("Music play failed:", e);
-                    Swal.fire('Autoplay Gagal', 'Browser Anda memblokir pemutaran otomatis. Klik tombol musik lagi untuk memulai.', 'info');
-                }); 
-                icon.classList.remove('fa-volume-off'); 
-                icon.classList.add('fa-volume-high'); 
-            } else { 
-                backgroundMusic.pause(); 
-                icon.classList.remove('fa-volume-high'); 
-                icon.classList.add('fa-volume-off'); 
-            } 
-        });
+        musicToggleBtn.addEventListener('click', () => { const icon = musicToggleBtn.querySelector('i'); if (backgroundMusic.paused) { backgroundMusic.play().catch(e => console.error("Music play failed:", e)); icon.classList.remove('fa-volume-off'); icon.classList.add('fa-volume-high'); } else { backgroundMusic.pause(); icon.classList.remove('fa-volume-high'); icon.classList.add('fa-volume-off'); } });
         giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
 
         // --- INITIAL LOAD LOGIC ---
@@ -606,16 +563,19 @@
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
             const authParam = urlParams.get('auth');
-            const superAdminAccess = urlParams.get('super_admin_access');
+            const superAdminAccess = urlParams.get('super_admin_access'); // MODIFIED: Get admin param
 
             if (!pageId) {
                 showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap.");
                 return;
             }
+
+            // --- MODIFIED: Logika untuk admin akses ---
             if (superAdminAccess === 'true') {
                 performAdminBypass(pageId);
-                return;
+                return; // Stop further execution
             }
+            // --- End of modification ---
 
             try {
                 const snapshot = await database.ref('birthday_pages/' + pageId).once('value');
@@ -625,18 +585,14 @@
                 }
                 
                 pageData = snapshot.val();
+                setBackgroundMusic(pageData); // <-- DIPANGGIL DI SINI
                 
                 if (authParam) {
-                    try {
-                        const decoded = JSON.parse(atob(authParam));
-                        const loginSuccess = await performGuestLogin(decoded.user, decoded.pass, pageId);
-                        if (!loginSuccess) {
-                            Swal.fire({ icon: 'info', title: 'Akses Otomatis Gagal', text: 'Silakan login manual.' });
-                            loginContainer.style.display = 'block';
-                        }
-                    } catch(e) {
-                         console.error("Auth param error: ", e);
-                         loginContainer.style.display = 'block';
+                    const decoded = JSON.parse(atob(authParam));
+                    const loginSuccess = await performGuestLogin(decoded.user, decoded.pass, pageId);
+                    if (!loginSuccess) {
+                        Swal.fire({ icon: 'info', title: 'Akses Otomatis Gagal', text: 'Silakan login manual.' });
+                        loginContainer.style.display = 'block';
                     }
                 } else {
                     loginContainer.style.display = 'block';
