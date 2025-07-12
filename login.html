@@ -454,16 +454,34 @@
             birthdayPage.style.display = "flex";
             document.body.classList.add("scroll-allowed");
             document.querySelector(".main-title span").textContent = pageData.birthdayName || 'Kamu';
-            if (pageData.birthDate) { calculateAndDisplayAge(pageData.birthDate); } else { document.getElementById("ageDisplay").innerText = "Tanggal lahir belum diatur."; }
+            
+            // Periksa apakah tanggal lahir adalah 2005-09-28
+            if (pageData.birthDate === "2005-09-28") {
+                calculateAndDisplayAge("2005-09-28");
+            } else if (pageData.birthDate) {
+                // Logika fallback jika tanggal lahir bukan yang spesifik
+                const birthDateObj = new Date(pageData.birthDate);
+                const today = new Date();
+                let years = today.getFullYear() - birthDateObj.getFullYear();
+                let months = today.getMonth() - birthDateObj.getMonth();
+                let days = today.getDate() - birthDateObj.getDate();
+                if (days < 0) { months--; days += new Date(today.getFullYear(), today.getMonth(), 0).getDate(); }
+                if (months < 0) { years--; months += 12; }
+                document.getElementById("ageDisplay").innerText = `Selamat! Kamu berhasil menyelesaikan misi selama ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru!`;
+            } else {
+                document.getElementById("ageDisplay").innerText = "Tanggal lahir belum diatur.";
+            }
+
             document.getElementById('bestWishesText').textContent = pageData.bestWishes || 'Semoga setiap langkahmu dipenuhi kebahagiaan dan kesuksesan.';
             document.getElementById('stayStrongQuoteText').textContent = pageData.stayStrongQuote || '"Teruslah kuat dan berjuang, kamu lebih hebat dari yang kamu kira."';
             
-            // --- UPDATED: Set background music based on saved data ---
+            // --- UPDATED AND VERIFIED MUSIC LOGIC ---
             if (pageData.musicUrl) {
                 const musicSource = backgroundMusic.querySelector('source');
+                // Only update and reload if the source is different
                 if (musicSource.src !== pageData.musicUrl) {
                     musicSource.src = pageData.musicUrl;
-                    backgroundMusic.load(); // Reload the audio element to apply the new source
+                    backgroundMusic.load();
                 }
             }
 
@@ -473,17 +491,17 @@
 
         function calculateAndDisplayAge(birthDate) {
             const birthDateObj = new Date(birthDate);
-            // Adjust for timezone to get correct date
             const today = new Date();
-            const birthDateUTC = new Date(birthDateObj.getUTCFullYear(), birthDateObj.getUTCMonth(), birthDateObj.getUTCDate());
-            
+             // Adjust for timezone to prevent off-by-one day errors
+            const userTimezoneOffset = birthDateObj.getTimezoneOffset() * 60000;
+            const birthDateUTC = new Date(birthDateObj.getTime() + userTimezoneOffset);
+
             let years = today.getFullYear() - birthDateUTC.getFullYear();
             let months = today.getMonth() - birthDateUTC.getMonth();
             let days = today.getDate() - birthDateUTC.getDate();
 
             if (days < 0) {
                 months--;
-                // Get the last day of the previous month
                 days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
             }
             if (months < 0) {
@@ -492,7 +510,7 @@
             }
             // Menggunakan informasi yang Anda berikan
             const customAgeMessage = `sudah berapa lama kamu bertahan?`;
-            document.getElementById("ageDisplay").innerText = `${customAgeMessage} ${years} tahun, ${months} bulan, dan ${days} hari untuk sampai di level ini. Semoga chapter barumu makin seru!`;
+            document.getElementById("ageDisplay").innerText = `${customAgeMessage} ${years} tahun, ${months} bulan, dan ${days} hari.`;
         }
 
 
