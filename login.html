@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
     <style>
         :root {
-            /* Dark Neumorphic Palette */
             --bg-color: #2c2f36;
             --shadow-dark: #202227;
             --shadow-light: #383c45;
@@ -24,50 +23,29 @@
             --primary-dark: #4a6fe0;
             --success: #28a745;
             --error: #dc3545;
-            --found: #ffc107; /* Warna untuk kata yang ditemukan */
+            --found: #ffc107;
             --transition-smooth: all 0.3s ease-in-out;
             --border-radius-main: 24px;
             --border-radius-inner: 15px;
         }
-
-        /* Base Styles & Utilities */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        body {
-            background: var(--bg-color);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow-x: hidden;
-            position: relative;
-            color: var(--text-color);
-        }
+        body { background: var(--bg-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; position: relative; color: var(--text-color); }
         body.no-scroll { overflow: hidden; }
         body.scroll-allowed { overflow: auto; }
-
-        /* Animations */
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes fadeOut { to { opacity: 0; transform: scale(0.95); } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes wobble-gift { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
         @keyframes fadeInCard-anim { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-
-        /* General Button Style */
         .btn { padding: 16px; background: var(--bg-color); border: none; border-radius: var(--border-radius-inner); color: var(--primary); font-size: 1.05rem; font-weight: 600; cursor: pointer; width: 100%; transition: var(--transition-smooth); box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn:hover:not(:disabled) { transform: translateY(-2px); color: var(--primary-dark); }
         .btn:active:not(:disabled) { transform: translateY(0px); box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light); }
         .btn:disabled { cursor: not-allowed; opacity: 0.7; }
-        
-        /* --- Error Page --- */
         .error-page { display: none; text-align: center; color: var(--text-light); animation: fadeIn 0.5s ease-out; z-index: 20; }
         .error-page .error-icon { font-size: 5rem; color: var(--primary); margin-bottom: 20px; }
         .error-page h1 { font-size: 2.2rem; color: var(--text-color); margin-bottom: 10px; }
         .error-page p { font-size: 1.1rem; }
-
-        /* --- Login Container --- */
         .login-container { width: 100%; max-width: 400px; display: none; }
         .login-box { background: var(--bg-color); border-radius: var(--border-radius-main); box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); padding: 40px; text-align: center; animation: fadeIn 0.8s ease forwards; }
         .login-header { margin-bottom: 35px; }
@@ -84,8 +62,6 @@
         #togglePassword { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-light); pointer-events: auto; z-index: 5; }
         #togglePassword:hover { color: var(--primary); }
         .login-box .btn { margin-top: 10px; }
-
-        /* --- Game Container (Added) --- */
         .game-container { display: none; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 500px; padding: 20px; animation: fadeIn 1s ease-out; user-select: none; }
         .game-container h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin-bottom: 5px; }
         .game-container p { font-size: clamp(0.9rem, 3vw, 1rem); color: var(--text-light); margin-bottom: 25px; }
@@ -97,8 +73,6 @@
         .word-item { font-size: 1.2rem; font-weight: 500; color: var(--text-light); position: relative; transition: color 0.3s ease; text-transform: uppercase; }
         .word-item.found { color: var(--text-color); }
         .word-item.found::after { content: ''; position: absolute; left: -5%; top: 55%; width: 110%; height: 3px; background-color: var(--found); transform: rotate(-5deg); animation: fadeIn 0.3s; }
-
-        /* --- Birthday Page --- */
         .birthday-page-container { display: none; flex-direction: column; align-items: center; padding-top: 8vh; padding-bottom: 8vh; width: 100%; max-width: 1000px; animation: fadeIn 1s ease-out forwards; overflow-y: auto; height: 95vh; }
         .birthday-content { width: 100%; text-align: center; z-index: 10; padding: 0 15px; }
         .main-title { font-family: 'Pacifico', cursive; font-size: clamp(3rem, 10vw, 6rem); line-height: 1.2; color: var(--text-color); text-shadow: 0 0 20px rgba(255,255,255,0.1); animation: fadeInDown 1s ease-out forwards; margin-bottom: 40px; }
@@ -113,8 +87,6 @@
         .gift-section-card.is-visible { opacity: 1; filter: blur(0); transform: perspective(800px) rotateY(0) scale(1); }
         .gift-btn { margin-top: 20px; color: var(--success); width: auto; padding: 15px 40px; font-size: 1.2rem; min-width: 200px; }
         .gift-btn:hover { color: #32c256; }
-
-        /* --- Modals & Other Styles --- */
         .feedback-modal, .gift-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; padding: 15px; animation: fadeIn 0.3s ease-out forwards; }
         .feedback-content { background: var(--bg-color); border-radius: var(--border-radius-main); box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); padding: 40px; text-align: center; width: 90%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
         .loader { margin: 0 auto; border: 6px solid var(--shadow-light); border-top: 6px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
@@ -123,10 +95,7 @@
         .gift-card { display: none; background: var(--bg-color); border-radius: var(--border-radius-main); padding: 30px; text-align: center; width: 100%; max-width: 320px; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); animation: fadeInCard-anim 0.5s ease-out forwards; color: var(--text-color); }
         #qrCodeImg { width: 180px; height: 180px; margin: 15px auto; border-radius: var(--border-radius-inner); background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 15px var(--shadow-dark), inset -5px -5px 15px var(--shadow-light); object-fit: contain; }
         .music-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; z-index: 1000; padding: 0; border-radius: 50%; }
-        
-        /* CSS untuk Salju Warna-warni */
         .snow-particle { position: fixed; top: -10px; border-radius: 50%; z-index: 5; pointer-events: none; }
-
         .swal2-popup { background-color: var(--bg-color) !important; border-radius: var(--border-radius-main) !important; color: var(--text-color) !important; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important; }
         .swal2-title { color: var(--text-color) !important; } .swal2-html-container { color: var(--text-light) !important; }
         .swal2-confirm { background-color: var(--primary) !important; color: white !important; } .swal2-confirm:hover { background-color: var(--primary-dark) !important; }
@@ -190,7 +159,7 @@
         <p id="errorMessage">Pastikan link yang Anda masukkan sudah benar dan lengkap.</p>
     </div>
     <div class="gift-modal" id="giftModal">
-        <div class="gift-box" onclick="openCard()"><img src="nir.gif" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
+        <div class="gift-box" onclick="openCard()"><img id="giftBoxImage" src="nir.gif" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
         <div class="gift-card" id="giftCard">
             <h2 style="font-weight: 600;">Hai, <span id="giftCardName"></span>!</h2>
             <p>Scan QR ini untuk klaim hadiahmu!</p>
@@ -229,13 +198,18 @@
               passwordInput = document.getElementById("password"),
               musicToggleBtn = document.getElementById('musicToggleBtn');
         
-        // --- DITAMBAHKAN: Fungsi untuk mengatur musik latar ---
         function setBackgroundMusic(data) {
             const musicPlayer = document.getElementById('background-music');
             if (data && data.musicUrl) {
                 musicPlayer.src = data.musicUrl;
             }
-            // Jika tidak ada data.musicUrl, audio akan menggunakan src default dari HTML ('mayfa.mp3')
+        }
+
+        function setGiftIcon(data) {
+            const giftImage = document.getElementById('giftBoxImage');
+            if (data && data.giftIconUrl) {
+                giftImage.src = data.giftIconUrl;
+            }
         }
 
         // --- LOGIN & DATA FETCHING ---
@@ -253,15 +227,14 @@
             await performGuestLogin(username, password, pageId);
         }
         
-        // --- MODIFIED: Fungsi baru untuk bypass login admin ---
         async function performAdminBypass(pageId) {
             showFeedback('loading', 'Memuat Halaman...');
             try {
                 const snapshot = await database.ref(`birthday_pages/${pageId}`).once('value');
                 if (snapshot.exists()) {
                     pageData = snapshot.val();
-                    setBackgroundMusic(pageData); // <-- DIPANGGIL DI SINI
-                    // Langsung tampilkan halaman ultah, tanpa game
+                    setBackgroundMusic(pageData);
+                    setGiftIcon(pageData);
                     loginContainer.style.display = "none";
                     gameContainer.style.display = 'none';
                     showBirthdayPage();
@@ -282,7 +255,8 @@
                 const data = snapshot.val();
                 if (data && data.guestUser === username && data.guestPass === password) {
                     pageData = data;
-                    setBackgroundMusic(pageData); // <-- DIPANGGIL DI SINI
+                    setBackgroundMusic(pageData);
+                    setGiftIcon(pageData);
                     await Swal.fire({ icon: 'success', title: 'Login Berhasil!', text: 'Selamat datang, ayo main game dulu!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, timerProgressBar: true, });
                     
                     loginContainer.style.animation = 'fadeOut 0.5s ease-out forwards';
@@ -462,7 +436,6 @@
             gameContainer.addEventListener('animationend', () => { gameContainer.style.display = 'none'; showBirthdayPage(); }, { once: true });
         }
         
-        // --- BIRTHDAY PAGE & VISUAL EFFECTS LOGIC ---
         function showBirthdayPage() {
             birthdayPage.style.display = "flex";
             document.body.classList.add("scroll-allowed");
@@ -552,30 +525,26 @@
             }, 250);
         }
         
-        // --- EVENT LISTENERS ---
         togglePassword.addEventListener("click", function() { const type = passwordInput.getAttribute("type") === "password" ? "text" : "password"; passwordInput.setAttribute("type", type); this.classList.toggle("fa-eye"); this.classList.toggle("fa-eye-slash"); });
         musicToggleBtn.addEventListener('click', () => { const icon = musicToggleBtn.querySelector('i'); if (backgroundMusic.paused) { backgroundMusic.play().catch(e => console.error("Music play failed:", e)); icon.classList.remove('fa-volume-off'); icon.classList.add('fa-volume-high'); } else { backgroundMusic.pause(); icon.classList.remove('fa-volume-high'); icon.classList.add('fa-volume-off'); } });
         giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
 
-        // --- INITIAL LOAD LOGIC ---
         document.addEventListener('DOMContentLoaded', async () => {
             document.body.classList.add("no-scroll");
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
             const authParam = urlParams.get('auth');
-            const superAdminAccess = urlParams.get('super_admin_access'); // MODIFIED: Get admin param
+            const superAdminAccess = urlParams.get('super_admin_access');
 
             if (!pageId) {
                 showErrorPage("Halaman Tidak Ditemukan", "Pastikan link yang Anda masukkan sudah benar dan lengkap.");
                 return;
             }
 
-            // --- MODIFIED: Logika untuk admin akses ---
             if (superAdminAccess === 'true') {
                 performAdminBypass(pageId);
-                return; // Stop further execution
+                return;
             }
-            // --- End of modification ---
 
             try {
                 const snapshot = await database.ref('birthday_pages/' + pageId).once('value');
@@ -585,7 +554,8 @@
                 }
                 
                 pageData = snapshot.val();
-                setBackgroundMusic(pageData); // <-- DIPANGGIL DI SINI
+                setBackgroundMusic(pageData);
+                setGiftIcon(pageData);
                 
                 if (authParam) {
                     const decoded = JSON.parse(atob(authParam));
