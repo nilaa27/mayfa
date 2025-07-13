@@ -316,6 +316,8 @@
         registerTabLabel.addEventListener('click', showRegisterView);
         mainActionBtn.addEventListener('click', handleMainAction);
         document.getElementById('google-signin-btn').addEventListener('click', signInWithGoogle);
+        // Menambahkan kembali event listener untuk tombol salin
+        document.getElementById('copyLinkBtn').addEventListener('click', copyShareableLink);
     });
 
     function handleMainAction() {
@@ -426,13 +428,21 @@
     }
     
     function createDefaultUserData(user) {
-        const defaultData = { birthdayName: user.displayName || 'Nama Anda', birthDate: "2005-09-28", guestUser: "tamu", guestPass: "12345", qrImageUrl: "", bestWishes: "", stayStrongQuote: "", qrMessage: "", targetWhatsappNumber: "", puzzleWord1: 'ULTAH', puzzleWord2: 'KADO', puzzleWord3: 'DOA', musicUrl: 'mayfa.mp3', giftIconUrl: 'nir.gif' };
+        const defaultData = { birthdayName: user.displayName || user.email, birthDate: "2005-09-28", guestUser: "tamu", guestPass: "12345", qrImageUrl: "", bestWishes: "", stayStrongQuote: "", qrMessage: "", targetWhatsappNumber: "", puzzleWord1: 'ULTAH', puzzleWord2: 'KADO', puzzleWord3: 'DOA', musicUrl: 'mayfa.mp3', giftIconUrl: 'nir.gif' };
         return database.ref('birthday_pages/' + user.uid).set(defaultData);
     }
     
     function loadDataToForm(user) {
         if (!user) return;
-        Swal.fire({ icon: 'success', title: `Login Berhasil!`, text: 'Memuat data panel...', timer: 1500, showConfirmButton: false, allowOutsideClick: false, didOpen: triggerConfetti });
+        Swal.fire({ 
+            icon: 'success', 
+            title: `Selamat Datang, ${user.displayName || 'Pengguna'}!`, 
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
         database.ref('birthday_pages/' + user.uid).once('value').then(s => {
             const data = s.val() || {};
             // Fill form data...
@@ -448,8 +458,9 @@
             document.getElementById('puzzleWord3').value = data.puzzleWord3 || '';
             document.getElementById('qrImageUrlInput').value = data.qrImageUrl || '';
             document.getElementById('qrMessageInput').value = data.qrMessage || '';
-            document.getElementById('qrPreviewImage').src = data.qrImageUrl || '';
-            document.getElementById('qrPreviewImage').style.display = data.qrImageUrl ? 'block' : 'none';
+            const qrImage = document.getElementById('qrPreviewImage');
+            qrImage.src = data.qrImageUrl || '';
+            qrImage.style.display = data.qrImageUrl ? 'block' : 'none';
 
             const realDateInput = document.getElementById('birthDateInput');
             const dateDisplayText = document.getElementById('dateDisplayText');
@@ -459,8 +470,29 @@
             realDateInput.value = data.birthDate || '';
             dateDisplayText.textContent = formatDateForDisplay(data.birthDate);
 
-            // Music and Gift logic would also be here
         }).catch(err => Swal.fire('Gagal Memuat Data', err.message, 'error'));
+    }
+
+    // Menambahkan kembali fungsi untuk menyalin link
+    function copyShareableLink() {
+        const linkInput = document.getElementById('shareableLink');
+        if (linkInput.value) {
+            navigator.clipboard.writeText(linkInput.value)
+                .then(() => { 
+                    Swal.fire({ 
+                        icon: 'success', 
+                        title: 'Link Berhasil Disalin!', 
+                        toast: true, 
+                        position: 'top-end', 
+                        showConfirmButton: false, 
+                        timer: 2000 
+                    }); 
+                })
+                .catch(err => { 
+                    console.error('Gagal menyalin:', err); 
+                    Swal.fire('Oops!', 'Gagal menyalin link.', 'error'); 
+                });
+        }
     }
 
     function logout() {
@@ -480,6 +512,7 @@
         const saveBtn = document.querySelector('.btn-save');
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+        // music and gift index logic would need to be re-added if those elements are used.
         const settings = { birthdayName: document.getElementById('birthdayNameInput').value, birthDate: document.getElementById('birthDateInput').value, bestWishes: document.getElementById('bestWishesInput').value, stayStrongQuote: document.getElementById('stayStrongQuoteInput').value, guestUser: document.getElementById('guestUserInput').value, guestPass: document.getElementById('guestPassInput').value, targetWhatsappNumber: document.getElementById('targetWhatsappNumber').value.trim(), puzzleWord1: document.getElementById('puzzleWord1').value.trim().toUpperCase(), puzzleWord2: document.getElementById('puzzleWord2').value.trim().toUpperCase(), puzzleWord3: document.getElementById('puzzleWord3').value.trim().toUpperCase(), qrImageUrl: document.getElementById('qrImageUrlInput').value, qrMessage: document.getElementById('qrMessageInput').value };
         database.ref('birthday_pages/' + user.uid).update(settings).then(() => { 
             const shareableLink = document.getElementById('shareableLink').value; 
