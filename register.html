@@ -239,6 +239,17 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="panel-section">
+                            <div class="section-title"><i class="fas fa-gift"></i><span>Pilih Ikon Kado</span></div>
+                            <div class="gift-carousel-container" style="text-align: center;">
+                                <img id="gift-preview-image" src="nir.gif" alt="Pratinjau Kado" style="max-width: 120px; height: 120px; object-fit: contain; margin-bottom: 20px; border-radius: var(--radius-inner); background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);">
+                                <div id="gift-display" style="font-size: 1.2rem; font-weight: 600; color: var(--text-color); margin-bottom: 25px;">Kado Default</div>
+                                <div class="gift-controls" style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+                                    <button type="button" id="prevGiftBtn" class="music-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                                    <button type="button" id="nextGiftBtn" class="music-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
                         <div class="panel-section"><div class="section-title"><i class="fas fa-puzzle-piece"></i><span>Setting Game Kata</span></div><div class="input-group"><label for="puzzleWord1">Kata Tersembunyi 1</label><div class="input-wrapper"><i class="fas fa-font icon-left"></i><input type="text" id="puzzleWord1" class="input-field" placeholder="Contoh: ULTAH" maxlength="8" required></div></div><div class="input-group"><label for="puzzleWord2">Kata Tersembunyi 2</label><div class="input-wrapper"><i class="fas fa-font icon-left"></i><input type="text" id="puzzleWord2" class="input-field" placeholder="Contoh: KADO" maxlength="8" required></div></div><div class="input-group"><label for="puzzleWord3">Kata Tersembunyi 3</label><div class="input-wrapper"><i class="fas fa-font icon-left"></i><input type="text" id="puzzleWord3" class="input-field" placeholder="Contoh: DOA" maxlength="8" required></div></div></div>
                         <div class="panel-section"><div class="section-title"><i class="fas fa-qrcode"></i><span>Kode QR</span></div><div class="input-group"><label for="qrImageUrlInput">URL Gambar QR</label><div class="input-wrapper"><i class="fas fa-image icon-left"></i><input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://..." required></div></div><img id="qrPreviewImage" class="qr-preview-image" src="" alt="Pratinjau QR"><div class="input-group" style="margin-top: 20px;"><label for="qrMessageInput">Pesan di bawah QR</label><div class="input-wrapper"><textarea id="qrMessageInput" class="input-field" rows="3" placeholder="Masukkan pesan di bawah QR code..."></textarea></div></div></div>
                         <div class="panel-section"><div class="section-title"><i class="fas fa-share-alt"></i><span>Link Publik</span></div><div class="input-group"><label for="shareableLink">Bagikan link ini</label><div class="input-wrapper"><i class="fas fa-link icon-left"></i><input type="text" id="shareableLink" class="input-field" readonly><i class="fas fa-copy icon-right" id="copyLinkBtn" title="Salin Link"></i></div></div></div>
@@ -286,6 +297,19 @@
     const nextMusicBtn = document.getElementById('nextMusicBtn');
     const previewBtn = document.getElementById('music-preview-btn');
 
+    // --- Gift Carousel Variables & Logic ---
+    const giftIcons = [
+        { name: "Kado Default", path: "nir.gif" },
+        { name: "Kado 1", path: "/img/gif1.gif" },
+        { name: "Kado 2", path: "/img/gif2.gif" },
+        { name: "Kado 3", path: "/img/gif3.gif" }
+    ];
+    let currentGiftIndex = 0;
+    const giftDisplay = document.getElementById('gift-display');
+    const giftPreviewImage = document.getElementById('gift-preview-image');
+    const prevGiftBtn = document.getElementById('prevGiftBtn');
+    const nextGiftBtn = document.getElementById('nextGiftBtn');
+
     function updateMusicDisplay() {
         musicDisplay.textContent = musicTracks[currentMusicIndex].name;
         musicPreviewPlayer.src = musicTracks[currentMusicIndex].path;
@@ -312,6 +336,23 @@
     });
     musicPreviewPlayer.onended = () => previewBtn.querySelector('i').classList.replace('fa-pause', 'fa-play');
     
+    function updateGiftDisplay() {
+        if (giftDisplay && giftPreviewImage) {
+            giftDisplay.textContent = giftIcons[currentGiftIndex].name;
+            giftPreviewImage.src = giftIcons[currentGiftIndex].path;
+        }
+    }
+
+    prevGiftBtn.addEventListener('click', () => {
+        currentGiftIndex = (currentGiftIndex - 1 + giftIcons.length) % giftIcons.length;
+        updateGiftDisplay();
+    });
+
+    nextGiftBtn.addEventListener('click', () => {
+        currentGiftIndex = (currentGiftIndex + 1) % giftIcons.length;
+        updateGiftDisplay();
+    });
+
     // --- Custom Date Field Logic ---
     const realDateInput = document.getElementById('birthDateInput');
     const dateDisplayText = document.getElementById('dateDisplayText');
@@ -389,7 +430,7 @@
                 const newAdminRef = database.ref('admins').push();
                 newAdminRef.set({ username: adminName, password: adminPass, createdAt: new Date().toISOString() })
                 .then(() => {
-                    const defaultData = { birthdayName: adminName, birthDate: new Date().toISOString().split('T')[0], guestUser: "guest", guestPass: "123", qrImageUrl: "", bestWishes: "", stayStrongQuote: "", qrMessage: "", targetWhatsappNumber: "", puzzleWord1: 'ULTAH', puzzleWord2: 'KADO', puzzleWord3: 'DOA', musicUrl: 'mayfa.mp3' };
+                    const defaultData = { birthdayName: adminName, birthDate: new Date().toISOString().split('T')[0], guestUser: "guest", guestPass: "123", qrImageUrl: "", bestWishes: "", stayStrongQuote: "", qrMessage: "", targetWhatsappNumber: "", puzzleWord1: 'ULTAH', puzzleWord2: 'KADO', puzzleWord3: 'DOA', musicUrl: 'mayfa.mp3', giftIconUrl: 'nir.gif' };
                     return database.ref('birthday_pages/' + newAdminRef.key).set(defaultData);
                 })
                 .then(() => { triggerConfetti(); Swal.fire('Akun Berhasil Dibuat!', 'Silakan login menggunakan akun baru Anda.', 'success'); showLoginView(); document.getElementById('adminUser').value = adminName; document.getElementById('adminPass').focus(); })
@@ -430,9 +471,15 @@
             dateDisplayText.textContent = formatDateForDisplay(data.birthDate);
             
             const savedMusicPath = data.musicUrl || 'mayfa.mp3';
-            const savedIndex = musicTracks.findIndex(track => track.path === savedMusicPath);
-            currentMusicIndex = (savedIndex !== -1) ? savedIndex : 0;
+            const savedMusicIndex = musicTracks.findIndex(track => track.path === savedMusicPath);
+            currentMusicIndex = (savedMusicIndex !== -1) ? savedMusicIndex : 0;
             updateMusicDisplay();
+
+            const savedGiftPath = data.giftIconUrl || 'nir.gif';
+            const savedGiftIndex = giftIcons.findIndex(icon => icon.path === savedGiftPath);
+            currentGiftIndex = (savedGiftIndex !== -1) ? savedGiftIndex : 0;
+            updateGiftDisplay();
+
         }).catch(err => Swal.fire('Gagal Memuat Data', err.message, 'error'));
     }
 
@@ -451,7 +498,8 @@
             puzzleWord3: document.getElementById('puzzleWord3').value.trim().toUpperCase(), 
             qrImageUrl: document.getElementById('qrImageUrlInput').value, 
             qrMessage: document.getElementById('qrMessageInput').value,
-            musicUrl: musicTracks[currentMusicIndex].path
+            musicUrl: musicTracks[currentMusicIndex].path,
+            giftIconUrl: giftIcons[currentGiftIndex].path
         }; 
 
         database.ref('birthday_pages/' + currentAdminId).update(settings).then(() => { 
