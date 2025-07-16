@@ -38,7 +38,7 @@
         --text-muted: #666666;
     }
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
     @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
@@ -125,7 +125,6 @@
     .auth-form-side { position: absolute; top: 0; left: 0; width: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
     #register-form-content { transform: rotateY(180deg); }
     
-    /* === STYLES FOR INPUT FIELDS RESTORED FROM ORIGINAL === */
     .input-group { margin-bottom: 25px; text-align: left; }
     .input-group label { display: block; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; margin-bottom: 12px; padding-left: 5px; }
     .input-wrapper { position: relative; }
@@ -136,12 +135,16 @@
     textarea ~ .icon-left { top: 22px; }
     .input-wrapper .icon-right { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: var(--transition); }
     .input-field:focus ~ .icon-left { color: var(--primary); }
-    /* === END OF RESTORED STYLES === */
 
     .btn-primary { width: 100%; padding: 18px; background: var(--primary); border: none; border-radius: var(--radius-inner); color: white; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); display: flex; align-items: center; justify-content: center; gap: 10px; }
     .btn-primary:hover:not(:disabled) { transform: translateY(-3px); background: var(--primary-dark); }
     .btn-primary:active:not(:disabled) { transform: translateY(0); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
     .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    
+    .terms-section { text-align: center; margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); }
+    .terms-section a { color: var(--text-muted); text-decoration: underline; font-weight: 500; }
+    .terms-section a:hover { color: var(--primary); }
+
     .btn-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 16px; background: var(--bg-color); border: none; border-radius: var(--radius-inner); color: var(--text-color); font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); margin-bottom: 20px; }
     .btn-google:hover { transform: translateY(-3px); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
     .btn-google:active { transform: translateY(0); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
@@ -150,8 +153,14 @@
     .auth-separator::before, .auth-separator::after { content: ''; flex: 1; border-bottom: 1px solid var(--shadow-dark); }
     .auth-separator:not(:empty)::before { margin-right: .5em; }
     .auth-separator:not(:empty)::after { margin-left: .5em; }
-    .support-section { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 30px; }
     
+    .support-section { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 25px; border-top: 1px solid var(--shadow-dark); padding-top: 25px; }
+    .footer-nav { display: flex; justify-content: center; align-items: center; gap: 25px; margin-bottom: 15px; }
+    .footer-nav a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: var(--transition); }
+    .footer-nav a:hover { color: var(--primary); }
+    .footer-copyright { margin-bottom: 10px; }
+    .footer-creator .fa-heart { color: var(--pink); animation: pulse 1.5s ease-in-out infinite; display: inline-block; }
+
     @media (max-width: 991px) {
         #auth-container { max-width: 450px; }
         .auth-card { flex-direction: column; }
@@ -216,13 +225,21 @@
     .image-upload-box:hover { border-color: var(--primary); color: var(--primary); }
     @media (max-width: 991px) { .panel-layout { display: flex; flex-direction: column; padding-right: 0; } .panel-actions { flex-direction: column-reverse; align-items: stretch; gap: 15px; } .btn { width: 100%; } }
 
-    /* SweetAlert2 styles (unchanged) */
+    /* SweetAlert2 specific styles */
     .swal2-popup { background: var(--bg-color) !important; color: var(--text-color) !important; border-radius: var(--radius-main) !important; }
     .swal2-title { color: var(--text-color) !important; }
     .swal2-html-container { color: var(--text-muted) !important; }
     .swal2-confirm, .swal2-cancel, .swal2-deny { border: none !important; border-radius: var(--radius-inner) !important; font-weight: 600 !important; }
     .swal2-confirm { background: var(--primary) !important; color: #fff !important; }
     .swal2-cancel { background-color: var(--bg-color) !important; color: var(--text-muted) !important; }
+
+    /* NEW: Styles for the contact form popup */
+    .swal-contact-form { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+    .swal-form-group { width: 100%; margin-bottom: 15px; }
+    .swal-form-group label { margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); display: block; }
+    .swal-form-group .swal2-input, .swal-form-group .swal2-textarea { width: 100% !important; margin: 0; background: var(--bg-color) !important; box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light) !important; border: none !important; border-radius: var(--radius-inner) !important; color: var(--text-color) !important; }
+    .swal-form-group .swal2-input:focus, .swal-form-group .swal2-textarea:focus { box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light), 0 0 0 2px var(--primary) !important; }
+    
     </style>
 </head>
 <body>
@@ -300,8 +317,22 @@
                 
                 <button class="btn-primary" id="main-action-btn"><i class="fas fa-sign-in-alt"></i> Masuk</button>
                 
+                <div class="terms-section">
+                    <p>By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+                </div>
+                
                 <div class="support-section">
-                    <p>© 2025 xlordcode. All Rights Reserved.</p>
+                    <div class="footer-nav">
+                        <a href="index.html">Home</a>
+                        <a href="#">Dashboard</a>
+                        <a href="#" id="contact-link">Contact</a>
+                    </div>
+                    <p class="footer-copyright">
+                        © 2025 xlordcode. All rights reserved.
+                    </p>
+                    <p class="footer-creator">
+                        Made with <i class="fas fa-heart"></i> by Misbah
+                    </p>
                 </div>
             </div>
         </div>
@@ -494,6 +525,49 @@
             if (registerForm) { authFlipper.style.height = `${registerForm.offsetHeight}px`; }
         }, 50);
     }
+    
+    function showContactForm() {
+        Swal.fire({
+            title: 'Hubungi Kami',
+            html: `
+            <div class="swal-contact-form">
+                <div class="swal-form-group">
+                    <label for="swal-name">Nama Anda</label>
+                    <input id="swal-name" class="swal2-input" placeholder="John Doe">
+                </div>
+                <div class="swal-form-group">
+                    <label for="swal-email">Email Anda</label>
+                    <input id="swal-email" type="email" class="swal2-input" placeholder="john.doe@example.com">
+                </div>
+                <div class="swal-form-group">
+                    <label for="swal-message">Pesan Anda</label>
+                    <textarea id="swal-message" class="swal2-textarea" placeholder="Tulis pesan Anda di sini..."></textarea>
+                </div>
+            </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Kirim Pesan',
+            cancelButtonText: 'Batal',
+            preConfirm: () => {
+                const name = document.getElementById('swal-name').value;
+                const email = document.getElementById('swal-email').value;
+                const message = document.getElementById('swal-message').value;
+                if (!name || !email || !message) {
+                    Swal.showValidationMessage(`Harap isi semua kolom`);
+                }
+                return { name: name, email: email, message: message };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('Contact Form Data:', result.value);
+                Swal.fire(
+                    'Terkirim!',
+                    'Terima kasih telah menghubungi kami. Pesan Anda telah kami terima.',
+                    'success'
+                );
+            }
+        });
+    }
 
     function renderCarousels() { musicCarouselTrack.innerHTML = musicTracks.map((track, index) => `<div class="carousel-item" data-index="${index}"><i class="fas fa-music item-icon"></i><span class="item-name">${track.name}</span></div>`).join(''); giftCarouselTrack.innerHTML = giftIcons.map((gift, index) => `<div class="carousel-item" data-index="${index}"><img src="${gift.path}" alt="${gift.name}"><span class="item-name">${gift.name}</span></div>`).join(''); addCarouselListeners(); }
     function addCarouselListeners() { musicCarouselTrack.addEventListener('click', e => { const item = e.target.closest('.carousel-item'); if (item) { currentMusicIndex = parseInt(item.dataset.index); updateMusicSelection(); } }); giftCarouselTrack.addEventListener('click', e => { const item = e.target.closest('.carousel-item'); if (item) { currentGiftIndex = parseInt(item.dataset.index); updateGiftSelection(); } }); }
@@ -635,6 +709,11 @@
         document.getElementById('copyLinkBtn').addEventListener('click', copyShareableLink);
         document.getElementById('birthDateInput').addEventListener('change', () => { document.getElementById('dateDisplayText').textContent = formatDateForDisplay(document.getElementById('birthDateInput').value); });
         
+        document.getElementById('contact-link').addEventListener('click', (event) => {
+            event.preventDefault();
+            showContactForm();
+        });
+
         document.getElementById('prevMusicBtn').addEventListener('click', () => { currentMusicIndex = (currentMusicIndex - 1 + musicTracks.length) % musicTracks.length; updateMusicSelection(); });
         document.getElementById('nextMusicBtn').addEventListener('click', () => { currentMusicIndex = (currentMusicIndex + 1) % musicTracks.length; updateMusicSelection(); });
         document.getElementById('music-preview-btn').addEventListener('click', () => { const icon = document.getElementById('music-preview-btn').querySelector('i'); if (musicPreviewPlayer.paused) { musicPreviewPlayer.play().catch(e => console.error("Audio play failed", e)); icon.classList.replace('fa-play', 'fa-pause'); } else { musicPreviewPlayer.pause(); icon.classList.replace('fa-pause', 'fa-play'); } });
