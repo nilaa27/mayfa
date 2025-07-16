@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
+<html lang="id" data-theme="dark"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday For You!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="shortcut icon" type="image/png" href="/favicon.PNG" />
+    <link rel="shortcut icon" type="image/png" href="IMG_1551.png" />
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -14,6 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
     <style>
         :root {
+            /* Default: Dark Mode Colors */
             --bg-color: #2c2f36;
             --shadow-dark: #202227;
             --shadow-light: #383c45;
@@ -28,8 +28,23 @@
             --border-radius-main: 24px;
             --border-radius-inner: 15px;
         }
+
+        [data-theme="light"] {
+            /* Light Mode Colors */
+            --bg-color: #e4e9f2;
+            --shadow-dark: #c8d0db;
+            --shadow-light: #ffffff;
+            --text-color: #313848;
+            --text-light: #6c7990;
+            --primary: #5a7dff;
+            --primary-dark: #4a6fe0;
+            --success: #28a745;
+            --error: #dc3545;
+            --found: #ffc107;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--bg-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; position: relative; color: var(--text-color); }
+        body { background: var(--bg-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; position: relative; color: var(--text-color); transition: background-color 0.3s, color 0.3s; }
         body.no-scroll { overflow: hidden; }
         body.scroll-allowed { overflow: auto; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
@@ -94,7 +109,16 @@
         .gift-box img { width: 100%; height: 100%; object-fit: contain; }
         .gift-card { display: none; background: var(--bg-color); border-radius: var(--border-radius-main); padding: 30px; text-align: center; width: 100%; max-width: 320px; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); animation: fadeInCard-anim 0.5s ease-out forwards; color: var(--text-color); }
         #qrCodeImg { width: 180px; height: 180px; margin: 15px auto; border-radius: var(--border-radius-inner); background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 15px var(--shadow-dark), inset -5px -5px 15px var(--shadow-light); object-fit: contain; }
-        .music-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; z-index: 1000; padding: 0; border-radius: 50%; }
+        
+        /* --- START: TOMBOL BARU --- */
+        .floating-btn { position: fixed; width: 50px; height: 50px; z-index: 1000; padding: 0; border-radius: 50%; color: var(--text-light); }
+        .floating-btn:hover { color: var(--primary); }
+        .theme-toggle { top: 20px; left: 20px; }
+        .music-toggle { top: 20px; right: 20px; }
+        [data-theme="dark"] .theme-toggle .fa-sun { display: none; }
+        [data-theme="light"] .theme-toggle .fa-moon { display: none; }
+        /* --- END: TOMBOL BARU --- */
+
         .snow-particle { position: fixed; top: -10px; border-radius: 50%; z-index: 5; pointer-events: none; }
         .swal2-popup { background-color: var(--bg-color) !important; border-radius: var(--border-radius-main) !important; color: var(--text-color) !important; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important; }
         .swal2-title { color: var(--text-color) !important; } .swal2-html-container { color: var(--text-light) !important; }
@@ -109,7 +133,9 @@
     <audio id="background-music" loop src="mayfa.mp3"></audio>
     <audio id="word-found-sound" src="https://assets.codepen.io/217233/chime.mp3"></audio>
     <audio id="confetti-sound" src="https://assets.codepen.io/217233/confetti.mp3"></audio>
-    <button id="musicToggleBtn" class="btn music-toggle"><i class="fas fa-volume-off"></i></button>
+
+    <button id="themeToggleBtn" class="btn floating-btn theme-toggle"><i class="fas fa-moon"></i><i class="fas fa-sun"></i></button>
+    <button id="musicToggleBtn" class="btn floating-btn music-toggle"><i class="fas fa-volume-off"></i></button>
 
     <div class="login-container" id="loginContainer">
         <div class="login-box">
@@ -196,8 +222,23 @@
               confettiSound = document.getElementById('confetti-sound'), 
               togglePassword = document.getElementById("togglePassword"), 
               passwordInput = document.getElementById("password"),
-              musicToggleBtn = document.getElementById('musicToggleBtn');
+              musicToggleBtn = document.getElementById('musicToggleBtn'),
+              themeToggleBtn = document.getElementById('themeToggleBtn'); // <-- ELEMEN BARU
         
+        // --- START: FUNGSI BARU UNTUK TEMA ---
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+        // --- END: FUNGSI BARU UNTUK TEMA ---
+
         function setBackgroundMusic(data) {
             const musicPlayer = document.getElementById('background-music');
             if (data && data.musicUrl) {
@@ -530,6 +571,7 @@
         giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
 
         document.addEventListener('DOMContentLoaded', async () => {
+            initTheme(); // <-- PANGGIL FUNGSI INISIASI TEMA
             document.body.classList.add("no-scroll");
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
