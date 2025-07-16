@@ -12,10 +12,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
     <style>
     :root {
-        /* Dark Mode Colors */
         --bg-color: #242831;
         --shadow-dark: #1a1d25;
         --shadow-light: #2e333e;
@@ -30,677 +29,120 @@
         --radius-main: 25px;
         --radius-inner: 15px;
     }
-
-    /* Light Mode Colors */
     [data-theme="light"] {
         --bg-color: #f0f2f5;
         --shadow-dark: #d9dde2;
         --shadow-light: #ffffff;
         --text-color: #333333;
         --text-muted: #666666;
-        --primary: #7a5dff;
-        --primary-dark: #694fe2;
-        --success: #28a745;
-        --error: #dc3545;
-        --pink: #ff69b4;
     }
-
-    /* Animations */
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.6; }
-    }
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Base Styles */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-        background: var(--bg-color);
-        color: var(--text-color);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        transition: var(--transition);
-    }
-
-    /* Theme Toggle */
-    .theme-toggle {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--bg-color);
-        box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        z-index: 100;
-        transition: var(--transition);
-    }
-    .theme-toggle:hover {
-        transform: scale(1.1);
-    }
-    .theme-toggle:active {
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-    }
-    .theme-toggle i {
-        font-size: 1.2rem;
-        color: var(--text-color);
-        transition: var(--transition);
-    }
-    [data-theme="dark"] .fa-moon,
-    [data-theme="light"] .fa-sun {
-        display: none;
-    }
-
-    /* Main Container */
-    #auth-container {
-        width: 100%;
-        max-width: 450px;
-        transition: all 0.6s ease;
-        perspective: 1500px;
-    }
-    #auth-container.is-active {
-        max-width: 1200px;
-        min-height: 95vh;
-    }
-
-    /* Auth Box */
-    #auth-box {
-        background: var(--bg-color);
-        border-radius: var(--radius-main);
-        box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light);
-        padding: 40px;
-        width: 100%;
-        display: none;
-        animation: slideIn 0.6s ease-out;
-    }
-    #auth-container.loaded #auth-box {
-        display: block;
-    }
-
-    /* Brand Header */
-    .brand-header {
-        text-align: center;
-        margin-bottom: 35px;
-        animation: slideIn 0.8s ease-out;
-    }
-    .brand-header img {
-        width: 80px;
-        height: 80px;
-        border-radius: var(--radius-inner);
-        margin: 0 auto 20px;
-        padding: 10px;
-        background: var(--bg-color);
-        box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
-        transition: var(--transition);
-    }
-    .brand-header img:hover {
-        transform: scale(1.05) rotate(5deg);
-    }
-    .brand-header h1 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-        background: linear-gradient(90deg, var(--primary), var(--pink), var(--primary));
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: gradientBG 4s linear infinite;
-    }
-    .brand-header p {
-        color: var(--text-muted);
-        font-size: 1rem;
-    }
-
-    /* Tabs */
-    .slider-tabs {
-        position: relative;
-        padding: 5px;
-        border-radius: var(--radius-inner);
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-        margin-bottom: 25px;
-        overflow: hidden;
-    }
-    .slider-tabs-track {
-        display: flex;
-        width: 100%;
-    }
-    .tab-label {
-        flex: 1;
-        text-align: center;
-        padding: 14px;
-        font-weight: 600;
-        color: var(--text-muted);
-        cursor: pointer;
-        z-index: 2;
-        transition: color 0.3s ease;
-    }
-    .slider-thumb {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        width: calc(50% - 5px);
-        height: calc(100% - 10px);
-        background: var(--bg-color);
-        border-radius: 10px;
-        box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-        transition: transform 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
-        z-index: 1;
-    }
-    .slider-tabs.register-active .slider-thumb {
-        transform: translateX(100%);
-    }
-    .slider-tabs.login-active #login-tab-label,
-    .slider-tabs.register-active #register-tab-label {
-        color: var(--primary);
-    }
-
-    #auth-flipper {
-        position: relative;
-        transform-style: preserve-3d;
-        transition: transform 0.6s cubic-bezier(0.65, 0.05, 0.36, 1), height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
-        margin-bottom: 20px;
-    }
-    #auth-flipper.is-flipped {
-        transform: rotateY(180deg);
-    }
-    .auth-form-side {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-    }
-    #register-form-content {
-        transform: rotateY(180deg);
-    }
-
-    /* Forms */
-    .input-group {
-        margin-bottom: 25px;
-        text-align: left;
-    }
-    .input-group label {
-        display: block;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin-bottom: 12px;
-        padding-left: 5px;
-    }
-    .input-wrapper {
-        position: relative;
-    }
-    .input-field {
-        width: 100%;
-        padding: 18px 22px 18px 55px;
-        background: var(--bg-color);
-        border: none;
-        border-radius: var(--radius-inner);
-        color: var(--text-color);
-        font-size: 1rem;
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-        transition: var(--transition);
-    }
-    .input-field:focus {
-        outline: none;
-        box-shadow: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light), 0 0 0 2px var(--primary);
-    }
-    .input-wrapper .icon-left {
-        position: absolute;
-        top: 50%;
-        left: 20px;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        font-size: 1rem;
-        transition: var(--transition);
-    }
-    .input-wrapper .icon-right {
-        position: absolute;
-        top: 50%;
-        right: 20px;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        font-size: 1rem;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-    .input-field:focus ~ .icon-left {
-        color: var(--primary);
-    }
-
-    /* Buttons */
-    .btn-primary {
-        width: 100%;
-        padding: 18px;
-        background: var(--primary);
-        border: none;
-        border-radius: var(--radius-inner);
-        color: white;
-        font-size: 1.05rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-        box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-    }
-    .btn-primary:hover:not(:disabled) {
-        transform: translateY(-3px);
-        background: var(--primary-dark);
-    }
-    .btn-primary:active:not(:disabled) {
-        transform: translateY(0);
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-    }
-    .btn-primary:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    /* Google Button */
-    .btn-google {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        width: 100%;
-        padding: 16px;
-        background: var(--bg-color);
-        border: none;
-        border-radius: var(--radius-inner);
-        color: var(--text-color);
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-        box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
-        margin-bottom: 20px;
-    }
-    .btn-google:hover {
-        transform: translateY(-3px);
-        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
-    }
-    .btn-google:active {
-        transform: translateY(0);
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-    }
-    .btn-google svg {
-        width: 24px;
-        height: 24px;
-    }
-
-    /* Separator */
-    .auth-separator {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        color: var(--text-muted);
-        margin: 20px 0;
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-    .auth-separator::before,
-    .auth-separator::after {
-        content: '';
-        flex: 1;
-        border-bottom: 1px solid var(--shadow-dark);
-    }
-    .auth-separator:not(:empty)::before {
-        margin-right: .5em;
-    }
-    .auth-separator:not(:empty)::after {
-        margin-left: .5em;
-    }
-
-    .support-section {
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        margin-top: 30px;
-    }
-
-    /* Admin Panel */
-    #adminPanelBox {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        height: 95vh;
-        animation: slideIn 0.6s ease-out;
-        padding: 30px;
-        background: var(--bg-color);
-        border-radius: var(--radius-main);
-        box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light);
-    }
-    #auth-container.is-active #auth-box {
-        display: none;
-    }
-    #auth-container.is-active #adminPanelBox {
-        display: flex;
-    }
-
-    .panel-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 25px;
-        padding-bottom: 25px;
-        border-bottom: 1px solid var(--shadow-light);
-    }
-    .panel-header h1 {
-        font-size: 1.8rem;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .panel-header h1 i {
-        color: var(--primary);
-    }
-
-    .panel-form {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding: 10px 5px;
-    }
-    .panel-form::-webkit-scrollbar {
-        width: 8px;
-    }
-    .panel-form::-webkit-scrollbar-track {
-        background: var(--shadow-dark);
-        border-radius: 10px;
-    }
-    .panel-form::-webkit-scrollbar-thumb {
-        background-color: var(--primary);
-        border-radius: 10px;
-        border: 2px solid var(--shadow-dark);
-    }
-
-    .panel-layout {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        padding-right: 15px;
-    }
-
-    .panel-section {
-        background: var(--bg-color);
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
-        transition: var(--transition);
-        display: flex;
-        flex-direction: column;
-    }
-    .panel-section:hover {
-        transform: translateY(-5px);
-    }
-
-    .section-title {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 30px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid var(--shadow-light);
-    }
-    .section-title i {
-        color: var(--primary);
-    }
-
-    /* --- START: Desain Carousel Baru --- */
-    .carousel-section-container {
-        position: relative;
-    }
-    .carousel-track {
-        display: flex;
-        overflow-x: auto;
-        padding: 10px;
-        margin: 0 -10px 15px -10px;
-        gap: 15px;
-        scroll-snap-type: x mandatory;
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-    }
-    .carousel-track::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
-    }
-    .carousel-item {
-        flex: 0 0 120px;
-        height: 120px;
-        background: var(--bg-color);
-        border-radius: var(--radius-inner);
-        box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: var(--transition);
-        scroll-snap-align: center;
-        border: 3px solid transparent;
-        text-align: center;
-        padding: 10px;
-    }
-    .carousel-item:hover {
-        transform: translateY(-4px);
-    }
-    .carousel-item.active {
-        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 3px var(--primary);
-        color: var(--primary);
-    }
-    .carousel-item img {
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-        margin-bottom: 8px;
-    }
-    .carousel-item .item-icon {
-        font-size: 2rem;
-        margin-bottom: 10px;
-    }
-    .carousel-item .item-name {
-        font-size: 0.85rem;
-        font-weight: 500;
-    }
-    .carousel-controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-    }
-    .carousel-nav-btn {
-        background: var(--bg-color);
-        border: none;
-        border-radius: 50%;
-        color: var(--text-muted);
-        width: 45px;
-        height: 45px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: var(--transition);
-        box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light);
-    }
-    .carousel-nav-btn:hover {
-        color: var(--primary);
-    }
-    .carousel-nav-btn:active {
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-    }
-    #music-preview-btn {
-        width: 65px;
-        height: 65px;
-        font-size: 1.5rem;
-        color: var(--primary);
-    }
-    /* --- END: Desain Carousel Baru --- */
-
-    /* Date Input */
-    .custom-date-input-wrapper {
-        position: relative;
-    }
-    .custom-date-display {
-        background-color: var(--bg-color);
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-        border-radius: var(--radius-inner);
-        padding: 0 22px;
-        height: 58px;
-        display: flex;
-        align-items: center;
-        color: var(--text-color);
-        font-size: 1rem;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-    .custom-date-display:hover {
-        box-shadow: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light);
-    }
-    .custom-date-display .icon-left {
-        font-size: 1rem;
-        color: var(--text-muted);
-        margin-right: 18px;
-    }
-    .real-date-input {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        cursor: pointer;
-        border: none;
-    }
-
-    /* QR Preview */
-    .qr-preview-image {
-        max-width: 150px;
-        border-radius: var(--radius-inner);
-        display: none;
-        margin-top: 15px;
-        background: var(--bg-color);
-        padding: 8px;
-        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
-    }
-
-    /* Panel Actions */
-    .panel-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 30px;
-        margin-top: auto;
-    }
-    .btn {
-        padding: 16px;
-        border: none;
-        background: var(--bg-color);
-        border-radius: var(--radius-inner);
-        cursor: pointer;
-        font-weight: 600;
-        box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
-        transition: var(--transition);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-    .btn-save {
-        color: var(--success);
-    }
-    .btn-logout {
-        color: var(--error);
-    }
-    .btn:active {
-        box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-    }
-
-    /* Responsive */
-    @media (max-width: 991px) {
-        .panel-layout {
-            display: flex;
-            flex-direction: column;
-            padding-right: 0;
-        }
-        .panel-actions {
-            flex-direction: column-reverse;
-            align-items: stretch;
-            gap: 15px;
-        }
-        .btn {
-            width: 100%;
-        }
-    }
-
-    @media (max-width: 768px) {
-        #auth-box {
-            padding: 30px 20px;
-        }
-        .brand-header img {
-            width: 70px;
-            height: 70px;
-        }
-    }
-
-    /* SweetAlert2 Customization */
-    .swal2-popup {
-        background: var(--bg-color) !important;
-        color: var(--text-color) !important;
-        border-radius: var(--radius-main) !important;
-    }
-    .swal2-title {
-        color: var(--text-color) !important;
-    }
-    .swal2-html-container {
-        color: var(--text-muted) !important;
-    }
-    .swal2-confirm, .swal2-cancel, .swal2-deny {
-        border: none !important;
-        border-radius: var(--radius-inner) !important;
-        font-weight: 600 !important;
-    }
-    .swal2-confirm {
-        background: var(--primary) !important;
-        color: #fff !important;
-    }
-    .swal2-cancel {
-        background-color: var(--bg-color) !important;
-        color: var(--text-muted) !important;
-    }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; transition: var(--transition); }
+    .theme-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--bg-color); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; transition: var(--transition); }
+    .theme-toggle:hover { transform: scale(1.1); }
+    .theme-toggle:active { box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
+    .theme-toggle i { font-size: 1.2rem; color: var(--text-color); transition: var(--transition); }
+    [data-theme="dark"] .fa-moon, [data-theme="light"] .fa-sun { display: none; }
+    #auth-container { width: 100%; max-width: 450px; transition: all 0.6s ease; perspective: 1500px; }
+    #auth-container.is-active { max-width: 1200px; min-height: 95vh; }
+    #auth-box { background: var(--bg-color); border-radius: var(--radius-main); box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light); padding: 40px; width: 100%; display: none; animation: slideIn 0.6s ease-out; }
+    #auth-container.loaded #auth-box { display: block; }
+    .brand-header { text-align: center; margin-bottom: 35px; animation: slideIn 0.8s ease-out; }
+    .brand-header img { width: 80px; height: 80px; border-radius: var(--radius-inner); margin: 0 auto 20px; padding: 10px; background: var(--bg-color); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); transition: var(--transition); }
+    .brand-header img:hover { transform: scale(1.05) rotate(5deg); }
+    .brand-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; background: linear-gradient(90deg, var(--primary), var(--pink), var(--primary)); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientBG 4s linear infinite; }
+    .brand-header p { color: var(--text-muted); font-size: 1rem; }
+    .slider-tabs { position: relative; padding: 5px; border-radius: var(--radius-inner); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); margin-bottom: 25px; overflow: hidden; }
+    .slider-tabs-track { display: flex; width: 100%; }
+    .tab-label { flex: 1; text-align: center; padding: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; z-index: 2; transition: color 0.3s ease; }
+    .slider-thumb { position: absolute; top: 5px; left: 5px; width: calc(50% - 5px); height: calc(100% - 10px); background: var(--bg-color); border-radius: 10px; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); transition: transform 0.4s cubic-bezier(0.65, 0.05, 0.36, 1); z-index: 1; }
+    .slider-tabs.register-active .slider-thumb { transform: translateX(100%); }
+    .slider-tabs.login-active #login-tab-label, .slider-tabs.register-active #register-tab-label { color: var(--primary); }
+    #auth-flipper { position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.65, 0.05, 0.36, 1), height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1); margin-bottom: 20px; }
+    #auth-flipper.is-flipped { transform: rotateY(180deg); }
+    .auth-form-side { position: absolute; top: 0; left: 0; width: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+    #register-form-content { transform: rotateY(180deg); }
+    .input-group { margin-bottom: 25px; text-align: left; }
+    .input-group label { display: block; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; margin-bottom: 12px; padding-left: 5px; }
+    .input-wrapper { position: relative; }
+    .input-field, textarea.input-field { width: 100%; padding: 18px 22px 18px 55px; background: var(--bg-color); border: none; border-radius: var(--radius-inner); color: var(--text-color); font-size: 1rem; box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); transition: var(--transition); }
+    textarea.input-field { padding: 18px 22px; resize: vertical; }
+    .input-field:focus, textarea.input-field:focus { outline: none; box-shadow: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light), 0 0 0 2px var(--primary); }
+    .input-wrapper .icon-left { position: absolute; top: 20px; left: 20px; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem; transition: var(--transition); }
+    textarea ~ .icon-left { top: 22px; }
+    .input-wrapper .icon-right { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); color: var(--text-muted); font-size: 1rem; cursor: pointer; transition: var(--transition); }
+    .input-field:focus ~ .icon-left { color: var(--primary); }
+    .btn-primary { width: 100%; padding: 18px; background: var(--primary); border: none; border-radius: var(--radius-inner); color: white; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-3px); background: var(--primary-dark); }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
+    .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+    .btn-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 16px; background: var(--bg-color); border: none; border-radius: var(--radius-inner); color: var(--text-color); font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); margin-bottom: 20px; }
+    .btn-google:hover { transform: translateY(-3px); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
+    .btn-google:active { transform: translateY(0); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
+    .btn-google svg { width: 24px; height: 24px; }
+    .auth-separator { display: flex; align-items: center; text-align: center; color: var(--text-muted); margin: 20px 0; font-size: 0.9rem; font-weight: 500; }
+    .auth-separator::before, .auth-separator::after { content: ''; flex: 1; border-bottom: 1px solid var(--shadow-dark); }
+    .auth-separator:not(:empty)::before { margin-right: .5em; }
+    .auth-separator:not(:empty)::after { margin-left: .5em; }
+    .support-section { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 30px; }
+    #adminPanelBox { display: none; flex-direction: column; width: 100%; height: 95vh; animation: slideIn 0.6s ease-out; padding: 30px; background: var(--bg-color); border-radius: var(--radius-main); box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light); }
+    #auth-container.is-active #auth-box { display: none; }
+    #auth-container.is-active #adminPanelBox { display: flex; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid var(--shadow-light); }
+    .panel-header h1 { font-size: 1.8rem; display: flex; align-items: center; gap: 15px; }
+    .panel-header h1 i { color: var(--primary); }
+    .panel-form { flex-grow: 1; overflow-y: auto; padding: 10px 5px; }
+    .panel-form::-webkit-scrollbar { width: 8px; }
+    .panel-form::-webkit-scrollbar-track { background: var(--shadow-dark); border-radius: 10px; }
+    .panel-form::-webkit-scrollbar-thumb { background-color: var(--primary); border-radius: 10px; border: 2px solid var(--shadow-dark); }
+    .panel-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding-right: 15px; }
+    .panel-section { background: var(--bg-color); border-radius: 20px; padding: 30px; box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); transition: var(--transition); display: flex; flex-direction: column; }
+    .panel-section:hover { transform: translateY(-5px); }
+    .section-title { display: flex; align-items: center; gap: 15px; font-size: 1.3rem; font-weight: 600; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid var(--shadow-light); }
+    .section-title i { color: var(--primary); }
+    .carousel-section-container { position: relative; }
+    .carousel-track { display: flex; overflow-x: auto; padding: 10px; margin: 0 -10px 15px -10px; gap: 15px; scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none; }
+    .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-item { flex: 0 0 120px; height: 120px; background: var(--bg-color); border-radius: var(--radius-inner); box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); scroll-snap-align: center; border: 3px solid transparent; text-align: center; padding: 10px; }
+    .carousel-item:hover { transform: translateY(-4px); }
+    .carousel-item.active { box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 3px var(--primary); color: var(--primary); }
+    .carousel-item img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 8px; }
+    .carousel-item .item-icon { font-size: 2rem; margin-bottom: 10px; }
+    .carousel-item .item-name { font-size: 0.85rem; font-weight: 500; }
+    .carousel-controls { display: flex; align-items: center; justify-content: center; gap: 20px; }
+    .carousel-nav-btn { background: var(--bg-color); border: none; border-radius: 50%; color: var(--text-muted); width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 1rem; cursor: pointer; transition: var(--transition); box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light); }
+    .carousel-nav-btn:hover { color: var(--primary); }
+    .carousel-nav-btn:active { box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
+    #music-preview-btn { width: 65px; height: 65px; font-size: 1.5rem; color: var(--primary); }
+    .custom-date-input-wrapper { position: relative; }
+    .custom-date-display { background-color: var(--bg-color); box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); border-radius: var(--radius-inner); padding: 0 22px; height: 58px; display: flex; align-items: center; color: var(--text-color); font-size: 1rem; cursor: pointer; transition: var(--transition); }
+    .custom-date-display:hover { box-shadow: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light); }
+    .custom-date-display .icon-left { font-size: 1rem; color: var(--text-muted); margin-right: 18px; }
+    .real-date-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; }
+    .qr-preview-image { max-width: 150px; border-radius: var(--radius-inner); display: none; margin-top: 15px; background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light); }
+    .panel-actions { display: flex; justify-content: space-between; align-items: center; padding-top: 30px; margin-top: auto; }
+    .btn { padding: 16px; border: none; background: var(--bg-color); border-radius: var(--radius-inner); cursor: pointer; font-weight: 600; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); transition: var(--transition); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-save { color: var(--success); }
+    .btn-logout { color: var(--error); }
+    .btn:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+    
+    /* CSS BARU UNTUK KOTAK UPLOAD */
+    .image-upload-box { display: flex; justify-content: center; align-items: center; width: 100%; height: 120px; border: 2px dashed var(--text-muted); border-radius: var(--radius-inner); cursor: pointer; transition: var(--transition); color: var(--text-muted); background-color: var(--bg-color); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); margin-top: 10px; text-align: center; padding: 10px; }
+    .image-upload-box:hover { border-color: var(--primary); color: var(--primary); }
+    
+    @media (max-width: 991px) { .panel-layout { display: flex; flex-direction: column; padding-right: 0; } .panel-actions { flex-direction: column-reverse; align-items: stretch; gap: 15px; } .btn { width: 100%; } }
+    @media (max-width: 768px) { #auth-box { padding: 30px 20px; } .brand-header img { width: 70px; height: 70px; } }
+    .swal2-popup { background: var(--bg-color) !important; color: var(--text-color) !important; border-radius: var(--radius-main) !important; }
+    .swal2-title { color: var(--text-color) !important; }
+    .swal2-html-container { color: var(--text-muted) !important; }
+    .swal2-confirm, .swal2-cancel, .swal2-deny { border: none !important; border-radius: var(--radius-inner) !important; font-weight: 600 !important; }
+    .swal2-confirm { background: var(--primary) !important; color: #fff !important; }
+    .swal2-cancel { background-color: var(--bg-color) !important; color: var(--text-muted) !important; }
     </style>
 </head>
 <body>
@@ -787,65 +229,46 @@
                             <div class="section-title"><i class="fas fa-birthday-cake"></i><span>Info Utama</span></div>
                             <div class="input-group">
                                 <label for="birthdayNameInput">Nama</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-user-edit icon-left"></i>
-                                    <input type="text" id="birthdayNameInput" class="input-field" required>
-                                </div>
+                                <div class="input-wrapper"><i class="fas fa-user-edit icon-left"></i><input type="text" id="birthdayNameInput" class="input-field" required></div>
                             </div>
                             <div class="input-group">
                                 <label for="birthDateInput">Tanggal Lahir</label>
                                 <div class="custom-date-input-wrapper">
-                                    <div class="custom-date-display">
-                                        <i class="fas fa-calendar-alt icon-left"></i>
-                                        <span id="dateDisplayText">Pilih Tanggal</span>
-                                    </div>
+                                    <div class="custom-date-display"><i class="fas fa-calendar-alt icon-left"></i><span id="dateDisplayText">Pilih Tanggal</span></div>
                                     <input type="date" id="birthDateInput" class="real-date-input" required>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <label for="bestWishesInput">Harapan Terbaik</label>
-                                <div class="input-wrapper">
-                                    <textarea id="bestWishesInput" class="input-field" rows="4" placeholder="Masukkan harapan terbaik..."></textarea>
-                                </div>
+                                <div class="input-wrapper"><textarea id="bestWishesInput" class="input-field" rows="4" placeholder="Masukkan harapan terbaik..."></textarea></div>
                             </div>
                             <div class="input-group">
                                 <label for="stayStrongQuoteInput">Kesan atau quotes</label>
-                                <div class="input-wrapper">
-                                    <textarea id="stayStrongQuoteInput" class="input-field" rows="3" placeholder="Masukkan quote..."></textarea>
-                                </div>
+                                <div class="input-wrapper"><textarea id="stayStrongQuoteInput" class="input-field" rows="3" placeholder="Masukkan quote..."></textarea></div>
                             </div>
                         </div>
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-users"></i><span>Akses Tamu</span></div>
                             <div class="input-group">
                                 <label for="guestUserInput">Username Tamu</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-user icon-left"></i>
-                                    <input type="text" id="guestUserInput" class="input-field" required>
-                                </div>
+                                <div class="input-wrapper"><i class="fas fa-user icon-left"></i><input type="text" id="guestUserInput" class="input-field" required></div>
                             </div>
                             <div class="input-group">
                                 <label for="guestPassInput">Password Tamu</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-lock icon-left"></i>
-                                    <input type="text" id="guestPassInput" class="input-field" required>
-                                </div>
+                                <div class="input-wrapper"><i class="fas fa-lock icon-left"></i><input type="text" id="guestPassInput" class="input-field" required></div>
                             </div>
                             <div class="input-group">
                                 <label for="targetWhatsappNumber">Nomor WhatsApp Target</label>
-                                <div class="input-wrapper">
-                                    <i class="fab fa-whatsapp icon-left"></i>
-                                    <input type="tel" id="targetWhatsappNumber" class="input-field" placeholder="6281xxxxxxxx">
-                                </div>
+                                <div class="input-wrapper"><i class="fab fa-whatsapp icon-left"></i><input type="tel" id="targetWhatsappNumber" class="input-field" placeholder="6281xxxxxxxx"></div>
                             </div>
                         </div>
                     </div>
+
                     <div class="layout-column">
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-music"></i><span>Pilih Musik Latar</span></div>
                             <div class="carousel-section-container">
-                                <div class="carousel-track" id="music-carousel-track">
-                                    </div>
+                                <div class="carousel-track" id="music-carousel-track"></div>
                                 <div class="carousel-controls">
                                     <button type="button" id="prevMusicBtn" class="carousel-nav-btn"><i class="fas fa-chevron-left"></i></button>
                                     <button type="button" id="music-preview-btn" class="carousel-nav-btn"><i class="fas fa-play"></i></button>
@@ -856,8 +279,7 @@
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-gift"></i><span>Pilih Ikon Kado</span></div>
                              <div class="carousel-section-container">
-                                <div class="carousel-track" id="gift-carousel-track">
-                                    </div>
+                                <div class="carousel-track" id="gift-carousel-track"></div>
                                 <div class="carousel-controls">
                                     <button type="button" id="prevGiftBtn" class="carousel-nav-btn"><i class="fas fa-chevron-left"></i></button>
                                     <button type="button" id="nextGiftBtn" class="carousel-nav-btn"><i class="fas fa-chevron-right"></i></button>
@@ -866,36 +288,19 @@
                         </div>
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-puzzle-piece"></i><span>Setting Game Kata</span></div>
-                            <div class="input-group">
-                                <label for="puzzleWord1">Kata Tersembunyi 1</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-font icon-left"></i>
-                                    <input type="text" id="puzzleWord1" class="input-field" placeholder="Contoh: ULTAH" maxlength="8" required>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="puzzleWord2">Kata Tersembunyi 2</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-font icon-left"></i>
-                                    <input type="text" id="puzzleWord2" class="input-field" placeholder="Contoh: KADO" maxlength="8" required>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label for="puzzleWord3">Kata Tersembunyi 3</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-font icon-left"></i>
-                                    <input type="text" id="puzzleWord3" class="input-field" placeholder="Contoh: DOA" maxlength="8" required>
-                                </div>
-                            </div>
+                            <div class="input-group"><label for="puzzleWord1">Kata Tersembunyi 1</label><div class="input-wrapper"><i class="fas fa-font icon-left"></i><input type="text" id="puzzleWord1" class="input-field" placeholder="Contoh: ULTAH" maxlength="8" required></div></div>
+                            <div class="input-group"><label for="puzzleWord2">Kata Tersembunyi 2</label><div class="input-wrapper"><i class="fas fa-font icon-left"></i><input type="text" id="puzzleWord2" class="input-field" placeholder="Contoh: KADO" maxlength="8" required></div></div>
+                            <div class="input-group"><label for="puzzleWord3">Kata Tersembunyi 3</label><div class="input-wrapper"><i class="fas fa-font icon-left"></i><input type="text" id="puzzleWord3" class="input-field" placeholder="Contoh: DOA" maxlength="8" required></div></div>
                         </div>
+                        
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-qrcode"></i><span>Kode QR</span></div>
                             <div class="input-group">
-                                <label for="qrImageUrlInput">URL Gambar QR</label>
-                                <div class="input-wrapper">
-                                    <i class="fas fa-image icon-left"></i>
-                                    <input type="url" id="qrImageUrlInput" class="input-field" placeholder="https://...">
-                                </div>
+                                <label for="qrImageUploadInput">Unggah Gambar QR</label>
+                                <label for="qrImageUploadInput" class="image-upload-box">
+                                    <span id="uploadBoxText"><i class="fas fa-upload"></i> Klik atau jatuhkan file di sini</span>
+                                    <input type="file" id="qrImageUploadInput" accept="image/png, image/jpeg, image/gif" style="display: none;">
+                                </label>
                                 <img id="qrPreviewImage" class="qr-preview-image" src="" alt="Pratinjau QR">
                             </div>
                             <div class="input-group">
@@ -905,6 +310,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-share-alt"></i><span>Link Publik</span></div>
                             <div class="input-group">
@@ -937,7 +343,7 @@
         authDomain: "mayfa-fa284.firebaseapp.com",
         databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "mayfa-fa284",
-        storageBucket: "mayfa-fa284.firebasestorage.app",
+        storageBucket: "mayfa-fa284.appspot.com", // PASTIKAN DOMAIN STORAGE BENAR
         messagingSenderId: "523290705179",
         appId: "1:523290705179:web:b06ae4d8e6b08cf07b27be"
     };
@@ -946,8 +352,9 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
+    const storage = firebase.storage(); // INISIALISASI STORAGE
 
-    // DOM Elements
+    // DOM Elements & Variabel Global
     const authContainer = document.getElementById('auth-container');
     const authFlipper = document.getElementById('auth-flipper');
     const mainActionBtn = document.getElementById('main-action-btn');
@@ -955,356 +362,44 @@
     const registerTabLabel = document.getElementById('register-tab-label');
     const sliderTabsContainer = document.getElementById('slider-tabs-container');
     const themeToggle = document.getElementById('themeToggle');
-    // --- START: Perubahan Elemen DOM ---
     const musicCarouselTrack = document.getElementById('music-carousel-track');
     const giftCarouselTrack = document.getElementById('gift-carousel-track');
     const musicPreviewPlayer = document.getElementById('musicPreviewPlayer');
-    // --- END: Perubahan Elemen DOM ---
+    
+    let newQrImageUrl = null; // Variabel untuk menyimpan URL QR yang baru diunggah
 
     // Music and Gift Data
-    const musicTracks = [
-        { name: "Melody 1", path: "/musik/musik1.mp3" },
-        { name: "Beat 2", path: "/musik/musik2.mp3" },
-        { name: "Rhytm 3", path: "/musik/musik3.mp3" },
-        { name: "Harmony 4", path: "/musik/musik4.mp3" },
-        { name: "Vibe 5", path: "/musik/musik5.mp3" },
-        { name: "Default", path: "mayfa.mp3" }
-    ];
+    const musicTracks = [ { name: "musik 1", path: "/musik/musik1.mp3" }, { name: "musik 2", path: "/musik/musik2.mp3" }, { name: "musik 3", path: "/musik/musik3.mp3" }, { name: "musik 4", path: "/musik/musik4.mp3" }, { name: "musik 5", path: "/musik/musik5.mp3" }, { name: "musik default", path: "mayfa.mp3" } ];
     let currentMusicIndex = musicTracks.length - 1;
-
-    const giftIcons = [
-        { name: "Kado Polos", path: "nir.gif" },
-        { name: "Kado Hati", path: "/img/gif1.gif" },
-        { name: "Kado Pita", path: "/img/gif2.gif" },
-        { name: "Kado Bintang", path: "/img/gif3.gif" }
-    ];
+    const giftIcons = [ { name: "Kado1", path: "nir.gif" }, { name: "Kado2", path: "/img/gif1.gif" }, { name: "Kado3", path: "/img/gif2.gif" }, { name: "Kado4", path: "/img/gif3.gif" } ];
     let currentGiftIndex = 0;
 
-    // Theme Toggle
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    });
-
-    // Initialize Theme
-    function initTheme() {
-        const savedTheme = localStorage.getItem('theme') || 
-                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', savedTheme);
-    }
-
-    // Toggle Password Visibility
-    function togglePasswordVisibility(fieldId, icon) {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.type = field.type === "password" ? "text" : "password";
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        }
-    }
-
-    // Show Login View
-    function showLoginView() {
-        sliderTabsContainer.classList.add('login-active');
-        sliderTabsContainer.classList.remove('register-active');
-        authFlipper.classList.remove('is-flipped');
-        mainActionBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
-        setTimeout(() => {
-            const loginForm = document.getElementById('login-form-content');
-            if (loginForm) {
-                authFlipper.style.height = `${loginForm.offsetHeight}px`;
-            }
-        }, 50);
-    }
-
-    // Show Register View
-    function showRegisterView() {
-        sliderTabsContainer.classList.remove('login-active');
-        sliderTabsContainer.classList.add('register-active');
-        authFlipper.classList.add('is-flipped');
-        mainActionBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar Sekarang';
-        setTimeout(() => {
-            const registerForm = document.getElementById('register-form-content');
-            if (registerForm) {
-                authFlipper.style.height = `${registerForm.offsetHeight}px`;
-            }
-        }, 50);
-    }
+    // FUNGSI-FUNGSI UTAMA (tidak ada perubahan di sini)
+    themeToggle.addEventListener('click', () => { const currentTheme = document.documentElement.getAttribute('data-theme'); const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); });
+    function initTheme() { const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); document.documentElement.setAttribute('data-theme', savedTheme); }
+    function togglePasswordVisibility(fieldId, icon) { const field = document.getElementById(fieldId); if (field) { field.type = field.type === "password" ? "text" : "password"; icon.classList.toggle('fa-eye'); icon.classList.toggle('fa-eye-slash'); } }
+    function showLoginView() { sliderTabsContainer.classList.add('login-active'); sliderTabsContainer.classList.remove('register-active'); authFlipper.classList.remove('is-flipped'); mainActionBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; setTimeout(() => { const loginForm = document.getElementById('login-form-content'); if (loginForm) { authFlipper.style.height = `${loginForm.offsetHeight}px`; } }, 50); }
+    function showRegisterView() { sliderTabsContainer.classList.remove('login-active'); sliderTabsContainer.classList.add('register-active'); authFlipper.classList.add('is-flipped'); mainActionBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar Sekarang'; setTimeout(() => { const registerForm = document.getElementById('register-form-content'); if (registerForm) { authFlipper.style.height = `${registerForm.offsetHeight}px`; } }, 50); }
+    function renderCarousels() { musicCarouselTrack.innerHTML = musicTracks.map((track, index) => `<div class="carousel-item" data-index="${index}"><i class="fas fa-music item-icon"></i><span class="item-name">${track.name}</span></div>`).join(''); giftCarouselTrack.innerHTML = giftIcons.map((gift, index) => `<div class="carousel-item" data-index="${index}"><img src="${gift.path}" alt="${gift.name}"><span class="item-name">${gift.name}</span></div>`).join(''); addCarouselListeners(); }
+    function addCarouselListeners() { musicCarouselTrack.addEventListener('click', e => { const item = e.target.closest('.carousel-item'); if (item) { currentMusicIndex = parseInt(item.dataset.index); updateMusicSelection(); } }); giftCarouselTrack.addEventListener('click', e => { const item = e.target.closest('.carousel-item'); if (item) { currentGiftIndex = parseInt(item.dataset.index); updateGiftSelection(); } }); }
+    function updateMusicSelection() { musicCarouselTrack.querySelectorAll('.carousel-item').forEach(item => { item.classList.toggle('active', parseInt(item.dataset.index) === currentMusicIndex); }); musicPreviewPlayer.src = musicTracks[currentMusicIndex].path; document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play'); const activeItem = musicCarouselTrack.querySelector('.active'); if (activeItem) { activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } }
+    function updateGiftSelection() { giftCarouselTrack.querySelectorAll('.carousel-item').forEach(item => { item.classList.toggle('active', parseInt(item.dataset.index) === currentGiftIndex); }); const activeItem = giftCarouselTrack.querySelector('.active'); if (activeItem) { activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } }
+    function formatDateForDisplay(dateString) { if (!dateString) return "Pilih Tanggal"; const date = new Date(dateString); const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"]; return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`; }
+    function setButtonLoading(isLoading, text = '') { mainActionBtn.disabled = isLoading; document.getElementById('google-signin-btn').disabled = isLoading; if (isLoading) { mainActionBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text || 'Memproses...'}`; } else { if (sliderTabsContainer.classList.contains('register-active')) { mainActionBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar Sekarang'; } else { mainActionBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; } } }
+    function handleMainAction() { if (sliderTabsContainer.classList.contains('register-active')) { createAccount(); } else { loginWithEmail(); } }
+    function createAccount() { const email = document.getElementById('registerEmail').value.trim(); const password = document.getElementById('registerPass').value; if (!email || !password) { Swal.fire('Input Tidak Lengkap', 'Email dan password wajib diisi.', 'warning'); return; } if (password.length < 6) { Swal.fire('Password Terlalu Pendek', 'Password minimal harus 6 karakter.', 'warning'); return; } setButtonLoading(true, 'Membuat Akun...'); auth.createUserWithEmailAndPassword(email, password).then(userCredential => { const user = userCredential.user; return createDefaultUserData(user).then(() => { return user.sendEmailVerification().then(() => { Swal.fire({ icon: 'success', title: 'Registrasi Berhasil!', html: `Satu langkah lagi! Kami telah mengirimkan email verifikasi ke <b>${email}</b>. Silakan periksa kotak masuk Anda.<br><br>Halaman ini akan masuk secara otomatis setelah verifikasi selesai.`, allowOutsideClick: false, showConfirmButton: false, willOpen: () => { Swal.showLoading(); const verificationCheckInterval = setInterval(() => { auth.currentUser.reload().then(() => { if (auth.currentUser.emailVerified) { clearInterval(verificationCheckInterval); Swal.close(); } }); }, 2500); } }); }); }); }).catch(error => { const message = error.code === 'auth/email-already-in-use' ? 'Email ini sudah terdaftar. Silakan login.' : 'Terjadi error: ' + error.message; Swal.fire('Registrasi Gagal', message, 'error'); }).finally(() => setButtonLoading(false)); }
+    function loginWithEmail() { const email = document.getElementById('loginEmail').value.trim(); const password = document.getElementById('loginPass').value; if (!email || !password) { Swal.fire('Input Diperlukan', 'Email dan password harus diisi.', 'warning'); return; } setButtonLoading(true, 'Memverifikasi...'); auth.signInWithEmailAndPassword(email, password).then(userCredential => { if (!userCredential.user.emailVerified) { auth.signOut(); Swal.fire({ icon: 'warning', title: 'Email Belum Diverifikasi', html: `Silakan periksa email <b>${email}</b> dan klik link verifikasi.`, confirmButtonText: 'Kirim Ulang Email', showCancelButton: true, cancelButtonText: 'Tutup' }).then(result => { if (result.isConfirmed) { userCredential.user.sendEmailVerification().then(() => { Swal.fire('Terkirim!', 'Email verifikasi baru telah dikirim.', 'success'); }); } }); } }).catch(error => { Swal.fire('Login Gagal', 'Email atau password yang Anda masukkan salah.', 'error'); }).finally(() => setButtonLoading(false)); }
+    function signInWithGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); setButtonLoading(true, 'Membuka Google...'); auth.signInWithPopup(provider).then(result => { if (result.additionalUserInfo.isNewUser) { return createDefaultUserData(result.user); } }).catch(error => { if (error.code === 'auth/unauthorized-domain') { Swal.fire('Login Google Gagal', 'Domain aplikasi ini belum diizinkan. Pastikan Anda sudah menambahkan `localhost` dan `127.0.0.1` ke Authorized Domains di Firebase Console.', 'error'); } else if (error.code !== 'auth/popup-closed-by-user') { Swal.fire('Login Google Gagal', error.message, 'error'); } }).finally(() => setButtonLoading(false)); }
+    function createDefaultUserData(user) { const nameFromEmail = user.email.split('@')[0]; const defaultDisplayName = user.displayName || nameFromEmail; const defaultData = { birthdayName: defaultDisplayName, birthDate: "2005-09-28", guestUser: "tamu", guestPass: "12345", qrImageUrl: "", bestWishes: "", stayStrongQuote: "", qrMessage: "", targetWhatsappNumber: "", puzzleWord1: 'ULTAH', puzzleWord2: 'KADO', puzzleWord3: 'DOA', musicUrl: 'mayfa.mp3', giftIconUrl: 'nir.gif' }; return database.ref('birthday_pages/' + user.uid).set(defaultData); }
+    function copyShareableLink() { const linkInput = document.getElementById('shareableLink'); if (linkInput.value) { navigator.clipboard.writeText(linkInput.value).then(() => { Swal.fire({ icon: 'success', title: 'Link Berhasil Disalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 }); }).catch(err => { console.error('Gagal menyalin:', err); Swal.fire('Oops!', 'Gagal menyalin link.', 'error'); }); } }
+    function logout() { Swal.fire({ title: 'Konfirmasi Log Out', text: 'Anda yakin ingin keluar?', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Log Out', cancelButtonText: 'Batal', reverseButtons: true }).then((result) => { if (result.isConfirmed) { musicPreviewPlayer.pause(); auth.signOut(); } }); }
     
-    // --- START: Logika Carousel Baru ---
-    function renderCarousels() {
-        // Render Music Carousel
-        musicCarouselTrack.innerHTML = musicTracks.map((track, index) => `
-            <div class="carousel-item" data-index="${index}">
-                <i class="fas fa-music item-icon"></i>
-                <span class="item-name">${track.name}</span>
-            </div>
-        `).join('');
-
-        // Render Gift Carousel
-        giftCarouselTrack.innerHTML = giftIcons.map((gift, index) => `
-            <div class="carousel-item" data-index="${index}">
-                <img src="${gift.path}" alt="${gift.name}">
-                <span class="item-name">${gift.name}</span>
-            </div>
-        `).join('');
-        
-        addCarouselListeners();
-    }
-
-    function addCarouselListeners() {
-        // Music Carousel
-        musicCarouselTrack.addEventListener('click', e => {
-            const item = e.target.closest('.carousel-item');
-            if (item) {
-                currentMusicIndex = parseInt(item.dataset.index);
-                updateMusicSelection();
-            }
-        });
-
-        // Gift Carousel
-        giftCarouselTrack.addEventListener('click', e => {
-            const item = e.target.closest('.carousel-item');
-            if (item) {
-                currentGiftIndex = parseInt(item.dataset.index);
-                updateGiftSelection();
-            }
-        });
-    }
-
-    function updateMusicSelection() {
-        // Update active class
-        musicCarouselTrack.querySelectorAll('.carousel-item').forEach(item => {
-            item.classList.toggle('active', parseInt(item.dataset.index) === currentMusicIndex);
-        });
-        
-        // Update music player source but don't play
-        musicPreviewPlayer.src = musicTracks[currentMusicIndex].path;
-        document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play');
-
-        // Scroll to active item
-        const activeItem = musicCarouselTrack.querySelector('.active');
-        if (activeItem) {
-            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-    }
-    
-    function updateGiftSelection() {
-        // Update active class
-        giftCarouselTrack.querySelectorAll('.carousel-item').forEach(item => {
-            item.classList.toggle('active', parseInt(item.dataset.index) === currentGiftIndex);
-        });
-        
-        // Scroll to active item
-        const activeItem = giftCarouselTrack.querySelector('.active');
-        if (activeItem) {
-            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-    }
-    // --- END: Logika Carousel Baru ---
-
-    // Update QR Preview
-    function updateQrPreview() {
-        const qrInput = document.getElementById('qrImageUrlInput');
-        const qrImage = document.getElementById('qrPreviewImage');
-        if (!qrInput || !qrImage) return;
-        
-        try {
-            const url = new URL(qrInput.value.trim());
-            if (url.protocol === "http:" || url.protocol === "https:") {
-                qrImage.src = url.href;
-                qrImage.style.display = 'block';
-            } else {
-                throw new Error();
-            }
-        } catch (e) {
-            qrImage.style.display = 'none';
-            qrImage.src = "";
-        }
-    }
-
-    // Format Date for Display
-    function formatDateForDisplay(dateString) {
-        if (!dateString) return "Pilih Tanggal";
-        const date = new Date(dateString);
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-        return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-    }
-
-    // Set Button Loading State
-    function setButtonLoading(isLoading, text = '') {
-        mainActionBtn.disabled = isLoading;
-        document.getElementById('google-signin-btn').disabled = isLoading;
-        if (isLoading) {
-            mainActionBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text || 'Memproses...'}`;
-        } else {
-            if (sliderTabsContainer.classList.contains('register-active')) {
-                mainActionBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar Sekarang';
-            } else {
-                mainActionBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
-            }
-        }
-    }
-
-    // Handle Main Action (Login/Register)
-    function handleMainAction() {
-        if (sliderTabsContainer.classList.contains('register-active')) {
-            createAccount();
-        } else {
-            loginWithEmail();
-        }
-    }
-
-    // Create Account Function
-    function createAccount() {
-        const email = document.getElementById('registerEmail').value.trim();
-        const password = document.getElementById('registerPass').value;
-
-        if (!email || !password) {
-            Swal.fire('Input Tidak Lengkap', 'Email dan password wajib diisi.', 'warning');
-            return;
-        }
-        if (password.length < 6) {
-            Swal.fire('Password Terlalu Pendek', 'Password minimal harus 6 karakter.', 'warning');
-            return;
-        }
-        
-        setButtonLoading(true, 'Membuat Akun...');
-        auth.createUserWithEmailAndPassword(email, password)
-            .then(userCredential => {
-                const user = userCredential.user;
-                return createDefaultUserData(user).then(() => {
-                    return user.sendEmailVerification().then(() => {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Registrasi Berhasil!',
-                            html: `Satu langkah lagi! Kami telah mengirimkan email verifikasi ke <b>${email}</b>. Silakan periksa kotak masuk Anda.<br><br>Halaman ini akan masuk secara otomatis setelah verifikasi selesai.`,
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => {
-                                Swal.showLoading();
-                                const verificationCheckInterval = setInterval(() => {
-                                    auth.currentUser.reload().then(() => {
-                                        if (auth.currentUser.emailVerified) {
-                                            clearInterval(verificationCheckInterval);
-                                            Swal.close();
-                                        }
-                                    });
-                                }, 2500);
-                            }
-                        });
-                    });
-                });
-            })
-            .catch(error => {
-                const message = error.code === 'auth/email-already-in-use' ? 
-                    'Email ini sudah terdaftar. Silakan login.' : 
-                    'Terjadi error: ' + error.message;
-                Swal.fire('Registrasi Gagal', message, 'error');
-            })
-            .finally(() => setButtonLoading(false));
-    }
-
-    // Login with Email Function
-    function loginWithEmail() {
-        const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPass').value;
-
-        if (!email || !password) {
-            Swal.fire('Input Diperlukan', 'Email dan password harus diisi.', 'warning');
-            return;
-        }
-        
-        setButtonLoading(true, 'Memverifikasi...');
-        auth.signInWithEmailAndPassword(email, password)
-            .then(userCredential => {
-                if (!userCredential.user.emailVerified) {
-                    auth.signOut();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Email Belum Diverifikasi',
-                        html: `Silakan periksa email <b>${email}</b> dan klik link verifikasi.`,
-                        confirmButtonText: 'Kirim Ulang Email',
-                        showCancelButton: true,
-                        cancelButtonText: 'Tutup'
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            userCredential.user.sendEmailVerification().then(() => {
-                                Swal.fire('Terkirim!', 'Email verifikasi baru telah dikirim.', 'success');
-                            });
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                Swal.fire('Login Gagal', 'Email atau password yang Anda masukkan salah.', 'error');
-            })
-            .finally(() => setButtonLoading(false));
-    }
-
-    // Sign In with Google
-    function signInWithGoogle() {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        setButtonLoading(true, 'Membuka Google...');
-        auth.signInWithPopup(provider)
-            .then(result => {
-                if (result.additionalUserInfo.isNewUser) {
-                    return createDefaultUserData(result.user);
-                }
-            })
-            .catch(error => {
-                if (error.code === 'auth/unauthorized-domain') {
-                    Swal.fire('Login Google Gagal', 'Domain aplikasi ini belum diizinkan. Pastikan Anda sudah menambahkan `localhost` dan `127.0.0.1` ke Authorized Domains di Firebase Console.', 'error');
-                } else if (error.code !== 'auth/popup-closed-by-user') {
-                    Swal.fire('Login Google Gagal', error.message, 'error');
-                }
-            })
-            .finally(() => setButtonLoading(false));
-    }
-
-    // Create Default User Data
-    function createDefaultUserData(user) {
-        const nameFromEmail = user.email.split('@')[0];
-        const defaultDisplayName = user.displayName || nameFromEmail;
-
-        const defaultData = { 
-            birthdayName: defaultDisplayName, 
-            birthDate: "2005-09-28", 
-            guestUser: "tamu", 
-            guestPass: "12345", 
-            qrImageUrl: "", 
-            bestWishes: "", 
-            stayStrongQuote: "", 
-            qrMessage: "", 
-            targetWhatsappNumber: "", 
-            puzzleWord1: 'ULTAH', 
-            puzzleWord2: 'KADO', 
-            puzzleWord3: 'DOA', 
-            musicUrl: 'mayfa.mp3', 
-            giftIconUrl: 'nir.gif' 
-        };
-        return database.ref('birthday_pages/' + user.uid).set(defaultData);
-    }
-
-    // Load Data to Form
+    // --- MODIFIKASI FUNGSI `loadDataToForm` ---
     function loadDataToForm(user) {
         if (!user) return;
-
         const nameFromEmail = user.email.split('@')[0];
         const welcomeName = user.displayName || nameFromEmail;
-        
-        Swal.fire({ 
-            icon: 'success', 
-            title: `Selamat Datang, ${welcomeName}!`,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: () => confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } })
-        });
+        Swal.fire({ icon: 'success', title: `Selamat Datang, ${welcomeName}!`, toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true, didOpen: () => confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } }) });
 
         database.ref('birthday_pages/' + user.uid).once('value').then(snapshot => {
             const data = snapshot.val() || {};
@@ -1319,10 +414,16 @@
             document.getElementById('puzzleWord1').value = data.puzzleWord1 || '';
             document.getElementById('puzzleWord2').value = data.puzzleWord2 || '';
             document.getElementById('puzzleWord3').value = data.puzzleWord3 || '';
-            document.getElementById('qrImageUrlInput').value = data.qrImageUrl || '';
             document.getElementById('qrMessageInput').value = data.qrMessage || '';
             
-            updateQrPreview();
+            // Atur pratinjau QR dari data yang ada
+            const qrPreviewImage = document.getElementById('qrPreviewImage');
+            if (data.qrImageUrl) {
+                qrPreviewImage.src = data.qrImageUrl;
+                qrPreviewImage.style.display = 'block';
+            } else {
+                qrPreviewImage.style.display = 'none';
+            }
 
             document.getElementById('birthDateInput').value = data.birthDate || '';
             document.getElementById('dateDisplayText').textContent = formatDateForDisplay(data.birthDate);
@@ -1338,47 +439,7 @@
         }).catch(err => Swal.fire('Gagal Memuat Data', err.message, 'error'));
     }
 
-    // Copy Shareable Link
-    function copyShareableLink() {
-        const linkInput = document.getElementById('shareableLink');
-        if (linkInput.value) {
-            navigator.clipboard.writeText(linkInput.value)
-                .then(() => { 
-                    Swal.fire({ 
-                        icon: 'success', 
-                        title: 'Link Berhasil Disalin!', 
-                        toast: true, 
-                        position: 'top-end', 
-                        showConfirmButton: false, 
-                        timer: 2000 
-                    }); 
-                })
-                .catch(err => { 
-                    console.error('Gagal menyalin:', err); 
-                    Swal.fire('Oops!', 'Gagal menyalin link.', 'error'); 
-                });
-        }
-    }
-
-    // Logout Function
-    function logout() {
-        Swal.fire({
-            title: 'Konfirmasi Log Out',
-            text: 'Anda yakin ingin keluar?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Log Out',
-            cancelButtonText: 'Batal',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                musicPreviewPlayer.pause();
-                auth.signOut();
-            }
-        });
-    }
-
-    // Save Data Function
+    // --- MODIFIKASI FUNGSI `saveData` ---
     function saveData() { 
         const user = auth.currentUser;
         if (!user) return;
@@ -1398,7 +459,7 @@
             puzzleWord1: document.getElementById('puzzleWord1').value.trim().toUpperCase(), 
             puzzleWord2: document.getElementById('puzzleWord2').value.trim().toUpperCase(), 
             puzzleWord3: document.getElementById('puzzleWord3').value.trim().toUpperCase(), 
-            qrImageUrl: document.getElementById('qrImageUrlInput').value, 
+            qrImageUrl: newQrImageUrl || document.getElementById('qrPreviewImage').src, // Menggunakan URL baru jika ada, jika tidak, gunakan URL lama
             qrMessage: document.getElementById('qrMessageInput').value,
             musicUrl: musicTracks[currentMusicIndex].path,
             giftIconUrl: giftIcons[currentGiftIndex].path
@@ -1406,6 +467,7 @@
         
         database.ref('birthday_pages/' + user.uid).update(settings)
             .then(() => { 
+                newQrImageUrl = null; // Reset URL baru setelah berhasil disimpan
                 const shareableLink = document.getElementById('shareableLink').value; 
                 const messageText = `Halo *${settings.birthdayName}*! 👋\n\nKejutan spesialmu sudah siap! 🎉 Akses halaman ulang tahunmu di link ini:\n\n🔗 *Link Halaman Ulang Tahun:*\n${shareableLink}\n\nDetail untuk masuk:\n👤 *Username:* ${settings.guestUser}\n🔑 *Password:* ${settings.guestPass}\n\n*Jangan lupa login ya!* ✨`.trim();
                 
@@ -1427,15 +489,7 @@
                             Swal.fire({ icon: 'info', title: 'Nomor WhatsApp Kosong', text: 'Nomor WhatsApp target belum diisi.' });
                         }
                     } else if (result.isDenied) {
-                        navigator.clipboard.writeText(messageText)
-                            .then(() => Swal.fire({ 
-                                icon: 'success', 
-                                title: 'Disalin!', 
-                                toast: true, 
-                                position: 'top-end', 
-                                showConfirmButton: false, 
-                                timer: 2000 
-                            }));
+                        navigator.clipboard.writeText(messageText).then(() => Swal.fire({ icon: 'success', title: 'Disalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 }));
                     } 
                 }); 
             })
@@ -1449,7 +503,7 @@
     // Initialize the App
     document.addEventListener('DOMContentLoaded', () => {
         initTheme();
-        renderCarousels(); // Panggil fungsi render carousel
+        renderCarousels();
         
         auth.onAuthStateChanged(user => {
             if (user && user.emailVerified) {
@@ -1458,9 +512,7 @@
             } else {
                 authContainer.classList.remove('is-active');
                 document.getElementById('auth-container').classList.add('loaded');
-                if (!user) {
-                    showLoginView();
-                }
+                if (!user) { showLoginView(); }
             }
         });
 
@@ -1470,48 +522,55 @@
         mainActionBtn.addEventListener('click', handleMainAction);
         document.getElementById('google-signin-btn').addEventListener('click', signInWithGoogle);
         document.getElementById('copyLinkBtn').addEventListener('click', copyShareableLink);
-
+        document.getElementById('birthDateInput').addEventListener('change', () => { document.getElementById('dateDisplayText').textContent = formatDateForDisplay(document.getElementById('birthDateInput').value); });
+        
         // Music Controls
-        document.getElementById('prevMusicBtn').addEventListener('click', () => {
-            currentMusicIndex = (currentMusicIndex - 1 + musicTracks.length) % musicTracks.length;
-            updateMusicSelection();
-        });
-        document.getElementById('nextMusicBtn').addEventListener('click', () => {
-            currentMusicIndex = (currentMusicIndex + 1) % musicTracks.length;
-            updateMusicSelection();
-        });
-        document.getElementById('music-preview-btn').addEventListener('click', () => {
-            const icon = document.getElementById('music-preview-btn').querySelector('i');
-            if (musicPreviewPlayer.paused) {
-                musicPreviewPlayer.play().catch(e => console.error("Audio play failed", e));
-                icon.classList.replace('fa-play', 'fa-pause');
-            } else {
-                musicPreviewPlayer.pause();
-                icon.classList.replace('fa-pause', 'fa-play');
-            }
-        });
-        musicPreviewPlayer.onended = () => {
-            document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play');
-        };
+        document.getElementById('prevMusicBtn').addEventListener('click', () => { currentMusicIndex = (currentMusicIndex - 1 + musicTracks.length) % musicTracks.length; updateMusicSelection(); });
+        document.getElementById('nextMusicBtn').addEventListener('click', () => { currentMusicIndex = (currentMusicIndex + 1) % musicTracks.length; updateMusicSelection(); });
+        document.getElementById('music-preview-btn').addEventListener('click', () => { const icon = document.getElementById('music-preview-btn').querySelector('i'); if (musicPreviewPlayer.paused) { musicPreviewPlayer.play().catch(e => console.error("Audio play failed", e)); icon.classList.replace('fa-play', 'fa-pause'); } else { musicPreviewPlayer.pause(); icon.classList.replace('fa-pause', 'fa-play'); } });
+        musicPreviewPlayer.onended = () => { document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play'); };
 
         // Gift Controls
-        document.getElementById('prevGiftBtn').addEventListener('click', () => {
-            currentGiftIndex = (currentGiftIndex - 1 + giftIcons.length) % giftIcons.length;
-            updateGiftSelection();
-        });
-        document.getElementById('nextGiftBtn').addEventListener('click', () => {
-            currentGiftIndex = (currentGiftIndex + 1) % giftIcons.length;
-            updateGiftSelection();
-        });
+        document.getElementById('prevGiftBtn').addEventListener('click', () => { currentGiftIndex = (currentGiftIndex - 1 + giftIcons.length) % giftIcons.length; updateGiftSelection(); });
+        document.getElementById('nextGiftBtn').addEventListener('click', () => { currentGiftIndex = (currentGiftIndex + 1) % giftIcons.length; updateGiftSelection(); });
 
-        // Date Input
-        document.getElementById('birthDateInput').addEventListener('change', () => {
-            document.getElementById('dateDisplayText').textContent = 
-                formatDateForDisplay(document.getElementById('birthDateInput').value);
-        });
+        // --- EVENT LISTENER BARU UNTUK UPLOAD QR ---
+        const qrUploadInput = document.getElementById('qrImageUploadInput');
+        const qrPreviewImage = document.getElementById('qrPreviewImage');
+        const uploadBoxText = document.getElementById('uploadBoxText');
 
-        // QR Input
-        document.getElementById('qrImageUrlInput').addEventListener('input', updateQrPreview);
+        qrUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) { return; }
+            const user = auth.currentUser;
+            if (!user) { Swal.fire('Error', 'Anda harus login untuk mengunggah gambar.', 'error'); return; }
+
+            uploadBoxText.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Mengunggah...`;
+            qrPreviewImage.style.display = 'none';
+            newQrImageUrl = null;
+
+            const filePath = `qr_codes/${user.uid}/${Date.now()}-${file.name}`;
+            const storageRef = storage.ref(filePath);
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {}, 
+                (error) => {
+                    console.error("Upload failed:", error);
+                    Swal.fire('Upload Gagal', 'Terjadi kesalahan saat mengunggah gambar.', 'error');
+                    uploadBoxText.innerHTML = `<i class="fas fa-upload"></i> Klik atau jatuhkan file di sini`;
+                }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        console.log('File tersedia di', downloadURL);
+                        newQrImageUrl = downloadURL;
+                        qrPreviewImage.src = downloadURL;
+                        qrPreviewImage.style.display = 'block';
+                        uploadBoxText.innerHTML = `<i class="fas fa-check-circle"></i> Berhasil! Unggah lagi?`;
+                    });
+                }
+            );
+        });
     });
     </script>
 </body>
