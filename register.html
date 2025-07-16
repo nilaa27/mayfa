@@ -9,10 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" type="image/png" href="IMG_1551.png" />
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
     <style>
     :root {
@@ -45,7 +49,7 @@
     
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
     
-    body { background: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; transition: var(--transition); }
+    body { background: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; transition: var(--transition); }
     
     .theme-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--bg-color); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; transition: var(--transition); }
     .theme-toggle:hover { transform: scale(1.1); }
@@ -53,7 +57,7 @@
     .theme-toggle i { font-size: 1.2rem; color: var(--text-color); transition: var(--transition); }
     [data-theme="dark"] .fa-moon, [data-theme="light"] .fa-sun { display: none; }
     
-    #auth-container { width: 100%; max-width: 960px; transition: all 0.6s ease; perspective: 1500px; display: flex; }
+    #auth-container { width: 100%; max-width: 960px; transition: all 0.6s ease; perspective: 1500px; display: flex; flex-shrink: 0; }
     #auth-container.is-active { max-width: 1200px; min-height: 95vh; }
     
     .auth-card {
@@ -142,7 +146,7 @@
     .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
     
     .terms-section { text-align: center; margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); }
-    .terms-section a { color: var(--text-muted); text-decoration: underline; font-weight: 500; }
+    .terms-section a { color: var(--text-muted); text-decoration: underline; font-weight: 500; transition: var(--transition); }
     .terms-section a:hover { color: var(--primary); }
 
     .btn-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 16px; background: var(--bg-color); border: none; border-radius: var(--radius-inner); color: var(--text-color); font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light); margin-bottom: 20px; }
@@ -154,13 +158,6 @@
     .auth-separator:not(:empty)::before { margin-right: .5em; }
     .auth-separator:not(:empty)::after { margin-left: .5em; }
     
-    .support-section { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 25px; border-top: 1px solid var(--shadow-dark); padding-top: 25px; }
-    .footer-nav { display: flex; justify-content: center; align-items: center; gap: 25px; margin-bottom: 15px; }
-    .footer-nav a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: var(--transition); }
-    .footer-nav a:hover { color: var(--primary); }
-    .footer-copyright { margin-bottom: 10px; }
-    .footer-creator .fa-heart { color: var(--pink); animation: pulse 1.5s ease-in-out infinite; display: inline-block; }
-
     @media (max-width: 991px) {
         #auth-container { max-width: 450px; }
         .auth-card { flex-direction: column; }
@@ -180,7 +177,7 @@
     }
     @media (max-width: 768px) { #auth-box { padding: 30px 20px; } .brand-header img { width: 70px; height: 70px; } }
 
-    /* Admin Panel styles (unchanged) */
+    /* Admin Panel styles */
     #adminPanelBox { display: none; flex-direction: column; width: 100%; height: 95vh; animation: slideIn 0.6s ease-out; padding: 30px; background: var(--bg-color); border-radius: var(--radius-main); box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light); }
     #auth-container.is-active .auth-card { display: none; }
     #auth-container.is-active #adminPanelBox { display: flex; }
@@ -199,12 +196,38 @@
     .carousel-section-container { position: relative; }
     .carousel-track { display: flex; overflow-x: auto; padding: 10px; margin: 0 -10px 15px -10px; gap: 15px; scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none; }
     .carousel-track::-webkit-scrollbar { display: none; }
-    .carousel-item { flex: 0 0 120px; height: 120px; background: var(--bg-color); border-radius: var(--radius-inner); box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); scroll-snap-align: center; border: 3px solid transparent; text-align: center; padding: 10px; }
+    .carousel-item { position: relative; flex: 0 0 120px; height: 120px; background: var(--bg-color); border-radius: var(--radius-inner); box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); scroll-snap-align: center; border: 3px solid transparent; text-align: center; padding: 10px; }
     .carousel-item:hover { transform: translateY(-4px); }
     .carousel-item.active { box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 3px var(--primary); color: var(--primary); }
     .carousel-item img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 8px; }
     .carousel-item .item-icon { font-size: 2rem; margin-bottom: 10px; }
-    .carousel-item .item-name { font-size: 0.85rem; font-weight: 500; }
+    .carousel-item .item-name { font-size: 0.85rem; font-weight: 500; word-break: break-all; }
+    
+    .carousel-item .change-music-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 6px;
+        background: var(--bg-color);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 2px 4px var(--shadow-dark), -2px -2px 4px var(--shadow-light);
+        z-index: 5;
+    }
+    .carousel-item.active[data-type="upload"] .change-music-btn {
+        display: flex;
+    }
+    .carousel-item .change-music-btn:hover {
+        color: var(--primary);
+    }
+
     .carousel-controls { display: flex; align-items: center; justify-content: center; gap: 20px; }
     .carousel-nav-btn { background: var(--bg-color); border: none; border-radius: 50%; color: var(--text-muted); width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; font-size: 1rem; cursor: pointer; transition: var(--transition); box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light); }
     .carousel-nav-btn:hover { color: var(--primary); }
@@ -233,12 +256,34 @@
     .swal2-confirm { background: var(--primary) !important; color: #fff !important; }
     .swal2-cancel { background-color: var(--bg-color) !important; color: var(--text-muted) !important; }
 
-    /* NEW: Styles for the contact form popup */
+    /* SweetAlert2 Contact Form styles */
     .swal-contact-form { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
     .swal-form-group { width: 100%; margin-bottom: 15px; }
     .swal-form-group label { margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); display: block; }
     .swal-form-group .swal2-input, .swal-form-group .swal2-textarea { width: 100% !important; margin: 0; background: var(--bg-color) !important; box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light) !important; border: none !important; border-radius: var(--radius-inner) !important; color: var(--text-color) !important; }
     .swal-form-group .swal2-input:focus, .swal-form-group .swal2-textarea:focus { box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light), 0 0 0 2px var(--primary) !important; }
+
+    /* Styles for the separated page footer */
+    .page-footer {
+        width: 100%;
+        max-width: 450px;
+        margin: 20px auto 0 auto;
+        padding: 10px 20px;
+        text-align: center;
+        display: none;
+        animation: slideIn 0.6s ease-out;
+    }
+    .page-footer .support-section {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        border-top: 1px solid var(--shadow-dark);
+        padding-top: 20px;
+    }
+    .footer-nav { display: flex; justify-content: center; align-items: center; gap: 25px; margin-bottom: 15px; }
+    .footer-nav a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: var(--transition); }
+    .footer-nav a:hover { color: var(--primary); }
+    .footer-copyright { margin-bottom: 10px; }
+    .footer-creator .fa-heart { color: var(--pink); animation: pulse 1.5s ease-in-out infinite; display: inline-block; }
     
     </style>
 </head>
@@ -259,7 +304,7 @@
             <div id="auth-box">
                 <div class="brand-header">
                     <img src="/IMG_1551.png" alt="Logo">
-                    <h1 id="form-title">Welcome to XlordVerse</h1>
+                    <h1 id="form-title">Selamat datang!</h1>
                     <p id="auth-subtitle">Masuk untuk melanjutkan</p>
                 </div>
                 
@@ -320,20 +365,7 @@
                 <div class="terms-section">
                     <p>By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
                 </div>
-                
-                <div class="support-section">
-                    <div class="footer-nav">
-                        <a href="index.html">Home</a>
-                        <a href="#">Dashboard</a>
-                        <a href="#" id="contact-link">Contact</a>
-                    </div>
-                    <p class="footer-copyright">
-                        © 2025 xlordcode. All rights reserved.
-                    </p>
-                    <p class="footer-creator">
-                        Made with <i class="fas fa-heart"></i> by Misbah
-                    </p>
-                </div>
+
             </div>
         </div>
         
@@ -450,13 +482,34 @@
             </div>
         </div>
     </div>
-
+    
+    <div class="page-footer">
+        <div class="support-section">
+            <div class="footer-nav">
+                <a href="index.html">Home</a>
+                <a href="#">Dashboard</a>
+                <a href="#" id="contact-link">Contact</a>
+            </div>
+            <p class="footer-copyright">
+                © 2025 xlordcode. All rights reserved.
+            </p>
+            <p class="footer-creator">
+                Made with <i class="fas fa-heart"></i> by Misbah
+            </p>
+        </div>
+    </div>
+    
+    <input type="file" id="musicUploadInput" accept="audio/*" style="display: none;" />
     <audio id="musicPreviewPlayer"></audio>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
-    // Firebase Configuration
+    // =================================================================
+    // KONFIGURASI FIREBASE & SUPABASE
+    // =================================================================
+
+    // --- Konfigurasi Firebase (Untuk Login dan Database) ---
     const firebaseConfig = {
         apiKey: "AIzaSyCWl2CJqIr-u8lSHu8s4tgZ25UQIK2ivt0",
         authDomain: "mayfa-fa284.firebaseapp.com",
@@ -466,14 +519,22 @@
         messagingSenderId: "523290705179",
         appId: "1:523290705179:web:b06ae4d8e6b08cf07b27be"
     };
-
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
-    const storage = firebase.storage();
+    const storage = firebase.storage(); // Untuk QR Code
 
-    // DOM Elements & Global Variables
+    // --- Konfigurasi Supabase (Untuk Unggah Musik) ---
+    const SUPABASE_URL = 'https://nzjbpacjssqagnpobqsx.supabase.co'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56amJwYWNqc3NxYWducG9icXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NzYzNzIsImV4cCI6MjA2ODI1MjM3Mn0.mW_KvkD8gTcdVY_OJbhkcMfR_wqf84J_-f3-DH_dqDM'; 
+    
+    // PERBAIKAN: Nama variabel diubah menjadi 'supabaseClient'
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+    // =================================================================
+    // DOM Elements & Variabel Global
+    // =================================================================
     const authContainer = document.getElementById('auth-container');
     const authFlipper = document.getElementById('auth-flipper');
     const mainActionBtn = document.getElementById('main-action-btn');
@@ -484,114 +545,122 @@
     const musicCarouselTrack = document.getElementById('music-carousel-track');
     const giftCarouselTrack = document.getElementById('gift-carousel-track');
     const musicPreviewPlayer = document.getElementById('musicPreviewPlayer');
+    const pageFooter = document.querySelector('.page-footer');
     
     let newQrImageUrl = null;
+    let customMusic = null; 
+    let currentMusicIndex = 0;
 
-    // Music and Gift Data
-    const musicTracks = [ { name: "musik 1", path: "/musik/musik1.mp3" }, { name: "musik 2", path: "/musik/musik2.mp3" }, { name: "musik 3", path: "/musik/musik3.mp3" }, { name: "musik 4", path: "/musik/musik4.mp3" }, { name: "musik 5", path: "/musik/musik5.mp3" }, { name: "musik default", path: "mayfa.mp3" } ];
-    let currentMusicIndex = musicTracks.length - 1;
+    const musicTracks = [ 
+        { name: "Musik 1", path: "/musik/musik1.mp3" }, 
+        { name: "Musik 2", path: "/musik/musik2.mp3" }, 
+        { name: "Musik 3", path: "/musik/musik3.mp3" }, 
+        { name: "Musik 4", path: "/musik/musik4.mp3" }, 
+        { name: "Musik 5", path: "/musik/musik5.mp3" },
+        { name: "Upload Musik", type: "upload", icon: "fas fa-upload" }
+    ];
     const giftIcons = [ { name: "Kado1", path: "nir.gif" }, { name: "Kado2", path: "/img/gif1.gif" }, { name: "Kado3", path: "/img/gif2.gif" }, { name: "Kado4", path: "/img/gif3.gif" } ];
     let currentGiftIndex = 0;
 
-    // Core Functions
+    // =================================================================
+    // Fungsi-Fungsi Utama Aplikasi
+    // =================================================================
+
+    function showAdminPanel(user) { if (!user) return; authContainer.classList.add('is-active'); pageFooter.style.display = 'none'; loadDataToForm(user); }
     themeToggle.addEventListener('click', () => { const currentTheme = document.documentElement.getAttribute('data-theme'); const newTheme = currentTheme === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', newTheme); localStorage.setItem('theme', newTheme); });
     function initTheme() { const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); document.documentElement.setAttribute('data-theme', savedTheme); }
     function togglePasswordVisibility(fieldId, icon) { const field = document.getElementById(fieldId); if (field) { field.type = field.type === "password" ? "text" : "password"; icon.classList.toggle('fa-eye'); icon.classList.toggle('fa-eye-slash'); } }
-    
-    function showLoginView() { 
-        sliderTabsContainer.classList.add('login-active');
-        sliderTabsContainer.classList.remove('register-active');
-        authFlipper.classList.remove('is-flipped');
-        mainActionBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
-        document.getElementById('auth-subtitle').textContent = 'Masuk untuk melanjutkan';
-        document.getElementById('form-title').textContent = 'Welcome to XlordVerse';
-        
-        setTimeout(() => { 
-            const loginForm = document.getElementById('login-form-content');
-            if (loginForm) { authFlipper.style.height = `${loginForm.offsetHeight}px`; } 
-        }, 50); 
-    }
-    
-    function showRegisterView() { 
-        sliderTabsContainer.classList.remove('login-active');
-        sliderTabsContainer.classList.add('register-active');
-        authFlipper.classList.add('is-flipped');
-        mainActionBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar Sekarang';
-        document.getElementById('auth-subtitle').textContent = 'Buat akun untuk memulai';
-        document.getElementById('form-title').textContent = 'Buat Akun Anda';
+    function showLoginView() { sliderTabsContainer.classList.add('login-active'); sliderTabsContainer.classList.remove('register-active'); authFlipper.classList.remove('is-flipped'); mainActionBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; document.getElementById('auth-subtitle').textContent = 'Masuk untuk melanjutkan'; document.getElementById('form-title').textContent = 'Selamat datang!'; setTimeout(() => { const loginForm = document.getElementById('login-form-content'); if (loginForm) { authFlipper.style.height = `${loginForm.offsetHeight}px`; } }, 50); }
+    function showRegisterView() { sliderTabsContainer.classList.remove('login-active'); sliderTabsContainer.classList.add('register-active'); authFlipper.classList.add('is-flipped'); mainActionBtn.innerHTML = '<i class="fas fa-user-plus"></i> Daftar Sekarang'; document.getElementById('auth-subtitle').textContent = 'Buat akun untuk memulai'; document.getElementById('form-title').textContent = 'Buat Akun Anda'; setTimeout(() => { const registerForm = document.getElementById('register-form-content'); if (registerForm) { authFlipper.style.height = `${registerForm.offsetHeight}px`; } }, 50); }
+    function showContactForm() { Swal.fire({ title: 'Hubungi Kami', html: `<div class="swal-contact-form"><div class="swal-form-group"><label for="swal-name">Nama Anda</label><input id="swal-name" class="swal2-input" placeholder="John Doe"></div><div class="swal-form-group"><label for="swal-email">Email Anda</label><input id="swal-email" type="email" class="swal2-input" placeholder="john.doe@example.com"></div><div class="swal-form-group"><label for="swal-message">Pesan Anda</label><textarea id="swal-message" class="swal2-textarea" placeholder="Tulis pesan Anda di sini..."></textarea></div></div>`, showCancelButton: true, confirmButtonText: 'Kirim Pesan', cancelButtonText: 'Batal', preConfirm: () => { const name = document.getElementById('swal-name').value; const email = document.getElementById('swal-email').value; const message = document.getElementById('swal-message').value; if (!name || !email || !message) { Swal.showValidationMessage(`Harap isi semua kolom`); } return { name, email, message }; } }).then((result) => { if (result.isConfirmed) { Swal.fire('Terkirim!', 'Terima kasih telah menghubungi kami.', 'success'); } }); }
 
-        setTimeout(() => { 
-            const registerForm = document.getElementById('register-form-content');
-            if (registerForm) { authFlipper.style.height = `${registerForm.offsetHeight}px`; }
-        }, 50);
+    function renderCarousels() { 
+        musicCarouselTrack.innerHTML = musicTracks.map((track, index) => {
+            const isUploadBtn = track.type === 'upload';
+            const iconClass = isUploadBtn ? track.icon : 'fas fa-music';
+            const changeBtnHtml = isUploadBtn ? '<i class="fas fa-sync-alt change-music-btn" title="Ganti Musik"></i>' : '';
+            return `<div class="carousel-item" data-index="${index}" ${isUploadBtn ? 'data-type="upload"' : ''}>
+                        ${changeBtnHtml}
+                        <i class="${iconClass} item-icon"></i>
+                        <span class="item-name">${track.name}</span>
+                    </div>`;
+        }).join('');
+        giftCarouselTrack.innerHTML = giftIcons.map((gift, index) => `<div class="carousel-item" data-index="${index}"><img src="${gift.path}" alt="${gift.name}"><span class="item-name">${gift.name}</span></div>`).join(''); 
+        addCarouselListeners(); 
     }
-    
-    function showContactForm() {
-        Swal.fire({
-            title: 'Hubungi Kami',
-            html: `
-            <div class="swal-contact-form">
-                <div class="swal-form-group">
-                    <label for="swal-name">Nama Anda</label>
-                    <input id="swal-name" class="swal2-input" placeholder="John Doe">
-                </div>
-                <div class="swal-form-group">
-                    <label for="swal-email">Email Anda</label>
-                    <input id="swal-email" type="email" class="swal2-input" placeholder="john.doe@example.com">
-                </div>
-                <div class="swal-form-group">
-                    <label for="swal-message">Pesan Anda</label>
-                    <textarea id="swal-message" class="swal2-textarea" placeholder="Tulis pesan Anda di sini..."></textarea>
-                </div>
-            </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Kirim Pesan',
-            cancelButtonText: 'Batal',
-            preConfirm: () => {
-                const name = document.getElementById('swal-name').value;
-                const email = document.getElementById('swal-email').value;
-                const message = document.getElementById('swal-message').value;
-                if (!name || !email || !message) {
-                    Swal.showValidationMessage(`Harap isi semua kolom`);
+
+    function addCarouselListeners() { 
+        musicCarouselTrack.addEventListener('click', e => {
+            const changeButton = e.target.closest('.change-music-btn');
+            if (changeButton) {
+                e.stopPropagation();
+                document.getElementById('musicUploadInput').click();
+                return;
+            }
+
+            const item = e.target.closest('.carousel-item'); 
+            if (item) {
+                if (item.dataset.type === 'upload') {
+                    if (customMusic) {
+                        currentMusicIndex = -1;
+                        updateMusicSelection();
+                    } else {
+                        document.getElementById('musicUploadInput').click();
+                    }
+                } else {
+                    currentMusicIndex = parseInt(item.dataset.index); 
+                    customMusic = null;
+                    updateMusicSelection(); 
                 }
-                return { name: name, email: email, message: message };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log('Contact Form Data:', result.value);
-                Swal.fire(
-                    'Terkirim!',
-                    'Terima kasih telah menghubungi kami. Pesan Anda telah kami terima.',
-                    'success'
-                );
-            }
-        });
+            } 
+        }); 
+        giftCarouselTrack.addEventListener('click', e => { const item = e.target.closest('.carousel-item'); if (item) { currentGiftIndex = parseInt(item.dataset.index); updateGiftSelection(); } }); 
     }
 
-    function renderCarousels() { musicCarouselTrack.innerHTML = musicTracks.map((track, index) => `<div class="carousel-item" data-index="${index}"><i class="fas fa-music item-icon"></i><span class="item-name">${track.name}</span></div>`).join(''); giftCarouselTrack.innerHTML = giftIcons.map((gift, index) => `<div class="carousel-item" data-index="${index}"><img src="${gift.path}" alt="${gift.name}"><span class="item-name">${gift.name}</span></div>`).join(''); addCarouselListeners(); }
-    function addCarouselListeners() { musicCarouselTrack.addEventListener('click', e => { const item = e.target.closest('.carousel-item'); if (item) { currentMusicIndex = parseInt(item.dataset.index); updateMusicSelection(); } }); giftCarouselTrack.addEventListener('click', e => { const item = e.target.closest('.carousel-item'); if (item) { currentGiftIndex = parseInt(item.dataset.index); updateGiftSelection(); } }); }
-    function updateMusicSelection() { musicCarouselTrack.querySelectorAll('.carousel-item').forEach(item => { item.classList.toggle('active', parseInt(item.dataset.index) === currentMusicIndex); }); musicPreviewPlayer.src = musicTracks[currentMusicIndex].path; document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play'); const activeItem = musicCarouselTrack.querySelector('.active'); if (activeItem) { activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } }
+    function updateMusicSelection() {
+        const musicItems = musicCarouselTrack.querySelectorAll('.carousel-item');
+        let activeItem = null;
+
+        musicItems.forEach((item, index) => {
+            const isCustomActive = currentMusicIndex === -1 && item.dataset.type === 'upload';
+            const isPresetActive = index === currentMusicIndex;
+            const isActive = isCustomActive || isPresetActive;
+            
+            item.classList.toggle('active', isActive);
+            if (isActive) activeItem = item;
+        });
+
+        if (activeItem) {
+            let musicSource = '';
+            if (currentMusicIndex === -1 && customMusic) {
+                 musicSource = customMusic.path;
+            } else if (currentMusicIndex !== -1) {
+                 musicSource = musicTracks[currentMusicIndex].path;
+            }
+            musicPreviewPlayer.src = musicSource;
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+        document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play');
+    }
+
     function updateGiftSelection() { giftCarouselTrack.querySelectorAll('.carousel-item').forEach(item => { item.classList.toggle('active', parseInt(item.dataset.index) === currentGiftIndex); }); const activeItem = giftCarouselTrack.querySelector('.active'); if (activeItem) { activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } }
     function formatDateForDisplay(dateString) { if (!dateString) return "Pilih Tanggal"; const date = new Date(dateString); const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"]; return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`; }
     function setButtonLoading(isLoading, text = '') { mainActionBtn.disabled = isLoading; document.getElementById('google-signin-btn').disabled = isLoading; if (isLoading) { mainActionBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${text || 'Memproses...'}`; } else { if (sliderTabsContainer.classList.contains('register-active')) { showRegisterView(); } else { showLoginView(); } } }
     function handleMainAction() { if (sliderTabsContainer.classList.contains('register-active')) { createAccount(); } else { loginWithEmail(); } }
-    function createAccount() { const email = document.getElementById('registerEmail').value.trim(); const password = document.getElementById('registerPass').value; if (!email || !password) { Swal.fire('Input Tidak Lengkap', 'Email dan password wajib diisi.', 'warning'); return; } if (password.length < 6) { Swal.fire('Password Terlalu Pendek', 'Password minimal harus 6 karakter.', 'warning'); return; } setButtonLoading(true, 'Membuat Akun...'); auth.createUserWithEmailAndPassword(email, password).then(userCredential => { const user = userCredential.user; return createDefaultUserData(user).then(() => { return user.sendEmailVerification().then(() => { Swal.fire({ icon: 'success', title: 'Registrasi Berhasil!', html: `Satu langkah lagi! Kami telah mengirimkan email verifikasi ke <b>${email}</b>. Silakan periksa kotak masuk Anda.<br><br>Halaman ini akan masuk secara otomatis setelah verifikasi selesai.`, allowOutsideClick: false, showConfirmButton: false, willOpen: () => { Swal.showLoading(); const verificationCheckInterval = setInterval(() => { auth.currentUser.reload().then(() => { if (auth.currentUser.emailVerified) { clearInterval(verificationCheckInterval); Swal.close(); } }); }, 2500); } }); }); }); }).catch(error => { const message = error.code === 'auth/email-already-in-use' ? 'Email ini sudah terdaftar. Silakan login.' : 'Terjadi error: ' + error.message; Swal.fire('Registrasi Gagal', message, 'error'); }).finally(() => setButtonLoading(false)); }
+    
+    function createAccount() { const email = document.getElementById('registerEmail').value.trim(); const password = document.getElementById('registerPass').value; if (!email || !password) { Swal.fire('Input Tidak Lengkap', 'Email dan password wajib diisi.', 'warning'); return; } if (password.length < 6) { Swal.fire('Password Terlalu Pendek', 'Password minimal harus 6 karakter.', 'warning'); return; } setButtonLoading(true, 'Membuat Akun...'); auth.createUserWithEmailAndPassword(email, password).then(userCredential => { const user = userCredential.user; return createDefaultUserData(user).then(() => { return user.sendEmailVerification().then(() => { Swal.fire({ icon: 'success', title: 'Registrasi Berhasil!', html: `Satu langkah lagi! Kami telah mengirimkan email verifikasi ke <b>${email}</b>. Silakan periksa kotak masuk Anda.<br><br>Halaman ini akan masuk secara otomatis setelah verifikasi selesai.`, allowOutsideClick: false, showConfirmButton: false, willOpen: () => { Swal.showLoading(); const verificationCheckInterval = setInterval(() => { auth.currentUser.reload().then(() => { if (auth.currentUser.emailVerified) { clearInterval(verificationCheckInterval); Swal.close(); showAdminPanel(auth.currentUser); } }); }, 2500); } }); }); }); }).catch(error => { const message = error.code === 'auth/email-already-in-use' ? 'Email ini sudah terdaftar. Silakan login.' : 'Terjadi error: ' + error.message; Swal.fire('Registrasi Gagal', message, 'error'); }).finally(() => setButtonLoading(false)); }
     function loginWithEmail() { const email = document.getElementById('loginEmail').value.trim(); const password = document.getElementById('loginPass').value; if (!email || !password) { Swal.fire('Input Diperlukan', 'Email dan password harus diisi.', 'warning'); return; } setButtonLoading(true, 'Memverifikasi...'); auth.signInWithEmailAndPassword(email, password).then(userCredential => { if (!userCredential.user.emailVerified) { auth.signOut(); Swal.fire({ icon: 'warning', title: 'Email Belum Diverifikasi', html: `Silakan periksa email <b>${email}</b> dan klik link verifikasi.`, confirmButtonText: 'Kirim Ulang Email', showCancelButton: true, cancelButtonText: 'Tutup' }).then(result => { if (result.isConfirmed) { userCredential.user.sendEmailVerification().then(() => { Swal.fire('Terkirim!', 'Email verifikasi baru telah dikirim.', 'success'); }); } }); } }).catch(error => { Swal.fire('Login Gagal', 'Email atau password yang Anda masukkan salah.', 'error'); }).finally(() => setButtonLoading(false)); }
-    function signInWithGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); setButtonLoading(true, 'Membuka Google...'); auth.signInWithPopup(provider).then(result => { if (result.additionalUserInfo.isNewUser) { return createDefaultUserData(result.user); } }).catch(error => { if (error.code === 'auth/unauthorized-domain') { Swal.fire('Login Google Gagal', 'Domain aplikasi ini belum diizinkan. Pastikan Anda sudah menambahkan `localhost` dan `127.0.0.1` ke Authorized Domains di Firebase Console.', 'error'); } else if (error.code !== 'auth/popup-closed-by-user') { Swal.fire('Login Google Gagal', error.message, 'error'); } }).finally(() => setButtonLoading(false)); }
-    function createDefaultUserData(user) { const nameFromEmail = user.email.split('@')[0]; const defaultDisplayName = user.displayName || nameFromEmail; const defaultData = { birthdayName: defaultDisplayName, birthDate: "2005-09-28", guestUser: "tamu", guestPass: "12345", qrImageUrl: "", bestWishes: "", stayStrongQuote: "", qrMessage: "", targetWhatsappNumber: "", puzzleWord1: 'ULTAH', puzzleWord2: 'KADO', puzzleWord3: 'DOA', musicUrl: 'mayfa.mp3', giftIconUrl: 'nir.gif' }; return database.ref('birthday_pages/' + user.uid).set(defaultData); }
-    function copyShareableLink() { const linkInput = document.getElementById('shareableLink'); if (linkInput.value) { navigator.clipboard.writeText(linkInput.value).then(() => { Swal.fire({ icon: 'success', title: 'Link Berhasil Disalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 }); }).catch(err => { console.error('Gagal menyalin:', err); Swal.fire('Oops!', 'Gagal menyalin link.', 'error'); }); } }
+    function signInWithGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); setButtonLoading(true, 'Membuka Google...'); auth.signInWithPopup(provider).then(result => { if (result.additionalUserInfo.isNewUser) { return createDefaultUserData(result.user); } }).catch(error => { if (error.code !== 'auth/popup-closed-by-user') { Swal.fire('Login Google Gagal', error.message, 'error'); } }).finally(() => setButtonLoading(false)); }
+    function createDefaultUserData(user) { const nameFromEmail = user.email.split('@')[0]; const defaultDisplayName = user.displayName || nameFromEmail; const defaultData = { birthdayName: defaultDisplayName, birthDate: "2005-09-28", guestUser: "tamu", guestPass: "12345", qrImageUrl: "", bestWishes: "", stayStrongQuote: "", qrMessage: "", targetWhatsappNumber: "", puzzleWord1: 'ULTAH', puzzleWord2: 'KADO', puzzleWord3: 'DOA', musicUrl: musicTracks[0].path, giftIconUrl: giftIcons[0].path }; return database.ref('birthday_pages/' + user.uid).set(defaultData); }
+    function copyShareableLink() { const linkInput = document.getElementById('shareableLink'); if (linkInput.value) { navigator.clipboard.writeText(linkInput.value).then(() => { Swal.fire({ icon: 'success', title: 'Link Berhasil Disalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 }); }); } }
     function logout() { Swal.fire({ title: 'Konfirmasi Log Out', text: 'Anda yakin ingin keluar?', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Log Out', cancelButtonText: 'Batal', reverseButtons: true }).then((result) => { if (result.isConfirmed) { musicPreviewPlayer.pause(); auth.signOut(); } }); }
     
     function loadDataToForm(user) {
         if (!user) return;
-        const nameFromEmail = user.email.split('@')[0];
-        const welcomeName = user.displayName || nameFromEmail;
-        Swal.fire({ icon: 'success', title: `Selamat Datang, ${welcomeName}!`, toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true, didOpen: () => confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } }) });
+        Swal.fire({ icon: 'success', title: `Selamat Datang, ${user.displayName || user.email.split('@')[0]}!`, toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true, didOpen: () => confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } }) });
 
         database.ref('birthday_pages/' + user.uid).once('value').then(snapshot => {
             const data = snapshot.val() || {};
-            
             document.getElementById('birthdayNameInput').value = data.birthdayName || '';
             document.getElementById('bestWishesInput').value = data.bestWishes || '';
             document.getElementById('stayStrongQuoteInput').value = data.stayStrongQuote || '';
@@ -605,101 +674,120 @@
             document.getElementById('qrMessageInput').value = data.qrMessage || '';
             
             const qrPreviewImage = document.getElementById('qrPreviewImage');
-            if (data.qrImageUrl) {
-                qrPreviewImage.src = data.qrImageUrl;
-                qrPreviewImage.style.display = 'block';
-            } else {
-                qrPreviewImage.style.display = 'none';
-            }
+            if (data.qrImageUrl) { qrPreviewImage.src = data.qrImageUrl; qrPreviewImage.style.display = 'block'; } else { qrPreviewImage.style.display = 'none'; }
 
             document.getElementById('birthDateInput').value = data.birthDate || '';
             document.getElementById('dateDisplayText').textContent = formatDateForDisplay(data.birthDate);
             
-            const savedMusicPath = data.musicUrl || 'mayfa.mp3';
-            currentMusicIndex = Math.max(0, musicTracks.findIndex(track => track.path === savedMusicPath));
+            const savedMusicPath = data.musicUrl || musicTracks[0].path;
+            const preDefinedTrackIndex = musicTracks.findIndex(track => track.path === savedMusicPath && track.type !== 'upload');
+
+            if (preDefinedTrackIndex !== -1) {
+                currentMusicIndex = preDefinedTrackIndex;
+                customMusic = null;
+            } else {
+                customMusic = { name: 'Musik Pilihan', path: savedMusicPath };
+                currentMusicIndex = -1;
+                const uploadBtn = musicCarouselTrack.querySelector('[data-type="upload"]');
+                if(uploadBtn) {
+                    uploadBtn.querySelector('.item-icon').className = 'fas fa-check-circle item-icon';
+                    uploadBtn.querySelector('.item-name').textContent = 'Musik Pilihan';
+                }
+            }
             updateMusicSelection();
 
-            const savedGiftPath = data.giftIconUrl || 'nir.gif';
+            const savedGiftPath = data.giftIconUrl || giftIcons[0].path;
             currentGiftIndex = Math.max(0, giftIcons.findIndex(icon => icon.path === savedGiftPath));
             updateGiftSelection();
 
         }).catch(err => Swal.fire('Gagal Memuat Data', err.message, 'error'));
     }
 
-    function saveData() { 
+    function saveData() {
         const user = auth.currentUser;
         if (!user) return;
-        
+
         const saveBtn = document.querySelector('.btn-save');
         saveBtn.disabled = true;
         saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
         
-        const settings = { 
-            birthdayName: document.getElementById('birthdayNameInput').value, 
-            birthDate: document.getElementById('birthDateInput').value,
-            bestWishes: document.getElementById('bestWishesInput').value, 
-            stayStrongQuote: document.getElementById('stayStrongQuoteInput').value, 
-            guestUser: document.getElementById('guestUserInput').value, 
-            guestPass: document.getElementById('guestPassInput').value, 
-            targetWhatsappNumber: document.getElementById('targetWhatsappNumber').value.trim(), 
-            puzzleWord1: document.getElementById('puzzleWord1').value.trim().toUpperCase(), 
-            puzzleWord2: document.getElementById('puzzleWord2').value.trim().toUpperCase(), 
-            puzzleWord3: document.getElementById('puzzleWord3').value.trim().toUpperCase(), 
-            qrImageUrl: newQrImageUrl || document.getElementById('qrPreviewImage').src,
-            qrMessage: document.getElementById('qrMessageInput').value,
-            musicUrl: musicTracks[currentMusicIndex].path,
-            giftIconUrl: giftIcons[currentGiftIndex].path
-        };
-        
-        database.ref('birthday_pages/' + user.uid).update(settings)
-            .then(() => { 
-                newQrImageUrl = null;
-                const shareableLink = document.getElementById('shareableLink').value; 
-                const messageText = `Halo *${settings.birthdayName}*! 👋\n\nKejutan spesialmu sudah siap! 🎉 Akses halaman ulang tahunmu di link ini:\n\n🔗 *Link Halaman Ulang Tahun:*\n${shareableLink}\n\nDetail untuk masuk:\n👤 *Username:* ${settings.guestUser}\n🔑 *Password:* ${settings.guestPass}\n\n*Jangan lupa login ya!* ✨`.trim();
-                
-                Swal.fire({
-                    title: 'Data Berhasil Disimpan!',
-                    html: 'Semua perubahan telah disimpan.<br>Pilih tindakan selanjutnya:',
-                    icon: 'success',
-                    showCancelButton: true,
-                    showDenyButton: true,
-                    confirmButtonText: '<i class="fab fa-whatsapp"></i> Kirim via WA',
-                    denyButtonText: '<i class="fas fa-copy"></i> Salin Info',
-                    cancelButtonText: 'Selesai',
-                    reverseButtons: true,
-                }).then((result) => { 
-                    if (result.isConfirmed) {
-                        if (settings.targetWhatsappNumber) {
-                            window.open(`https://wa.me/${settings.targetWhatsappNumber}?text=${encodeURIComponent(messageText)}`, '_blank');
-                        } else {
-                            Swal.fire({ icon: 'info', title: 'Nomor WhatsApp Kosong', text: 'Nomor WhatsApp target belum diisi.' });
-                        }
-                    } else if (result.isDenied) {
-                        navigator.clipboard.writeText(messageText).then(() => Swal.fire({ icon: 'success', title: 'Disalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 }));
-                    } 
-                }); 
-            })
-            .catch(e => Swal.fire('Gagal Menyimpan', e.message, 'error'))
-            .finally(() => {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Semua Perubahan';
+        database.ref('birthday_pages/' + user.uid).once('value').then(snapshot => {
+            const existingData = snapshot.val() || {};
+            let musicUrlToSave = existingData.musicUrl; 
+
+            if (currentMusicIndex !== -1) {
+                musicUrlToSave = musicTracks[currentMusicIndex].path;
+            } else if (customMusic) {
+                if (customMusic.path && !customMusic.path.startsWith('blob:')) {
+                    musicUrlToSave = customMusic.path;
+                }
+            }
+
+            const settings = {
+                birthdayName: document.getElementById('birthdayNameInput').value,
+                birthDate: document.getElementById('birthDateInput').value,
+                bestWishes: document.getElementById('bestWishesInput').value,
+                stayStrongQuote: document.getElementById('stayStrongQuoteInput').value,
+                guestUser: document.getElementById('guestUserInput').value,
+                guestPass: document.getElementById('guestPassInput').value,
+                targetWhatsappNumber: document.getElementById('targetWhatsappNumber').value.trim(),
+                puzzleWord1: document.getElementById('puzzleWord1').value.trim().toUpperCase(),
+                puzzleWord2: document.getElementById('puzzleWord2').value.trim().toUpperCase(),
+                puzzleWord3: document.getElementById('puzzleWord3').value.trim().toUpperCase(),
+                qrImageUrl: newQrImageUrl || document.getElementById('qrPreviewImage').src,
+                qrMessage: document.getElementById('qrMessageInput').value,
+                musicUrl: musicUrlToSave,
+                giftIconUrl: giftIcons[currentGiftIndex].path
+            };
+
+            return database.ref('birthday_pages/' + user.uid).update(settings);
+
+        }).then(() => {
+            newQrImageUrl = null;
+            const settings = { 
+                birthdayName: document.getElementById('birthdayNameInput').value,
+                guestUser: document.getElementById('guestUserInput').value,
+                guestPass: document.getElementById('guestPassInput').value,
+                targetWhatsappNumber: document.getElementById('targetWhatsappNumber').value.trim()
+            };
+            const shareableLink = document.getElementById('shareableLink').value;
+            const messageText = `Halo *${settings.birthdayName}*! 👋\n\nKejutan spesialmu sudah siap! 🎉 Akses halaman ulang tahunmu di link ini:\n\n🔗 *Link Halaman Ulang Tahun:*\n${shareableLink}\n\nDetail untuk masuk:\n👤 *Username:* ${settings.guestUser}\n🔑 *Password:* ${settings.guestPass}\n\n*Jangan lupa login ya!* ✨`.trim();
+            Swal.fire({
+                title: 'Data Berhasil Disimpan!',
+                html: 'Semua perubahan telah disimpan.<br>Pilih tindakan selanjutnya:',
+                icon: 'success',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: '<i class="fab fa-whatsapp"></i> Kirim via WA',
+                denyButtonText: '<i class="fas fa-copy"></i> Salin Info',
+                cancelButtonText: 'Selesai',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (settings.targetWhatsappNumber) {
+                        window.open(`https://wa.me/${settings.targetWhatsappNumber}?text=${encodeURIComponent(messageText)}`, '_blank');
+                    } else {
+                        Swal.fire({ icon: 'info', title: 'Nomor WhatsApp Kosong', text: 'Nomor WhatsApp target belum diisi.' });
+                    }
+                } else if (result.isDenied) {
+                    navigator.clipboard.writeText(messageText).then(() => Swal.fire({ icon: 'success', title: 'Disalin!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 }));
+                }
             });
+        }).catch(e => Swal.fire('Gagal Menyimpan', e.message, 'error'))
+        .finally(() => {
+            const saveBtn = document.querySelector('.btn-save');
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Semua Perubahan';
+        });
     }
 
-    // Initialize the App
     document.addEventListener('DOMContentLoaded', () => {
         initTheme();
         renderCarousels();
         
         auth.onAuthStateChanged(user => {
-            if (user && user.emailVerified) {
-                authContainer.classList.add('is-active');
-                loadDataToForm(user);
-            } else {
-                authContainer.classList.remove('is-active');
-                document.getElementById('auth-container').classList.add('loaded');
-                if (!user) { showLoginView(); }
-            }
+            if (user && user.emailVerified) { showAdminPanel(user); } 
+            else { authContainer.classList.remove('is-active'); document.getElementById('auth-container').classList.add('loaded'); pageFooter.style.display = 'block'; if (!user) { showLoginView(); } }
         });
 
         loginTabLabel.addEventListener('click', showLoginView);
@@ -708,62 +796,91 @@
         document.getElementById('google-signin-btn').addEventListener('click', signInWithGoogle);
         document.getElementById('copyLinkBtn').addEventListener('click', copyShareableLink);
         document.getElementById('birthDateInput').addEventListener('change', () => { document.getElementById('dateDisplayText').textContent = formatDateForDisplay(document.getElementById('birthDateInput').value); });
-        
-        document.getElementById('contact-link').addEventListener('click', (event) => {
-            event.preventDefault();
-            showContactForm();
-        });
-
-        document.getElementById('prevMusicBtn').addEventListener('click', () => { currentMusicIndex = (currentMusicIndex - 1 + musicTracks.length) % musicTracks.length; updateMusicSelection(); });
-        document.getElementById('nextMusicBtn').addEventListener('click', () => { currentMusicIndex = (currentMusicIndex + 1) % musicTracks.length; updateMusicSelection(); });
+        document.getElementById('contact-link').addEventListener('click', (event) => { event.preventDefault(); showContactForm(); });
+        document.getElementById('prevMusicBtn').addEventListener('click', () => { if (currentMusicIndex > 0) { currentMusicIndex--; } else { currentMusicIndex = musicTracks.findIndex(t => t.type !== 'upload'); } updateMusicSelection(); });
+        document.getElementById('nextMusicBtn').addEventListener('click', () => { const lastPresetIndex = musicTracks.findIndex(t => t.type === 'upload') - 1; if (currentMusicIndex < lastPresetIndex && currentMusicIndex !== -1) { currentMusicIndex++; } else { currentMusicIndex = 0; } updateMusicSelection(); });
         document.getElementById('music-preview-btn').addEventListener('click', () => { const icon = document.getElementById('music-preview-btn').querySelector('i'); if (musicPreviewPlayer.paused) { musicPreviewPlayer.play().catch(e => console.error("Audio play failed", e)); icon.classList.replace('fa-play', 'fa-pause'); } else { musicPreviewPlayer.pause(); icon.classList.replace('fa-pause', 'fa-play'); } });
         musicPreviewPlayer.onended = () => { document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play'); };
         document.getElementById('prevGiftBtn').addEventListener('click', () => { currentGiftIndex = (currentGiftIndex - 1 + giftIcons.length) % giftIcons.length; updateGiftSelection(); });
         document.getElementById('nextGiftBtn').addEventListener('click', () => { currentGiftIndex = (currentGiftIndex + 1) % giftIcons.length; updateGiftSelection(); });
 
-        const qrUploadInput = document.getElementById('qrImageUploadInput');
-        const qrPreviewImage = document.getElementById('qrPreviewImage');
-        const uploadBoxText = document.getElementById('uploadBoxText');
-
-        qrUploadInput.addEventListener('change', (event) => {
+        // =================================================================
+        // KODE UNGGAH MUSIK MENGGUNAKAN SUPABASE (DENGAN PERBAIKAN)
+        // =================================================================
+        document.getElementById('musicUploadInput').addEventListener('change', async (event) => {
             const file = event.target.files[0];
-            if (!file) { return; }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                qrPreviewImage.src = e.target.result;
-                qrPreviewImage.style.display = 'block';
-                uploadBoxText.innerHTML = `<i class="fas fa-check-circle"></i> Gambar berhasil dipilih!`;
-            };
-            reader.readAsDataURL(file);
+            if (!file) return;
 
             const user = auth.currentUser;
             if (!user) {
-                Swal.fire('Error', 'Anda harus login untuk mengunggah gambar.', 'error');
+                Swal.fire('Error', 'Anda harus login untuk mengunggah musik.', 'error');
                 return;
             }
+
+            const localUrl = URL.createObjectURL(file);
+            customMusic = { name: file.name, path: localUrl };
+            currentMusicIndex = -1;
+            updateMusicSelection();
             
+            const uploadBtnElement = document.querySelector('.carousel-item[data-type="upload"]');
+            const iconElement = uploadBtnElement.querySelector('.item-icon');
+            const nameElement = uploadBtnElement.querySelector('.item-name');
+            
+            iconElement.className = 'fas fa-spinner fa-spin item-icon';
+            nameElement.textContent = 'Mengunggah...';
+
+            try {
+                const filePath = `${user.uid}/${Date.now()}-${file.name}`;
+
+                // PERBAIKAN: Menggunakan 'supabaseClient'
+                const { data, error } = await supabaseClient
+                    .storage
+                    .from('music-uploads') // Ganti nama bucket jika perlu
+                    .upload(filePath, file);
+
+                if (error) { throw error; }
+
+                // PERBAIKAN: Menggunakan 'supabaseClient'
+                const { data: publicUrlData } = supabaseClient
+                    .storage
+                    .from('music-uploads') // Ganti nama bucket jika perlu
+                    .getPublicUrl(filePath);
+
+                if (customMusic) {
+                    customMusic.path = publicUrlData.publicUrl;
+                }
+
+                iconElement.className = 'fas fa-check-circle item-icon';
+                nameElement.textContent = file.name.length > 15 ? file.name.substring(0, 12) + '...' : file.name;
+                Swal.fire({icon: 'success', title: 'Upload Sukses!', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000});
+
+            } catch (error) {
+                console.error("Upload ke Supabase Gagal:", error);
+                Swal.fire('Upload Gagal', 'Terjadi kesalahan saat mengunggah.', 'error');
+                iconElement.className = 'fas fa-upload item-icon';
+                nameElement.textContent = 'Upload Musik';
+                customMusic = null;
+                currentMusicIndex = 0;
+                updateMusicSelection();
+            }
+        });
+
+        // =================================================================
+        // KODE UNGGAH QR MENGGUNAKAN FIREBASE STORAGE (TIDAK BERUBAH)
+        // =================================================================
+        const qrUploadInput = document.getElementById('qrImageUploadInput');
+        qrUploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) { return; }
+            const reader = new FileReader();
+            reader.onload = (e) => { document.getElementById('qrPreviewImage').src = e.target.result; document.getElementById('qrPreviewImage').style.display = 'block'; document.getElementById('uploadBoxText').innerHTML = `<i class="fas fa-check-circle"></i> Gambar dipilih!`; };
+            reader.readAsDataURL(file);
+            const user = auth.currentUser;
+            if (!user) { Swal.fire('Error', 'Anda harus login.', 'error'); return; }
             newQrImageUrl = null;
             const filePath = `qr_codes/${user.uid}/${Date.now()}-${file.name}`;
-            const storageRef = storage.ref(filePath);
-            const uploadTask = storageRef.put(file);
-
-            uploadTask.on('state_changed',
-                (snapshot) => { /* Progress bisa dipantau di sini */ },
-                (error) => {
-                    console.error("Upload Gagal:", error);
-                    Swal.fire('Upload Gagal', 'Terjadi kesalahan saat mengunggah gambar.', 'error');
-                    uploadBoxText.innerHTML = `<i class="fas fa-upload"></i> Klik atau jatuhkan file di sini`;
-                    qrPreviewImage.style.display = 'none';
-                },
-                () => {
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        console.log('File diunggah dan tersedia di', downloadURL);
-                        newQrImageUrl = downloadURL;
-                        uploadBoxText.innerHTML = `<i class="fas fa-check-circle"></i> Berhasil diunggah!`;
-                    });
-                }
-            );
+            const uploadTask = storage.ref(filePath).put(file);
+            uploadTask.on('state_changed', null, (error) => { Swal.fire('Upload Gagal', 'Terjadi kesalahan.', 'error'); }, () => { uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => { newQrImageUrl = downloadURL; document.getElementById('uploadBoxText').innerHTML = `<i class="fas fa-check-circle"></i> Berhasil diunggah!`; }); });
         });
     });
     </script>
