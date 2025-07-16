@@ -223,37 +223,26 @@
         color: var(--primary);
     }
 
-    /* --- START: PERBAIKAN FORM FLIPPER --- */
-    
-    /* Kontainer untuk animasi flip */
     #auth-flipper {
-        position: relative; /* Wajib agar anak elemen 'absolute' terkendali */
-        transform-style: preserve-3d; /* Mengaktifkan ruang 3D */
-        transition: transform 0.6s cubic-bezier(0.65, 0.05, 0.36, 1), height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1); /* Animasi flip dan tinggi */
-        margin-bottom: 20px; /* Jarak ke tombol */
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.65, 0.05, 0.36, 1), height 0.4s cubic-bezier(0.65, 0.05, 0.36, 1);
+        margin-bottom: 20px;
     }
-
-    /* Kondisi saat form register aktif */
     #auth-flipper.is-flipped {
         transform: rotateY(180deg);
     }
-
-    /* Style untuk kedua sisi form (login & register) */
     .auth-form-side {
-        position: absolute; /* KUNCI PERBAIKAN: Membuat form menumpuk di tempat yang sama */
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
-        -webkit-backface-visibility: hidden; /* Menyembunyikan sisi belakang saat animasi */
+        -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
     }
-
-    /* Form register dimulai dengan posisi terbalik (di belakang) */
     #register-form-content {
         transform: rotateY(180deg);
     }
-
-    /* --- END: PERBAIKAN FORM FLIPPER --- */
 
     /* Forms */
     .input-group {
@@ -326,7 +315,6 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        /* margin-top: 20px; (Dihapus karena jarak diatur dari #auth-flipper) */
     }
     .btn-primary:hover:not(:disabled) {
         transform: translateY(-3px);
@@ -396,7 +384,6 @@
         margin-left: .5em;
     }
 
-    /* Footer Copyright */
     .support-section {
         text-align: center;
         color: var(--text-muted);
@@ -472,6 +459,8 @@
         padding: 30px;
         box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
         transition: var(--transition);
+        display: flex;
+        flex-direction: column;
     }
     .panel-section:hover {
         transform: translateY(-5px);
@@ -491,57 +480,95 @@
         color: var(--primary);
     }
 
-    /* Music Controls */
-    .music-controls {
+    /* --- START: Desain Carousel Baru --- */
+    .carousel-section-container {
+        position: relative;
+    }
+    .carousel-track {
         display: flex;
-        justify-content: center;
+        overflow-x: auto;
+        padding: 10px;
+        margin: 0 -10px 15px -10px;
+        gap: 15px;
+        scroll-snap-type: x mandatory;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .carousel-track::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+    .carousel-item {
+        flex: 0 0 120px;
+        height: 120px;
+        background: var(--bg-color);
+        border-radius: var(--radius-inner);
+        box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+        display: flex;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        scroll-snap-align: center;
+        border: 3px solid transparent;
+        text-align: center;
+        padding: 10px;
+    }
+    .carousel-item:hover {
+        transform: translateY(-4px);
+    }
+    .carousel-item.active {
+        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light), 0 0 0 3px var(--primary);
+        color: var(--primary);
+    }
+    .carousel-item img {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        margin-bottom: 8px;
+    }
+    .carousel-item .item-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    .carousel-item .item-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .carousel-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 20px;
     }
-    .music-nav-btn, #music-preview-btn {
+    .carousel-nav-btn {
         background: var(--bg-color);
         border: none;
         border-radius: 50%;
         color: var(--text-muted);
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 1.1rem;
+        font-size: 1rem;
         cursor: pointer;
         transition: var(--transition);
         box-shadow: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light);
+    }
+    .carousel-nav-btn:hover {
+        color: var(--primary);
+    }
+    .carousel-nav-btn:active {
+        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
     }
     #music-preview-btn {
         width: 65px;
         height: 65px;
         font-size: 1.5rem;
         color: var(--primary);
-        margin: 0 15px;
     }
-    .music-nav-btn:hover, #music-preview-btn:hover {
-        color: var(--primary);
-        transform: translateY(-2px);
-        box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
-    }
-    .music-nav-btn:active, #music-preview-btn:active {
-        box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-        transform: translateY(0);
-        color: var(--primary-dark);
-    }
-
-    /* Gift Controls */
-    #gift-preview-image {
-        max-width: 120px;
-        height: 120px;
-        object-fit: contain;
-        margin-bottom: 20px;
-        border-radius: var(--radius-inner);
-        background: var(--bg-color);
-        padding: 8px;
-        box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
-    }
+    /* --- END: Desain Carousel Baru --- */
 
     /* Date Input */
     .custom-date-input-wrapper {
@@ -723,7 +750,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="auth-form-side" id="register-form-content">
                     <div class="input-group">
                         <label for="registerEmail">Email</label>
@@ -817,23 +843,24 @@
                     <div class="layout-column">
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-music"></i><span>Pilih Musik Latar</span></div>
-                            <div class="music-carousel-container">
-                                <div id="music-display">Nama Musik</div>
-                                <div class="music-controls">
-                                    <button type="button" id="prevMusicBtn" class="music-nav-btn"><i class="fas fa-backward-step"></i></button>
-                                    <button type="button" id="music-preview-btn"><i class="fas fa-play"></i></button>
-                                    <button type="button" id="nextMusicBtn" class="music-nav-btn"><i class="fas fa-forward-step"></i></button>
+                            <div class="carousel-section-container">
+                                <div class="carousel-track" id="music-carousel-track">
+                                    </div>
+                                <div class="carousel-controls">
+                                    <button type="button" id="prevMusicBtn" class="carousel-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                                    <button type="button" id="music-preview-btn" class="carousel-nav-btn"><i class="fas fa-play"></i></button>
+                                    <button type="button" id="nextMusicBtn" class="carousel-nav-btn"><i class="fas fa-chevron-right"></i></button>
                                 </div>
                             </div>
                         </div>
                         <div class="panel-section">
                             <div class="section-title"><i class="fas fa-gift"></i><span>Pilih Ikon Kado</span></div>
-                            <div class="gift-carousel-container">
-                                <img id="gift-preview-image" src="nir.gif" alt="Pratinjau Kado">
-                                <div id="gift-display">Kado Default</div>
-                                <div class="gift-controls">
-                                    <button type="button" id="prevGiftBtn" class="music-nav-btn"><i class="fas fa-chevron-left"></i></button>
-                                    <button type="button" id="nextGiftBtn" class="music-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                             <div class="carousel-section-container">
+                                <div class="carousel-track" id="gift-carousel-track">
+                                    </div>
+                                <div class="carousel-controls">
+                                    <button type="button" id="prevGiftBtn" class="carousel-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                                    <button type="button" id="nextGiftBtn" class="carousel-nav-btn"><i class="fas fa-chevron-right"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -928,23 +955,28 @@
     const registerTabLabel = document.getElementById('register-tab-label');
     const sliderTabsContainer = document.getElementById('slider-tabs-container');
     const themeToggle = document.getElementById('themeToggle');
+    // --- START: Perubahan Elemen DOM ---
+    const musicCarouselTrack = document.getElementById('music-carousel-track');
+    const giftCarouselTrack = document.getElementById('gift-carousel-track');
+    const musicPreviewPlayer = document.getElementById('musicPreviewPlayer');
+    // --- END: Perubahan Elemen DOM ---
 
     // Music and Gift Data
     const musicTracks = [
-        { name: "Musik 1", path: "/musik/musik1.mp3" },
-        { name: "Musik 2", path: "/musik/musik2.mp3" },
-        { name: "Musik 3", path: "/musik/musik3.mp3" },
-        { name: "Musik 4", path: "/musik/musik4.mp3" },
-        { name: "Musik 5", path: "/musik/musik5.mp3" },
+        { name: "Melody 1", path: "/musik/musik1.mp3" },
+        { name: "Beat 2", path: "/musik/musik2.mp3" },
+        { name: "Rhytm 3", path: "/musik/musik3.mp3" },
+        { name: "Harmony 4", path: "/musik/musik4.mp3" },
+        { name: "Vibe 5", path: "/musik/musik5.mp3" },
         { name: "Default", path: "mayfa.mp3" }
     ];
-    let currentMusicIndex = 0;
+    let currentMusicIndex = musicTracks.length - 1;
 
     const giftIcons = [
-        { name: "Kado Default", path: "nir.gif" },
-        { name: "Kado 1", path: "/img/gif1.gif" },
-        { name: "Kado 2", path: "/img/gif2.gif" },
-        { name: "Kado 3", path: "/img/gif3.gif" }
+        { name: "Kado Polos", path: "nir.gif" },
+        { name: "Kado Hati", path: "/img/gif1.gif" },
+        { name: "Kado Pita", path: "/img/gif2.gif" },
+        { name: "Kado Bintang", path: "/img/gif3.gif" }
     ];
     let currentGiftIndex = 0;
 
@@ -984,7 +1016,7 @@
             if (loginForm) {
                 authFlipper.style.height = `${loginForm.offsetHeight}px`;
             }
-        }, 50); // Small delay to ensure correct height calculation
+        }, 50);
     }
 
     // Show Register View
@@ -998,25 +1030,80 @@
             if (registerForm) {
                 authFlipper.style.height = `${registerForm.offsetHeight}px`;
             }
-        }, 50); // Small delay to ensure correct height calculation
+        }, 50);
+    }
+    
+    // --- START: Logika Carousel Baru ---
+    function renderCarousels() {
+        // Render Music Carousel
+        musicCarouselTrack.innerHTML = musicTracks.map((track, index) => `
+            <div class="carousel-item" data-index="${index}">
+                <i class="fas fa-music item-icon"></i>
+                <span class="item-name">${track.name}</span>
+            </div>
+        `).join('');
+
+        // Render Gift Carousel
+        giftCarouselTrack.innerHTML = giftIcons.map((gift, index) => `
+            <div class="carousel-item" data-index="${index}">
+                <img src="${gift.path}" alt="${gift.name}">
+                <span class="item-name">${gift.name}</span>
+            </div>
+        `).join('');
+        
+        addCarouselListeners();
     }
 
-    // Update Music Display
-    function updateMusicDisplay() {
-        if (document.getElementById('music-display')) {
-            document.getElementById('music-display').textContent = musicTracks[currentMusicIndex].name;
-            document.getElementById('musicPreviewPlayer').src = musicTracks[currentMusicIndex].path;
-            document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play');
-        }
+    function addCarouselListeners() {
+        // Music Carousel
+        musicCarouselTrack.addEventListener('click', e => {
+            const item = e.target.closest('.carousel-item');
+            if (item) {
+                currentMusicIndex = parseInt(item.dataset.index);
+                updateMusicSelection();
+            }
+        });
+
+        // Gift Carousel
+        giftCarouselTrack.addEventListener('click', e => {
+            const item = e.target.closest('.carousel-item');
+            if (item) {
+                currentGiftIndex = parseInt(item.dataset.index);
+                updateGiftSelection();
+            }
+        });
     }
 
-    // Update Gift Display
-    function updateGiftDisplay() {
-        if (document.getElementById('gift-display') && document.getElementById('gift-preview-image')) {
-            document.getElementById('gift-display').textContent = giftIcons[currentGiftIndex].name;
-            document.getElementById('gift-preview-image').src = giftIcons[currentGiftIndex].path;
+    function updateMusicSelection() {
+        // Update active class
+        musicCarouselTrack.querySelectorAll('.carousel-item').forEach(item => {
+            item.classList.toggle('active', parseInt(item.dataset.index) === currentMusicIndex);
+        });
+        
+        // Update music player source but don't play
+        musicPreviewPlayer.src = musicTracks[currentMusicIndex].path;
+        document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play');
+
+        // Scroll to active item
+        const activeItem = musicCarouselTrack.querySelector('.active');
+        if (activeItem) {
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
     }
+    
+    function updateGiftSelection() {
+        // Update active class
+        giftCarouselTrack.querySelectorAll('.carousel-item').forEach(item => {
+            item.classList.toggle('active', parseInt(item.dataset.index) === currentGiftIndex);
+        });
+        
+        // Scroll to active item
+        const activeItem = giftCarouselTrack.querySelector('.active');
+        if (activeItem) {
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+    // --- END: Logika Carousel Baru ---
 
     // Update QR Preview
     function updateQrPreview() {
@@ -1088,7 +1175,6 @@
         auth.createUserWithEmailAndPassword(email, password)
             .then(userCredential => {
                 const user = userCredential.user;
-                // Create default data immediately after user creation
                 return createDefaultUserData(user).then(() => {
                     return user.sendEmailVerification().then(() => {
                         Swal.fire({
@@ -1103,7 +1189,6 @@
                                     auth.currentUser.reload().then(() => {
                                         if (auth.currentUser.emailVerified) {
                                             clearInterval(verificationCheckInterval);
-                                            // The onAuthStateChanged listener will handle the UI update
                                             Swal.close();
                                         }
                                     });
@@ -1152,7 +1237,6 @@
                         }
                     });
                 }
-                // If verified, onAuthStateChanged will handle the rest
             })
             .catch(error => {
                 Swal.fire('Login Gagal', 'Email atau password yang Anda masukkan salah.', 'error');
@@ -1225,7 +1309,6 @@
         database.ref('birthday_pages/' + user.uid).once('value').then(snapshot => {
             const data = snapshot.val() || {};
             
-            // Fill form data
             document.getElementById('birthdayNameInput').value = data.birthdayName || '';
             document.getElementById('bestWishesInput').value = data.bestWishes || '';
             document.getElementById('stayStrongQuoteInput').value = data.stayStrongQuote || '';
@@ -1246,11 +1329,11 @@
             
             const savedMusicPath = data.musicUrl || 'mayfa.mp3';
             currentMusicIndex = Math.max(0, musicTracks.findIndex(track => track.path === savedMusicPath));
-            updateMusicDisplay();
+            updateMusicSelection();
 
             const savedGiftPath = data.giftIconUrl || 'nir.gif';
             currentGiftIndex = Math.max(0, giftIcons.findIndex(icon => icon.path === savedGiftPath));
-            updateGiftDisplay();
+            updateGiftSelection();
 
         }).catch(err => Swal.fire('Gagal Memuat Data', err.message, 'error'));
     }
@@ -1289,7 +1372,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById('musicPreviewPlayer').pause();
+                musicPreviewPlayer.pause();
                 auth.signOut();
             }
         });
@@ -1366,6 +1449,7 @@
     // Initialize the App
     document.addEventListener('DOMContentLoaded', () => {
         initTheme();
+        renderCarousels(); // Panggil fungsi render carousel
         
         auth.onAuthStateChanged(user => {
             if (user && user.emailVerified) {
@@ -1373,9 +1457,9 @@
                 loadDataToForm(user);
             } else {
                 authContainer.classList.remove('is-active');
-                authContainer.classList.add('loaded'); // Show auth box after initial check
+                document.getElementById('auth-container').classList.add('loaded');
                 if (!user) {
-                    showLoginView(); // Default to login view if logged out
+                    showLoginView();
                 }
             }
         });
@@ -1390,36 +1474,34 @@
         // Music Controls
         document.getElementById('prevMusicBtn').addEventListener('click', () => {
             currentMusicIndex = (currentMusicIndex - 1 + musicTracks.length) % musicTracks.length;
-            updateMusicDisplay();
+            updateMusicSelection();
         });
         document.getElementById('nextMusicBtn').addEventListener('click', () => {
             currentMusicIndex = (currentMusicIndex + 1) % musicTracks.length;
-            updateMusicDisplay();
+            updateMusicSelection();
         });
         document.getElementById('music-preview-btn').addEventListener('click', () => {
             const icon = document.getElementById('music-preview-btn').querySelector('i');
-            const player = document.getElementById('musicPreviewPlayer');
-            
-            if (player.paused) {
-                player.play().catch(e => console.error("Audio play failed", e));
+            if (musicPreviewPlayer.paused) {
+                musicPreviewPlayer.play().catch(e => console.error("Audio play failed", e));
                 icon.classList.replace('fa-play', 'fa-pause');
             } else {
-                player.pause();
+                musicPreviewPlayer.pause();
                 icon.classList.replace('fa-pause', 'fa-play');
             }
         });
-        document.getElementById('musicPreviewPlayer').onended = () => {
+        musicPreviewPlayer.onended = () => {
             document.getElementById('music-preview-btn').querySelector('i').classList.replace('fa-pause', 'fa-play');
         };
 
         // Gift Controls
         document.getElementById('prevGiftBtn').addEventListener('click', () => {
             currentGiftIndex = (currentGiftIndex - 1 + giftIcons.length) % giftIcons.length;
-            updateGiftDisplay();
+            updateGiftSelection();
         });
         document.getElementById('nextGiftBtn').addEventListener('click', () => {
             currentGiftIndex = (currentGiftIndex + 1) % giftIcons.length;
-            updateGiftDisplay();
+            updateGiftSelection();
         });
 
         // Date Input
