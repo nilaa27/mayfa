@@ -2,186 +2,1186 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xlordcode - Birthday Wishes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hi, Welcome</title>
     
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E✨%3C/text%3E%3C/svg%3E">
+    <link rel="shortcut icon" type="image/png" href="IMG_1551.png" />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
     <style>
-    :root {
-        /* Dark Neumorphic Palette */
-        --bg-color: #2c2f36;
-        --shadow-dark: #202227;
-        --shadow-light: #383c45;
-        --text-color: #d1d5db;
-        --text-light: #8a91a0;
-        --primary: #5a7dff;
-        --pink: #ff69b4;
-        --transition-smooth: all 0.3s ease-in-out;
-        --border-radius-main: 30px;
-        --border-radius-inner: 15px;
-    }
+        /* --- Variabel & Gaya Dasar --- */
+        :root {
+            --bg-color: #2c2f36;
+            --shadow-dark: #212429;
+            --shadow-light: #373a43;
+            --text-color: #e0e5ec;
+            --text-light: #97a1b3;
+            --primary: #6d5bff;
+            --secondary: #ff69b4;
+            --star-color: #ffc107;
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius-main: 30px;
+            --border-radius-inner: 15px;
+        }
 
-    /* --- Animasi --- */
-    @keyframes slideUpFadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+        /* Light mode color scheme */
+        [data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --shadow-dark: #d9dde2;
+            --shadow-light: #ffffff;
+            --text-color: #333333;
+            --text-light: #666666;
+            --primary: #6d5bff;
+            --secondary: #ff69b4;
+            --star-color: #ffc107;
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
 
-    /* --- Gaya Dasar --- */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
-    }
-    body {
-        background: var(--bg-color);
-        color: var(--text-color);
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        padding: 2rem;
-        overflow-y: auto;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
 
-    /* --- Panel Utama (Neumorphic) --- */
-    .welcome-panel {
-        width: 100%;
-        max-width: 480px;
-        background: var(--bg-color);
-        border-radius: var(--border-radius-main);
-        padding: 30px 40px 40px 40px;
-        text-align: center;
-        box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
-        animation: slideUpFadeIn 0.7s ease-out forwards;
-    }
+        html, body {
+            overflow-x: hidden;
+        }
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            position: relative;
+            transition: background-color 0.5s ease;
+        }
+        body.sidebar-open, body.modal-open {
+            overflow: hidden;
+        }
+        
+        body.sidebar-open::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 998; 
+            backdrop-filter: blur(2px);
+        }
 
-    /* --- Header di dalam Panel --- */
-    .panel-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--shadow-dark);
-        box-shadow: 0 1px 0 var(--shadow-light);
-    }
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: var(--text-color);
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
-    .logo img, .logo svg {
-        width: 28px;
-        height: 28px;
-    }
-    .sign-in-link {
-        color: var(--text-light);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: color var(--transition-smooth);
-        cursor: pointer;
-    }
-    .sign-in-link:hover {
-        color: var(--text-color);
-    }
+        .background-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: blob-animation 20s infinite alternate;
+        }
+        @keyframes blob-animation {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.2) translate(40px, -60px); }
+            100% { transform: scale(1) translate(0, 0); }
+        }
+        .blob.one { width: 500px; height: 500px; top: -150px; left: -200px; background: var(--primary); }
+        .blob.two { width: 400px; height: 400px; bottom: -180px; right: -150px; background: var(--secondary); animation-duration: 25s; animation-delay: -5s; }
 
-    .panel-icon {
-        width: 90px;
-        height: 90px;
-        background: var(--bg-color);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 25px;
-        font-size: 3rem;
-        color: var(--pink);
-        box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
-    }
-    h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-        color: var(--text-color);
-        line-height: 1.3;
-    }
-    p {
-        color: var(--text-light);
-        font-size: 1.1rem;
-        line-height: 1.6;
-        margin-bottom: 35px;
-    }
-    .button-group {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-    .btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        padding: 16px;
-        border-radius: var(--border-radius-inner);
-        font-size: 1rem;
-        font-weight: 500;
-        text-decoration: none;
-        cursor: pointer;
-        border: none;
-        background: var(--bg-color);
-        transition: var(--transition-smooth);
-        box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
-    }
-    .btn.primary { color: var(--primary); }
-    .btn.primary:hover { transform: translateY(-2px); }
-    .btn.secondary { color: var(--text-light); }
-    .btn.secondary:hover { color: var(--text-color); transform: translateY(-2px); }
-    .btn:active {
-        transform: translateY(0);
-        box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light);
-    }
+        /* --- Tombol Global --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 28px;
+            border-radius: var(--border-radius-inner);
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            background: var(--bg-color);
+            transition: var(--transition-smooth);
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+        }
+        .btn.primary { color: #ffffff; background: var(--primary); box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); }
+        .btn.primary:hover { transform: translateY(-3px); background: linear-gradient(135deg, #7b6aff, #6d5bff); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
+        .btn.secondary { color: var(--text-light); }
+        .btn.secondary:hover { color: var(--text-color); transform: translateY(-3px); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
+        .btn:active { transform: translateY(0); box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light); }
+        .btn.disabled, .btn:disabled { background: #41454e; color: var(--text-light); cursor: not-allowed; box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
+        .btn.disabled:hover, .btn:disabled:hover { transform: none; box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
+        
+        /* --- Header / Navigasi --- */
+        .main-header { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 980px; z-index: 1000; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(44, 47, 54, 0.8); backdrop-filter: blur(10px); border-radius: var(--border-radius-main); box-shadow: 10px 10px 25px var(--shadow-dark), -10px -10px 25px var(--shadow-light); border: 1px solid var(--shadow-light); }
+        [data-theme="light"] .header-container { background: rgba(240, 242, 245, 0.8); }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-color); font-weight: 600; font-size: 1.1rem; }
+        .logo img { width: 30px; height: 30px; transition: transform 0.4s ease; }
+        .logo:hover img { transform: rotate(360deg); }
+        .main-nav { display: flex; gap: 30px; }
+        .main-nav a { color: var(--text-light); text-decoration: none; font-weight: 500; transition: var(--transition-smooth); }
+        .main-nav a:hover { color: var(--primary); }
+        .sign-in-btn { padding: 12px 24px; }
+        
+        /* --- Theme Toggle Button --- */
+        .theme-toggle-btn {
+            background: var(--bg-color);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            transition: var(--transition-smooth);
+            margin-left: 15px;
+        }
 
-    @media (max-width: 520px) {
-        body { padding: 1.5rem 1rem; align-items: flex-start; }
-        .welcome-panel { padding: 25px; margin-top: 1rem; }
-        .panel-header { margin-bottom: 25px; padding-bottom: 15px; }
-        h1 { font-size: 2.2rem; }
-        p { font-size: 1rem; }
-    }
-</style>
+        .theme-toggle-btn:hover {
+            transform: scale(1.05);
+            color: var(--primary);
+        }
+
+        .theme-toggle-btn:active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
+
+        [data-theme="light"] .theme-toggle-btn i.fa-moon {
+            display: none;
+        }
+
+        [data-theme="light"] .theme-toggle-btn i.fa-sun {
+            display: block;
+        }
+
+        .theme-toggle-btn i.fa-sun {
+            display: none;
+        }
+
+        [data-theme="dark"] .theme-toggle-btn i.fa-moon {
+            display: block;
+        }
+
+        [data-theme="dark"] .theme-toggle-btn i.fa-sun {
+            display: none;
+        }
+        
+        .hamburger-menu {
+            display: none; cursor: pointer; width: 48px; height: 48px;
+            justify-content: center; align-items: center; z-index: 1003;
+            background: var(--bg-color); border: none; border-radius: 50%;
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+            transition: var(--transition-smooth); perspective: 1000px; 
+        }
+        .hamburger-menu:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+        .cake-icon { position: relative; width: 25px; height: 19px; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        .cake-icon::before { content: ''; position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; background-color: var(--text-color); border-radius: 50%; transition: opacity 0.3s ease; box-shadow: 1px 1px 2px var(--shadow-dark); }
+        .hamburger-menu .bar { display: block; width: 100%; height: 3px; background-color: var(--text-color); border-radius: 3px; position: absolute; left: 0; box-shadow: 1px 1px 2px var(--shadow-dark); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease, box-shadow 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        .bar:nth-child(1) { top: 0; } .bar:nth-child(2) { top: 8px; } .bar:nth-child(3) { top: 16px; }
+        body.sidebar-open .hamburger-menu { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+        body.sidebar-open .cake-icon { transform: rotateY(180deg); }
+        body.sidebar-open .cake-icon::before { opacity: 0; }
+        body.sidebar-open .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); box-shadow: -1px -1px 2px var(--shadow-dark); }
+        body.sidebar-open .bar:nth-child(2) { opacity: 0; }
+        body.sidebar-open .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); box-shadow: -1px 1px 2px var(--shadow-dark); }
+
+        .sidebar {
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
+            background: var(--bg-color);
+            box-shadow: -10px 0px 30px var(--shadow-dark);
+            z-index: 999; padding: 80px 30px 30px; display: flex; flex-direction: column;
+            gap: 25px; transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .sidebar.active { right: 0; }
+        .close-sidebar-btn { position: absolute; top: 20px; right: 20px; background: var(--bg-color); border: none; color: var(--text-light); cursor: pointer; width: 48px;  height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; line-height: 1; font-weight: 400; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); transition: var(--transition-smooth); }
+        .close-sidebar-btn:hover { color: var(--primary); transform: rotate(90deg) scale(1.05);  box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); }
+        .close-sidebar-btn:active { color: var(--primary); transform: rotate(90deg) scale(1); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 20px; text-align: center; }
+        .sidebar-nav a { color: var(--text-light); text-decoration: none; font-size: 1.2rem; font-weight: 500; padding: 10px; border-radius: var(--border-radius-inner); transition: var(--transition-smooth); }
+        .sidebar-nav a:hover { color: var(--primary); background: var(--shadow-dark); }
+        .sidebar .btn.primary { margin-top: auto; width: 100%; }
+
+        /* --- Landing Page Sections --- */
+        .landing-page { display: flex; flex-direction: column; align-items: center; gap: 6rem; width: 100%; padding: 150px 2rem 6rem; }
+        section { width: 100%; max-width: 980px; text-align: center; }
+        .section-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .section-subtitle { font-size: 1.1rem; color: var(--text-light); max-width: 600px; margin: 0 auto 3.5rem; line-height: 1.7; }
+
+        /* --- Hero Section --- */
+        .hero-section .welcome-panel { 
+            background: var(--bg-color); 
+            border-radius: var(--border-radius-main); 
+            padding: 40px 45px; 
+            box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light); 
+            max-width: 650px; 
+            margin: 0 auto; 
+            position: relative;
+        }
+        
+        .panel-icon { 
+            width: 100px; 
+            height: 100px; 
+            background: var(--bg-color); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 25px; 
+            font-size: 3.5rem; 
+            color: var(--primary); 
+            box-shadow: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light); 
+        }
+        
+        .panel-icon img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+        .panel-icon i { background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Typing Effect Styles */
+        .typing-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        
+        #typing-text {
+            display: inline;
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1.3;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 2.8rem;
+            background: var(--primary);
+            margin-left: 4px;
+            animation: blink 0.7s infinite;
+            vertical-align: bottom;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .hero-section p { 
+            color: var(--text-light); 
+            font-size: 1.1rem; 
+            line-height: 1.7; 
+            margin-bottom: 40px; 
+            max-width: 500px; 
+            margin-left: auto; 
+            margin-right: auto; 
+        }
+        
+        .button-group { display: flex; justify-content: center; gap: 20px; }
+
+        /* --- How It Works & Templates Section --- */
+        .steps-container, .templates-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .templates-container { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+        .step-card, .template-card { background: var(--bg-color); padding: 35px 30px; border-radius: var(--border-radius-main); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
+        .template-card { position: relative; overflow: hidden; text-align: left; display: flex; flex-direction: column; }
+        .step-icon { font-size: 2.5rem; margin-bottom: 20px; color: var(--primary); }
+        .step-card h3 { font-size: 1.4rem; margin-bottom: 15px; color: var(--text-color); }
+        .step-card p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 0; color: var(--text-light); }
+        .template-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; position: relative; z-index: 2; }
+        .template-icon { font-size: 1.8rem; color: var(--primary); background: var(--bg-color); width: 50px; height: 50px; border-radius: var(--border-radius-inner); display: flex; align-items: center; justify-content: center; box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light); flex-shrink: 0; }
+        .template-card h3 { font-size: 1.4rem; color: var(--text-color); font-weight: 600; }
+        .template-card p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; color: var(--text-light); text-align: left; position: relative; z-index: 2; }
+        .card-button-group { display: flex; flex-direction: column; gap: 15px; margin-top: auto; position: relative; z-index: 2; }
+        .card-button-group .btn { width: 100%; }
+        .confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        
+        /* --- [BARU] Gaya untuk Latar Belakang GIF --- */
+        .template-card .gif-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Memastikan GIF menutupi seluruh area kartu */
+            opacity: 0.15;      /* Membuat GIF menjadi latar belakang subtil, sesuaikan nilainya */
+            z-index: 1;         /* Menempatkan GIF di belakang konten */
+            border-radius: var(--border-radius-main); /* Mengikuti lengkungan kartu */
+            pointer-events: none; /* Agar GIF tidak bisa diklik */
+        }
+        
+        /* --- Gaya 3D untuk Fitur --- */
+        .features-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 30px;
+            perspective: 1200px; /* Membuat ruang 3D */
+        }
+        .feature-card { 
+            background: var(--bg-color); /* Ubah background agar bayangan terlihat */
+            padding: 30px; 
+            border-radius: var(--border-radius-inner); 
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+            text-align: left; 
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s ease;
+        }
+        .feature-card:hover {
+            transform: scale(1.03) rotateY(7deg) rotateX(3deg);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+        }
+        .feature-card.active {
+            transform: scale(1.08) rotateY(0) rotateX(0) translateZ(40px);
+            box-shadow: 0px 25px 50px rgba(0,0,0,0.3);
+        }
+        .feature-icon { font-size: 2rem; color: var(--secondary); margin-bottom: 20px; }
+        .feature-card h4 { font-size: 1.2rem; color: var(--text-color); margin-bottom: 10px; }
+        .feature-card p { font-size: 0.9rem; color: var(--text-light); margin-bottom: 0; line-height: 1.6; text-align: left; }
+        
+        /* --- FAQ & CTA --- */
+        .faq-container { max-width: 768px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .faq-item { background: var(--bg-color); border-radius: var(--border-radius-inner); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); overflow: hidden; transition: box-shadow 0.3s ease; }
+        .faq-item[open] { box-shadow: inset 8px 8px 16px var(--shadow-dark), inset -8px -8px 16px var(--shadow-light); }
+        .faq-question { padding: 20px 25px; font-weight: 600; font-size: 1.1rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        .faq-question::-webkit-details-marker { display: none; }
+        .faq-arrow { color: var(--primary); font-size: 1.2rem; transition: transform 0.3s ease; }
+        .faq-item[open] .faq-arrow { transform: rotate(180deg); }
+        .faq-answer { padding: 0 25px 20px; color: var(--text-light); font-size: 1rem; line-height: 1.7; text-align: left; margin: 0; max-width: 100%; }
+        .cta-content { max-width: 600px; margin: 0 auto; background: transparent; padding: 40px 25px; }
+        .cta-content p { color: var(--text-light); font-size: 1.2rem; line-height: 1.8; margin-bottom: 30px; max-width: 100%; font-weight: 500; }
+        
+        /* --- Testimonials Section Styles --- */
+        .testimonial-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 15px 20px; background: var(--bg-color); border-radius: var(--border-radius-inner); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); }
+        .testimonial-header h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-color); display: flex; align-items: center; gap: 10px; margin: 0; }
+        .testimonial-header h3 i { color: var(--primary); }
+        .btn-add-testimonial { padding: 12px 20px; font-size: 0.9rem; background: var(--shadow-dark); color: var(--text-light); }
+        .btn-add-testimonial:hover { background: var(--shadow-dark); color: var(--primary); }
+
+        .testimonial-list {
+            max-height: 450px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding: 10px 15px 10px 5px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--shadow-dark);
+        }
+        .testimonial-list::-webkit-scrollbar { width: 8px; }
+        .testimonial-list::-webkit-scrollbar-track { background: var(--shadow-dark); border-radius: 10px; }
+        .testimonial-list::-webkit-scrollbar-thumb { background-color: var(--primary); border-radius: 10px; }
+
+        .testimonial-card-new {
+            background: var(--bg-color);
+            padding: 30px 35px;
+            border-radius: var(--border-radius-main);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            text-align: left;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .testimonial-card-new:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+        }
+
+        .testimonial-card-new .quote-icon {
+            position: absolute;
+            top: 25px;
+            left: 30px;
+            font-size: 3rem;
+            color: var(--shadow-dark);
+            opacity: 0.9;
+        }
+        .testimonial-card-new .quote-text {
+            padding-left: 55px;
+            font-size: 1.05rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            flex-grow: 1;
+        }
+        .testimonial-rating {
+            padding-left: 55px;
+            margin-bottom: 25px;
+            color: var(--star-color);
+            font-size: 1.1rem;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-left: 55px;
+            margin-top: auto;
+        }
+        .author-initials {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+        .author-details .name { font-weight: 600; color: var(--text-color); }
+        .author-details .position { font-size: 0.9rem; color: var(--text-light); }
+
+        /* --- Footer --- */
+        .main-footer { padding: 4rem 2rem 2rem; background: var(--bg-color); border-top: 1px solid var(--shadow-dark); box-shadow: 0 -5px 15px var(--shadow-dark); text-align: center; }
+        .support-section { margin-bottom: 3rem; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .support-title { color: var(--text-light); font-size: 1rem; font-weight: 500; letter-spacing: 0.5px; margin: 0; }
+        .social-icons { display: flex; justify-content: center; gap: 20px; }
+        .social-icons a { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text-light); background: var(--bg-color); border-radius: 50%; font-size: 1.2rem; box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); transition: var(--transition-smooth); }
+        .social-icons a:hover { color: var(--secondary); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); transform: translateY(2px); }
+        .footer-bottom { font-size: 0.8rem; color: var(--text-light); opacity: 0.7; }
+
+        /* --- Modal Global --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); display: flex; align-items: center; justify-content: center; z-index: 1001; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; backdrop-filter: blur(5px); }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { 
+            background: var(--bg-color); padding: 30px 35px; border-radius: var(--border-radius-main); box-shadow: 0 10px 40px rgba(0,0,0,0.4); position: relative; max-width: 480px; width: 90%; text-align: left;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        .modal-overlay.active .modal-content {
+             transform: scale(1);
+             opacity: 1;
+        }
+
+        .modal-content h2 { text-align: center; font-size: 1.6rem; margin-bottom: 8px; font-weight: 700; }
+        .modal-content p.modal-subtitle { text-align: center; max-width: 100%; margin-bottom: 25px; font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+        .modal-close-btn { position: absolute; top: 10px; right: 20px; background: none; border: none; font-size: 2.5rem; color: var(--text-light); cursor: pointer; line-height: 1; }
+        
+        /* --- Gaya Form Baru dengan Floating Label --- */
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--shadow-dark);
+            background: var(--shadow-dark);
+            border-radius: var(--border-radius-inner);
+            color: var(--text-color);
+            font-size: 1rem;
+            box-shadow: inset 4px 4px 8px #212429, inset -4px -4px 8px #373a43;
+            transition: all 0.2s ease;
+        }
+
+        .form-label {
+            position: absolute;
+            top: 15px;
+            left: 17px;
+            color: var(--text-light);
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background-color: var(--shadow-dark); /* Agar teks tidak tertimpa garis input */
+            padding: 0 5px;
+        }
+        
+        .form-input:focus,
+        .form-input:not(:placeholder-shown) {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: inset 4px 4px 8px #212429, inset -4px -4px 8px #373a43, 0 0 0 2px var(--primary);
+        }
+
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -10px;
+            left: 12px;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+        
+        /* Khusus untuk textarea */
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+        textarea.form-input + .form-label {
+            background-color: transparent; /* Textarea tidak butuh background karena multiline */
+        }
+        textarea.form-input:focus + .form-label,
+        textarea.form-input:not(:placeholder-shown) + .form-label {
+             background-color: var(--shadow-dark); /* Beri background saat floating */
+        }
+        .form-group.rating-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .modal-button-group { display: flex; gap: 15px; margin-top: 25px; }
+        .modal-button-group .btn { flex-grow: 1; }
+        
+        /* --- Toast Notification --- */
+        .toast-notification {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px 25px;
+            border-radius: var(--border-radius-inner);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+            border-left: 5px solid var(--primary);
+            z-index: 2000;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .toast-notification i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        .toast-notification p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: var(--text-light);
+        }
+        
+        /* --- Star Rating Input Styles --- */
+        .star-rating-input { display: flex; gap: 10px; font-size: 1.8rem; cursor: pointer; }
+        .star-rating-input i { color: var(--shadow-light); transition: color 0.2s, transform 0.2s; }
+        .star-rating-input i:hover { transform: scale(1.2); }
+        .star-rating-input.rating-1 i:nth-child(-n+1),
+        .star-rating-input.rating-2 i:nth-child(-n+2),
+        .star-rating-input.rating-3 i:nth-child(-n+3),
+        .star-rating-input.rating-4 i:nth-child(-n+4),
+        .star-rating-input.rating-5 i:nth-child(-n+5) {
+            color: var(--star-color);
+        }
+        @keyframes star-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(15deg); }
+            100% { transform: scale(1.1); }
+        }
+        .star-rating-input i.pop {
+            animation: star-pop 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: scale(1.1); /* Jaga ukuran setelah animasi */
+        }
+
+        /* --- Modal QRIS Spesifik --- */
+        .qris-modal .modal-content { text-align: center; }
+        .qris-modal .qris-image { max-width: 250px; height: auto; margin: 20px auto; border-radius: var(--border-radius-inner); box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: block; }
+        .qris-modal .download-link { display: inline-block; margin-top: 15px; color: var(--primary); text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        .qris-modal .download-link:hover { color: var(--secondary); }
+
+        /* --- Media Queries --- */
+        @media (max-width: 768px) {
+            .main-header { width: 100%; top: 0; border-radius: 0; }
+            .header-container { border-radius: 0; padding: 15px 20px; }
+            .main-nav, .sign-in-btn { display: none; }
+            .hamburger-menu { display: flex; }
+            .theme-toggle-btn {
+                margin-left: auto;
+                margin-right: 15px;
+            }
+            .landing-page { padding-top: 100px; gap: 4rem; }
+            #typing-text { font-size: 2.3rem; }
+            .section-title { font-size: 2rem; margin-bottom: 1rem; }
+            .section-subtitle { margin-bottom: 2.5rem; }
+            p { font-size: 1rem; }
+            .button-group { flex-direction: column; }
+            .faq-question { font-size: 1rem; }
+            .cta-content p { font-size: 1.1rem; }
+            .toast-notification {
+                top: 80px;
+                left: 50%;
+                transform: translate(-50%, -150%);
+                width: 90%;
+            }
+            .toast-notification.show {
+                transform: translate(-50%, 0);
+            }
+        }
+        @media (min-width: 769px) { .hamburger-menu { display: none; } }
+        
+        @media (max-width: 520px) {
+            .landing-page { padding: 80px 1rem 4rem; }
+            .hero-section .welcome-panel { padding: 30px 25px; }
+            .blob { filter: blur(60px); }
+            .blob.one { width: 300px; height: 300px; }
+            .blob.two { width: 250px; height: 250px; }
+            #typing-text { font-size: 1.8rem; }
+            .cursor { height: 1.8rem; }
+            .testimonial-card-new { padding: 25px; }
+            .testimonial-card-new .quote-icon { font-size: 2.5rem; left: 20px; top: 20px; }
+            .testimonial-card-new .quote-text,
+            .testimonial-rating,
+            .testimonial-author { padding-left: 40px; }
+            .testimonial-card-new .quote-text { font-size: 1rem; }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="welcome-panel" id="landing-page">
-        <header class="panel-header">
-            <a href="#" class="logo">
-                <img src="/logoku.png" alt="Logo xlordcode">
-                <span>xlordcode</span>
-            </a>
-            <a href="register.html" class="sign-in-link">Sign In</a>
-        </header>
+    <div class="background-blobs">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+    </div>
 
-        <div class="panel-icon">🎉</div>
-        <h1>Create Magical Digital Wishes That Spark Joy</h1>
-        <p>Design beautiful, animated wishes and share them with your loved ones. No technical knowledge required.</p>
+    <header class="main-header">
+        <div class="header-container" data-aos="fade-down">
+            <a href="#" class="logo">
+                <img src="IMG_1551.png" alt="Logo xlordcode"> <span>XlordVerse</span>
+            </a>
+            <nav class="main-nav">
+                <a href="#templates">Template</a>
+                <a href="#features">Fitur</a>
+                <a href="#testimonials">Testimoni</a>
+                <a href="#faq">FAQ</a>
+                <a href="#contact">Kontak</a>
+            </nav>
+            <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+            <a href="register.html" class="btn primary sign-in-btn">Sign in</a>
+            
+            <button class="hamburger-menu" id="hamburger-menu" aria-label="Buka menu">
+                <div class="cake-icon">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </button>
+
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <button class="close-sidebar-btn" id="close-sidebar-btn">&times;</button>
+        <nav class="sidebar-nav">
+            <a href="#templates">Template</a>
+            <a href="#features">Fitur</a>
+            <a href="#testimonials">Testimoni</a>
+            <a href="#faq">FAQ</a>
+            <a href="#contact">Kontak</a>
+        </nav>
+        <a href="register.html" class="btn primary">Masuk <i class="fa-solid fa-arrow-right-to-bracket" style="color: #ffffff;"></i></a>
+    </div>
+
+    <main class="landing-page">
+        <section class="hero-section" id="hero">
+            <div class="welcome-panel" data-aos="fade-up">
+                <div class="panel-icon">
+                    <img src="/img/dor.gif" alt="Ikon Selamat Datang">
+                </div>
+                
+                <div class="typing-container">
+                    <h1 id="typing-text"></h1>
+                    <div class="cursor"></div>
+                </div>
+                
+                <p>Animasi keren + desain elegan. Gak perlu ngoding, ciptakan website ucapan selamat ulang tahun yang personal dan berkesan dalam hitungan menit.</p>
+                <div class="button-group">
+                    <a href="register.html" class="btn primary">Mulai buat ucapan!<i class="fa-solid fa-arrow-right-to-bracket" style="color: #ffffff;"></i></a>
+                    <a href="demo.html" class="btn secondary"><i class="fas fa-eye"></i> watch demo</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="how-it-works">
+            <h2 class="section-title" data-aos="fade-up">Hanya 3 Langkah Mudah</h2>
+            <div class="steps-container">
+                <div class="step-card" data-aos="fade-right" data-aos-delay="100"><div class="step-icon"><i class="fas fa-pencil-ruler"></i></div><h3>1. Pilih Desain</h3><p>Pilih dari berbagai template premium yang sudah kami siapkan khusus untukmu.</p></div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="200"><div class="step-icon"><i class="fas fa-keyboard"></i></div><h3>2. Isi Data</h3><p>Tulis nama, ucapan, dan unggah foto terbaikmu untuk ditampilkan di website.</p></div>
+                <div class="step-card" data-aos="fade-left" data-aos-delay="300"><div class="step-icon"><i class="fas fa-share-alt"></i></div><h3>3. Bagikan Link</h3><p>Website-mu langsung jadi! Sebarkan ke teman dan keluarga lewat media sosial.</p></div>
+            </div>
+        </section>
         
-        <div class="button-group">
-            <a href="register.html" class="btn primary">Start Creating Wishes</a>
-            <a href="demo.html" class="btn secondary"><i class="fas fa-eye"></i> Preview Demo</a>
+        <section class="templates" id="templates">
+            <h2 class="section-title" data-aos="fade-up">Template yang dirancang dengan cermat</h2>
+            <p class="section-subtitle">Untuk setiap momen dan kesempatan istimewa dalam hidup Anda.</p>
+            <div class="templates-container">
+                <div class="template-card confetti-birthday" data-aos="fade-right" data-aos-delay="100">
+                    <canvas class="confetti-canvas"></canvas>
+                    <div class="template-header"><div class="template-icon"><i class="fas fa-birthday-cake"></i></div><h3>Birthday Template</h3></div>
+                    <p>Buat ucapan ulang tahun yang menyenangkan dengan pesan pribadi, transisi yang indah, dan animasi yang memikat. Sempurna untuk membuat hari istimewa seseorang menjadi lebih berkesan.</p>
+                    <div class="card-button-group"><a href="register.html" class="btn primary">Mulai buat ucapan!<i class="fa-solid fa-arrow-right-to-bracket" style="color: #ffffff;"></i></a><a href="demo.html" class="btn secondary"><i class="fas fa-eye"></i> watch demo</a></div>
+                </div>
+
+                <div class="template-card" data-aos="fade-left" data-aos-delay="200">
+                    <img src="/ken.gif" alt="Coming Soon Animation" class="gif-background">
+                    
+                    <div class="template-header"><div class="template-icon"><i class="fas fa-wand-sparkles"></i></div><h3>More Templates Coming Soon</h3></div>
+                    <p>Kami sedang mengembangkan lebih banyak template indah untuk berbagai momen spesial. Nantikan ucapan ulang tahun pernikahan, kartu ucapan selamat, dan masih banyak lagi tambahan menarik dalam koleksi kami.</p>
+                    <p>Punya ide untuk acara tertentu atau template yang ingin dibuat? Kami ingin sekali mendengarnya!</p>
+                    <div class="card-button-group"><a class="btn disabled"><i class="fas fa-gift"></i> Coming Soon</a><a href="#" class="btn secondary"><i class="fas fa-lightbulb"></i> Suggest Template</a></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <h2 class="section-title" data-aos="fade-up">Fitur Unggulan Kami</h2>
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100"><div class="feature-icon"><i class="fas fa-palette"></i></div><h4>Template Premium</h4><p>Desain neumorphic yang sedang tren. Buat kesan pertama yang tak terlupakan.</p></div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200"><div class="feature-icon"><i class="fas fa-film"></i></div><h4>Animasi Halus</h4><p>Setiap elemen muncul dengan animasi yang membuat website lebih hidup dan dinamis.</p></div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300"><div class="feature-icon"><i class="fas fa-mobile-alt"></i></div><h4>Super Responsif</h4><p>Tampilan sempurna di semua perangkat, baik desktop, tablet, maupun mobile.</p></div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400"><div class="feature-icon"><i class="fas fa-music"></i></div><h4>Pilihan latar musik</h4><p>Pilihan musik, sesuaikan dengan moodmu </p></div>
+            </div>
+        </section>
+        
+        <section class="testimoni" id="testimonials">
+            <h2 class="section-title" data-aos="fade-up">What People Say</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                Voices from clients, collaborators, and friends who have experienced my work.
+            </p>
+
+            <div class="testimonial-header" data-aos="fade-up" data-aos-delay="200">
+                <h3><i class="fas fa-comments"></i>Testimoni</h3>
+                <button class="btn btn-add-testimonial" id="add-testimonial-btn">
+                    <i class="fas fa-plus"></i> Add Testimoni
+                </button>
+            </div>
+
+            <div class="testimonial-list" id="testimonial-list-container" data-aos="fade-up" data-aos-delay="300">
+                </div>
+        </section>
+
+        <section class="faq" id="faq">
+            <h2 class="section-title" data-aos="fade-up">Tanya Jawab Umum</h2>
+            <div class="faq-container" data-aos="fade-up" data-aos-delay="100">
+                <details class="faq-item"><summary class="faq-question">Apa sebenarnya XlordVerse itu?<i class="fas fa-chevron-down faq-arrow"></i></summary><p class="faq-answer">XlordVerse adalah platform yang memungkinkan Anda membuat website ucapan selamat ulang tahun digital dengan animasi dan desain personal secara mudah dan cepat, tanpa perlu keahlian coding.</p></details>
+                <details class="faq-item"><summary class="faq-question">Apakah layanan ini gratis?<i class="fas fa-chevron-down faq-arrow"></i></summary><p class="faq-answer">Saat ini, kami menyediakan berbagai template dan fitur dasar yang dapat Anda gunakan secara gratis. Untuk fitur-fitur premium di masa depan, mungkin akan ada biaya tambahan, tapi akan selalu ada versi gratisnya!</p></details>
+                <details class="faq-item"><summary class="faq-question">Apakah saya perlu keahlian teknis?<i class="fas fa-chevron-down faq-arrow"></i></summary><p class="faq-answer">Sama sekali tidak! Platform kami dirancang dengan antarmuka yang intuitif. Anda hanya perlu memilih template, mengisi data seperti nama dan ucapan, lalu website Anda langsung siap dibagikan.</p></details>
+                <details class="faq-item"><summary class="faq-question">Bagaimana cara membagikan website ucapan saya?<i class="fas fa-chevron-down faq-arrow"></i></summary><p class="faq-answer">Setelah selesai membuat, Anda akan mendapatkan sebuah link unik. Cukup salin (copy) link tersebut dan tempel (paste) untuk dibagikan ke teman atau keluarga Anda melalui media sosial, aplikasi chat, atau email.</p></details>
+                <details class="faq-item"><summary class="faq-question">Bisakah saya mengedit ucapan setelah dibuat?<i class="fas fa-chevron-down faq-arrow"></i></summary><p class="faq-answer">Tentu! Selama Anda menyimpan link editnya, Anda dapat masuk kembali dan melakukan perubahan pada teks, foto, atau bahkan musik latar kapan saja Anda mau.</p></details>
+            </div>
+        </section>
+
+        <section class="cta-section" id="contact">
+            <div class="cta-content" data-aos="fade-up">
+                <p>Masih ada pertanyaan? Punya ide fitur?<br>Menemukan bug?<br>Saya ingin sekali mendengar dari Anda!</p>
+                <a href="#" id="open-contact-btn" class="btn secondary"><i class="fas fa-comment-dots"></i> Hubungi saya</a>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="main-footer">
+         <div class="support-section">
+            <p class="support-title">Support Me</p>
+            <div class="social-icons">
+                <a href="https://instagram.com/off.xlord" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" id="open-donate-btn" title="Donasi"><i class="fa-solid fa-qrcode"></i></a>
+                <a href="https://www.tiktok.com/@xlordduyy" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 XlordVerse. All Rights Reserved.
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="contact-modal">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Hubungi Saya</h2>
+            <p class="modal-subtitle">Punya pertanyaan atau masukan? Saya ingin sekali mendengarnya.</p>
+            <form class="contact-form" id="main-contact-form">
+                <div class="form-group">
+                    <input type="text" id="contact-name" name="name" class="form-input" placeholder=" " required>
+                    <label for="contact-name" class="form-label">Nama</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="contact-email" name="email" class="form-input" placeholder=" " required>
+                    <label for="contact-email" class="form-label">E-mail</label>
+                </div>
+                <div class="form-group">
+                    <textarea id="contact-message" name="message" class="form-input" placeholder=" " required></textarea>
+                    <label for="contact-message" class="form-label">Pesan Anda</label>
+                </div>
+                <div class="modal-button-group">
+                    <button type="submit" class="btn primary" id="submit-contact-btn">Kirim Pesan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="testimonial-modal">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Bagikan Testimoni Anda</h2>
+            <p class="modal-subtitle">Ceritakan pengalaman Anda menggunakan layanan kami.</p>
+            <form id="testimonial-form">
+                <div class="form-group">
+                    <input type="text" id="testimonial-name" class="form-input" placeholder=" " required>
+                    <label for="testimonial-name" class="form-label">Nama Lengkap</label>
+                </div>
+                 <div class="form-group">
+                    <input type="text" id="testimonial-position" class="form-input" placeholder=" " required>
+                    <label for="testimonial-position" class="form-label">Posisi (Contoh: Pelajar)</label>
+                </div>
+                <div class="form-group">
+                    <textarea id="testimonial-text" rows="4" class="form-input" placeholder=" " required></textarea>
+                    <label for="testimonial-text" class="form-label">Testimoni</label>
+                </div>
+                <div class="form-group rating-group">
+                    <label>Rating Anda</label>
+                    <div class="star-rating-input" data-rating="0">
+                        <i class="fas fa-star" data-value="1"></i>
+                        <i class="fas fa-star" data-value="2"></i>
+                        <i class="fas fa-star" data-value="3"></i>
+                        <i class="fas fa-star" data-value="4"></i>
+                        <i class="fas fa-star" data-value="5"></i>
+                    </div>
+                </div>
+                <div class="modal-button-group">
+                    <button type="button" class="btn secondary" id="cancel-testimonial-btn">Batal</button>
+                    <button type="submit" class="btn primary" id="submit-testimonial-btn">
+                        <i class="fa-solid fa-paper-plane"></i> Kirim
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    </body>
+    <div class="modal-overlay qris-modal" id="qris-modal">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h2>Dukung Kami dengan Donasi</h2>
+            <p class="modal-subtitle">Scan QRIS di bawah ini untuk mendukung pengembangan XlordVerse. Setiap donasi sangat berarti!</p>
+            <img src="/qris.jpg" alt="QRIS Code" class="qris-image"> <a href="/img/qris.jpeg" download="qrisxlord.jpeg" class="download-link">Unduh QRIS</a>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script>
+        // PASTE KONFIGURASI FIREBASE ANDA DI SINI
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWl2CJqIr-u8lSHu8s4tgZ25UQIK2ivt0",
+            authDomain: "mayfa-fa284.firebaseapp.com",
+            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mayfa-fa284",
+            storageBucket: "mayfa-fa284.firebasestorage.app",
+            messagingSenderId: "523290705179",
+            appId: "1:523290705179:web:b06ae4d8e6b08cf07b27be",
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const testimonialsCollection = db.collection('testimonials');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init({
+                duration: 800,
+                once: false, // Animasi akan berulang saat scroll
+                offset: 150,
+            });
+
+            // --- Theme Toggle Functionality ---
+            (() => {
+                const themeToggle = document.getElementById('theme-toggle');
+                const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+                const currentTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
+                
+                // Set initial theme
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                updateThemeIcon(currentTheme);
+                
+                // Toggle theme on button click
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeIcon(newTheme);
+                });
+                
+                // Update theme icon based on current theme
+                function updateThemeIcon(theme) {
+                    const icon = themeToggle.querySelector('i');
+                    if (theme === 'dark') {
+                        icon.classList.remove('fa-sun');
+                        icon.classList.add('fa-moon');
+                    } else {
+                        icon.classList.remove('fa-moon');
+                        icon.classList.add('fa-sun');
+                    }
+                }
+                
+                // Listen for system theme changes
+                prefersDarkScheme.addListener(e => {
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    updateThemeIcon(newTheme);
+                });
+            })();
+
+            // Animasi ketik untuk hero text
+            const typingText = document.getElementById('typing-text');
+            if (typingText) {
+                const staticPart = "Desain Ucapan Ultah, ";
+                const dynamicPart = "Cuma Modal Klik?";
+                let i = 0, j = 0, isDeleting = false;
+                const typeLoop = () => {
+                    const typingSpeed = 100, erasingSpeed = 50, pauseEnd = 2000, pauseStart = 500;
+                    if (i < staticPart.length) { typingText.innerHTML += staticPart.charAt(i); i++; setTimeout(typeLoop, typingSpeed); return; }
+                    if (isDeleting) { typingText.innerHTML = staticPart + dynamicPart.substring(0, j - 1); j--; } 
+                    else { typingText.innerHTML = staticPart + dynamicPart.substring(0, j + 1); j++; }
+                    if (!isDeleting && j === dynamicPart.length) { isDeleting = true; setTimeout(typeLoop, pauseEnd); } 
+                    else if (isDeleting && j === 0) { isDeleting = false; setTimeout(typeLoop, pauseStart); } 
+                    else { setTimeout(typeLoop, isDeleting ? erasingSpeed : typingSpeed); }
+                };
+                typeLoop();
+            }
+
+            // Muat testimoni dari Firestore saat halaman siap
+            loadTestimonials();
+            
+            // --- Custom Alert/Toast Function ---
+            function showCustomAlert(message) {
+                const oldToast = document.querySelector('.toast-notification');
+                if (oldToast) oldToast.remove();
+                const toast = document.createElement('div');
+                toast.className = 'toast-notification';
+                toast.innerHTML = `<i class="fas fa-check-circle"></i><p>${message}</p>`;
+                document.body.appendChild(toast);
+                setTimeout(() => { toast.classList.add('show'); }, 100);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+                }, 4000);
+            }
+            
+            // --- General Modal Handler ---
+            const setupModal = (openBtnId, modalId, closeBtnSelector) => {
+                const openBtn = document.getElementById(openBtnId);
+                const modal = document.getElementById(modalId);
+                if (!openBtn || !modal) return;
+                const closeBtn = modal.querySelector(closeBtnSelector);
+                const open = (e) => { if (e) e.preventDefault(); modal.classList.add('active'); document.body.classList.add('modal-open'); };
+                const close = () => { modal.classList.remove('active'); document.body.classList.remove('modal-open'); };
+                openBtn.addEventListener('click', open);
+                closeBtn.addEventListener('click', close);
+                modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+                return { open, close };
+            };
+
+            // Setup all modals
+            const contactModal = setupModal('open-contact-btn', 'contact-modal', '.modal-close-btn');
+            const qrisModal = setupModal('open-donate-btn', 'qris-modal', '.modal-close-btn');
+            const testimonialModal = setupModal('add-testimonial-btn', 'testimonial-modal', '.modal-close-btn');
+            
+            // --- Contact Form Logic ---
+            (() => {
+                const form = document.getElementById('main-contact-form');
+                if (!form) return;
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = form.name.value, email = form.email.value, message = form.message.value;
+                    const adminEmail = 'email@xlord.web.id';
+                    const mailtoLink = `mailto:${adminEmail}?subject=${encodeURIComponent(`Pesan dari ${name}`)}&body=${encodeURIComponent(`Nama: ${name}\nEmail: ${email}\n\nPesan:\n${message}`)}`;
+                    window.location.href = mailtoLink;
+                    setTimeout(() => { contactModal.close(); form.reset(); }, 500);
+                });
+            })();
+            
+            document.getElementById('cancel-testimonial-btn').addEventListener('click', testimonialModal.close);
+
+            // --- Sidebar Logic ---
+            (() => {
+                const hamburger = document.getElementById('hamburger-menu');
+                const sidebar = document.getElementById('sidebar');
+                const closeBtn = document.getElementById('close-sidebar-btn');
+                const toggleSidebar = () => { sidebar.classList.toggle('active'); document.body.classList.toggle('sidebar-open'); };
+                hamburger.addEventListener('click', toggleSidebar);
+                closeBtn.addEventListener('click', toggleSidebar);
+                sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', () => sidebar.classList.contains('active') && toggleSidebar()));
+                document.addEventListener('click', (e) => { if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !hamburger.contains(e.target)) toggleSidebar(); });
+            })();
+            
+            // --- Logika untuk Kartu Fitur 3D ---
+            (() => {
+                const featureCards = document.querySelectorAll('.feature-card');
+                featureCards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        if (card.classList.contains('active')) { card.classList.remove('active'); return; }
+                        featureCards.forEach(otherCard => otherCard.classList.remove('active'));
+                        card.classList.add('active');
+                    });
+                });
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.feature-card')) {
+                         featureCards.forEach(card => card.classList.remove('active'));
+                    }
+                });
+            })();
+
+            // --- Confetti Logic ---
+            (() => {
+                const birthdayCard = document.querySelector('.confetti-birthday');
+                if (!birthdayCard) return;
+                const canvas = birthdayCard.querySelector('.confetti-canvas');
+                if (!canvas) return;
+                const myConfetti = confetti.create(canvas, { resize: true, useWorker: true });
+                let interval;
+                const fireConfetti = () => {
+                    const primary = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+                    const secondary = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim();
+                    myConfetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: [primary, secondary, '#FFFFFF'], shapes: ['star', 'circle'] });
+                };
+                const observer = new IntersectionObserver(entries => {
+                    if (entries[0].isIntersecting) {
+                        fireConfetti();
+                        interval = setInterval(fireConfetti, 3500);
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, { threshold: 0.5 });
+                observer.observe(birthdayCard);
+            })();
+
+            // --- FAQ Logic ---
+            (() => { document.querySelectorAll('.faq-item').forEach(item => item.addEventListener('toggle', e => { if (e.target.open) document.querySelectorAll('.faq-item').forEach(other => { if (other !== e.target) other.open = false; }); })); })();
+            
+            // --- Testimonial Form Logic with Firebase ---
+            (() => {
+                const form = document.getElementById('testimonial-form');
+                if (!form) return;
+                const starContainer = form.querySelector('.star-rating-input');
+                const stars = starContainer.querySelectorAll('i');
+                const submitBtn = document.getElementById('submit-testimonial-btn');
+                const originalBtnHTML = submitBtn.innerHTML;
+
+                stars.forEach(star => {
+                    star.addEventListener('mouseover', () => {
+                        starContainer.classList.remove(...Array(5).fill(0).map((_,i) => `rating-${i+1}`));
+                        starContainer.classList.add(`rating-${star.dataset.value}`);
+                    });
+                    star.addEventListener('mouseout', () => {
+                        starContainer.classList.remove(...Array(5).fill(0).map((_,i) => `rating-${i+1}`));
+                        if (starContainer.dataset.rating > 0) starContainer.classList.add(`rating-${starContainer.dataset.rating}`);
+                    });
+                    star.addEventListener('click', () => {
+                        const rating = star.dataset.value;
+                        starContainer.dataset.rating = rating;
+                        stars.forEach(s => s.classList.remove('pop'));
+                        for (let i = 0; i < rating; i++) stars[i].classList.add('pop');
+                    });
+                });
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const name = form.querySelector('#testimonial-name').value;
+                    const position = form.querySelector('#testimonial-position').value;
+                    const text = form.querySelector('#testimonial-text').value;
+                    const rating = parseInt(starContainer.dataset.rating) || 0;
+
+                    if (!name || !position || !text || rating === 0) { showCustomAlert('Harap isi semua kolom dan berikan rating.'); return; }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...`;
+                    
+                    try {
+                        await testimonialsCollection.add({ name, position, text, rating, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                        loadTestimonials();
+                        submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> Terkirim!`;
+                        showCustomAlert(`Terima kasih ${name} atas testimoninya :)`);
+                        
+                        setTimeout(() => {
+                            testimonialModal.close();
+                            form.reset();
+                            starContainer.dataset.rating = 0;
+                            starContainer.classList.remove(...Array(5).fill(0).map((_,i) => `rating-${i+1}`));
+                            stars.forEach(s => s.classList.remove('pop'));
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnHTML;
+                        }, 1200);
+
+                    } catch (error) {
+                        console.error("Error adding testimonial: ", error);
+                        alert("Gagal mengirim testimoni. Silakan coba lagi.");
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnHTML;
+                    }
+                });
+            })();
+            
+            // Fungsi untuk MEMUAT testimoni dari Firestore
+            async function loadTestimonials() {
+                const listContainer = document.getElementById('testimonial-list-container');
+                listContainer.innerHTML = '';
+                try {
+                    const snapshot = await testimonialsCollection.orderBy('createdAt', 'desc').get();
+                    if (snapshot.empty) { listContainer.innerHTML = '<p style="text-align:center; color: var(--text-light);">Belum ada testimoni. Jadilah yang pertama!</p>'; return; }
+                    snapshot.forEach(doc => addTestimonialCardToDOM(doc.data()));
+                } catch (error) {
+                    console.error("Error loading testimonials: ", error);
+                    listContainer.innerHTML = '<p style="text-align:center; color: var(--text-light);">Gagal memuat testimoni saat ini.</p>';
+                }
+            }
+
+            // Fungsi untuk MENAMBAHKAN kartu testimoni ke DOM
+            function addTestimonialCardToDOM(data) {
+                const listContainer = document.getElementById('testimonial-list-container');
+                const initials = data.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                let starsHTML = Array(5).fill(0).map((_, i) => `<i class="${i < data.rating ? 'fas' : 'far'} fa-star"></i>`).join('');
+                const card = document.createElement('div');
+                card.className = 'testimonial-card-new';
+                card.innerHTML = `
+                    <i class="fas fa-quote-left quote-icon"></i>
+                    <p class="quote-text">${data.text}</p>
+                    <div class="testimonial-rating">${starsHTML}</div>
+                    <div class="testimonial-author">
+                        <div class="author-initials">${initials}</div>
+                        <div class="author-details">
+                            <div class="name">${data.name}</div>
+                            <div class="position">${data.position}</div>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            }
+        });
+    </script>
+</body>
 </html>
