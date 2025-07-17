@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark"> <head>
+<html lang="id" data-theme="dark"> 
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday For You!</title>
@@ -13,7 +14,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css">
     <style>
         :root {
-            /* Default: Dark Mode Colors */
             --bg-color: #2c2f36;
             --shadow-dark: #202227;
             --shadow-light: #383c45;
@@ -30,17 +30,11 @@
         }
 
         [data-theme="light"] {
-            /* Light Mode Colors */
             --bg-color: #e4e9f2;
             --shadow-dark: #c8d0db;
             --shadow-light: #ffffff;
             --text-color: #313848;
             --text-light: #6c7990;
-            --primary: #5a7dff;
-            --primary-dark: #4a6fe0;
-            --success: #28a745;
-            --error: #dc3545;
-            --found: #ffc107;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -57,10 +51,59 @@
         .btn:hover:not(:disabled) { transform: translateY(-2px); color: var(--primary-dark); }
         .btn:active:not(:disabled) { transform: translateY(0px); box-shadow: inset 7px 7px 15px var(--shadow-dark), inset -7px -7px 15px var(--shadow-light); }
         .btn:disabled { cursor: not-allowed; opacity: 0.7; }
-        .error-page { display: none; text-align: center; color: var(--text-light); animation: fadeIn 0.5s ease-out; z-index: 20; }
-        .error-page .error-icon { font-size: 5rem; color: var(--primary); margin-bottom: 20px; }
-        .error-page h1 { font-size: 2.2rem; color: var(--text-color); margin-bottom: 10px; }
-        .error-page p { font-size: 1.1rem; }
+        
+        /* === KODE CSS ERROR PAGE BARU === */
+        .error-page {
+            display: none; /* Tetap 'none' untuk kontrol via JS */
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            animation: fadeIn 0.5s ease-out;
+            z-index: 20;
+            padding: 20px;
+        }
+
+        .error-card {
+            background: var(--bg-color);
+            border-radius: var(--border-radius-main);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .error-main-image {
+            max-width: 220px; /* Sesuaikan ukuran gambar */
+            margin-bottom: 20px;
+        }
+
+        .error-page h1 {
+            font-size: 2rem;
+            color: var(--text-color);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .error-page p {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .error-btn {
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none; /* Menghilangkan garis bawah pada link */
+        }
+
+        .error-btn:hover {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+        /* === AKHIR KODE CSS ERROR PAGE BARU === */
+
         .login-container { width: 100%; max-width: 400px; display: none; }
         .login-box { background: var(--bg-color); border-radius: var(--border-radius-main); box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); padding: 40px; text-align: center; animation: fadeIn 0.8s ease forwards; }
         .login-header { margin-bottom: 35px; }
@@ -109,16 +152,12 @@
         .gift-box img { width: 100%; height: 100%; object-fit: contain; }
         .gift-card { display: none; background: var(--bg-color); border-radius: var(--border-radius-main); padding: 30px; text-align: center; width: 100%; max-width: 320px; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light); animation: fadeInCard-anim 0.5s ease-out forwards; color: var(--text-color); }
         #qrCodeImg { width: 180px; height: 180px; margin: 15px auto; border-radius: var(--border-radius-inner); background: var(--bg-color); padding: 8px; box-shadow: inset 5px 5px 15px var(--shadow-dark), inset -5px -5px 15px var(--shadow-light); object-fit: contain; }
-        
-        /* --- START: TOMBOL BARU --- */
         .floating-btn { position: fixed; width: 50px; height: 50px; z-index: 1000; padding: 0; border-radius: 50%; color: var(--text-light); }
         .floating-btn:hover { color: var(--primary); }
         .theme-toggle { top: 20px; left: 20px; }
         .music-toggle { top: 20px; right: 20px; }
         [data-theme="dark"] .theme-toggle .fa-sun { display: none; }
         [data-theme="light"] .theme-toggle .fa-moon { display: none; }
-        /* --- END: TOMBOL BARU --- */
-
         .snow-particle { position: fixed; top: -10px; border-radius: 50%; z-index: 5; pointer-events: none; }
         .swal2-popup { background-color: var(--bg-color) !important; border-radius: var(--border-radius-main) !important; color: var(--text-color) !important; box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light) !important; }
         .swal2-title { color: var(--text-color) !important; } .swal2-html-container { color: var(--text-light) !important; }
@@ -130,7 +169,7 @@
     </style>
 </head>
 <body>
-    <audio id="background-music" loop src="mayfa.mp3"></audio>
+    <audio id="background-music" loop></audio>
     <audio id="word-found-sound" src="https://assets.codepen.io/217233/chime.mp3"></audio>
     <audio id="confetti-sound" src="https://assets.codepen.io/217233/confetti.mp3"></audio>
 
@@ -178,11 +217,19 @@
             </div>
         </div>
     </div>
-
+    
     <div class="error-page" id="errorPage">
-        <div class="error-icon"><i class="fas fa-link-slash"></i></div>
-        <h1 id="errorTitle">Halaman Tidak Ditemukan</h1>
-        <p id="errorMessage">Pastikan link yang Anda masukkan sudah benar dan lengkap.</p>
+        <div class="error-card">
+            <img src="404.gif" alt="Halaman Tidak Ditemukan" class="error-main-image">
+            
+            <h1 id="errorTitle">Halaman Tidak Ditemukan</h1>
+            <p id="errorMessage">Oops! Sepertinya link yang Anda tuju salah atau sudah tidak ada lagi.</p>
+            
+            <a href="/" class="btn error-btn">
+                <i class="fas fa-home"></i>
+                Kembali ke Beranda
+            </a>
+        </div>
     </div>
     <div class="gift-modal" id="giftModal">
         <div class="gift-box" onclick="openCard()"><img id="giftBoxImage" src="nir.gif" alt="Gift Box" style="width: 100%; height: 100%; object-fit: contain;"></div>
@@ -203,7 +250,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
     <script>
         // --- CONFIG & GLOBAL VARIABLES ---
-        const firebaseConfig = { apiKey: "GANTI_DENGAN_API_KEY_ANDA", authDomain: "mayfa-fa284.firebaseapp.com", databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" };
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCWl2CJqIr-u8lSHu8s4tgZ25UQIK2ivt0", 
+            authDomain: "mayfa-fa284.firebaseapp.com", 
+            databaseURL: "https://mayfa-fa284-default-rtdb.asia-southeast1.firebasedatabase.app" 
+        };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         let pageData = {};
@@ -223,9 +274,9 @@
               togglePassword = document.getElementById("togglePassword"), 
               passwordInput = document.getElementById("password"),
               musicToggleBtn = document.getElementById('musicToggleBtn'),
-              themeToggleBtn = document.getElementById('themeToggleBtn'); // <-- ELEMEN BARU
+              themeToggleBtn = document.getElementById('themeToggleBtn');
         
-        // --- START: FUNGSI BARU UNTUK TEMA ---
+        // --- THEME & MUSIC FUNCTIONS ---
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -237,25 +288,42 @@
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         });
-        // --- END: FUNGSI BARU UNTUK TEMA ---
 
         function setBackgroundMusic(data) {
-            const musicPlayer = document.getElementById('background-music');
-            if (data && data.musicUrl) {
-                musicPlayer.src = data.musicUrl;
-            }
+            backgroundMusic.src = data?.musicUrl || 'mayfa.mp3';
+            console.log(`Memuat musik dari: ${backgroundMusic.src}`);
         }
 
         function setGiftIcon(data) {
             const giftImage = document.getElementById('giftBoxImage');
-            if (data && data.giftIconUrl) {
-                giftImage.src = data.giftIconUrl;
-            }
+            giftImage.src = data?.giftIconUrl || 'nir.gif';
         }
+
+        musicToggleBtn.addEventListener('click', () => { 
+            const icon = musicToggleBtn.querySelector('i'); 
+            if (backgroundMusic.paused) { 
+                backgroundMusic.play().catch(e => console.error("Gagal memutar musik:", e)); 
+                icon.classList.remove('fa-volume-off'); 
+                icon.classList.add('fa-volume-high'); 
+            } else { 
+                backgroundMusic.pause(); 
+                icon.classList.remove('fa-volume-high'); 
+                icon.classList.add('fa-volume-off'); 
+            } 
+        });
 
         // --- LOGIN & DATA FETCHING ---
         function getUrlParameter(name) { name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'); var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'); var results = regex.exec(location.search); return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' ')); }
-        function showErrorPage(title, message) { loginContainer.style.display = 'none'; birthdayPage.style.display = 'none'; gameContainer.style.display = 'none'; document.getElementById('errorTitle').textContent = title; document.getElementById('errorMessage').textContent = message; errorPage.style.display = 'block'; document.body.classList.remove("no-scroll"); }
+        function showErrorPage(title, message) { 
+            loginContainer.style.display = 'none'; 
+            birthdayPage.style.display = 'none'; 
+            gameContainer.style.display = 'none'; 
+            // Baris di bawah ini diperbarui untuk mencocokkan struktur HTML baru
+            document.getElementById('errorTitle').textContent = title; 
+            document.getElementById('errorMessage').textContent = message; 
+            errorPage.style.display = 'flex'; // Menggunakan 'flex' untuk centering
+            document.body.classList.remove("no-scroll"); 
+        }
         function showFeedback(state, title, message = '') { const modal = document.getElementById('feedbackModal'); document.getElementById('feedbackLoader').style.display = (state === 'loading' ? 'block' : 'none'); document.getElementById('feedbackTitle').textContent = title; document.getElementById('feedbackMessage').textContent = message; modal.style.display = 'flex'; }
         function hideFeedback() { document.getElementById('feedbackModal').style.display = 'none'; }
 
@@ -567,11 +635,10 @@
         }
         
         togglePassword.addEventListener("click", function() { const type = passwordInput.getAttribute("type") === "password" ? "text" : "password"; passwordInput.setAttribute("type", type); this.classList.toggle("fa-eye"); this.classList.toggle("fa-eye-slash"); });
-        musicToggleBtn.addEventListener('click', () => { const icon = musicToggleBtn.querySelector('i'); if (backgroundMusic.paused) { backgroundMusic.play().catch(e => console.error("Music play failed:", e)); icon.classList.remove('fa-volume-off'); icon.classList.add('fa-volume-high'); } else { backgroundMusic.pause(); icon.classList.remove('fa-volume-high'); icon.classList.add('fa-volume-off'); } });
         giftModal.addEventListener("click", e => { if (e.target === giftModal) closeGiftModal(); });
 
         document.addEventListener('DOMContentLoaded', async () => {
-            initTheme(); // <-- PANGGIL FUNGSI INISIASI TEMA
+            initTheme();
             document.body.classList.add("no-scroll");
             const urlParams = new URLSearchParams(window.location.search);
             const pageId = urlParams.get('id');
