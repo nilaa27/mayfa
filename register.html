@@ -90,45 +90,57 @@
     }
     #auth-container.loaded .auth-card { display: flex; }
 
-    /* Blok CSS untuk sidebar dengan gambar custom */
-    .auth-sidebar-custom {
+    /* PERUBAHAN: Mengembalikan CSS Sidebar Asli + Penambahan untuk Konfeti */
+    .auth-sidebar {
         flex: 0 0 45%;
-        position: relative;
+        padding: 40px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 40px;
-        color: #ffffff;
-        background-image: url('/blir.gif');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-
-    /*
-    PERUBAHAN: BLOK .auth-sidebar-custom::before DIHAPUS DARI SINI
-    */
-
-    .sidebar-content {
-        position: relative;
-        z-index: 1;
         text-align: center;
+        background: linear-gradient(135deg, rgba(238, 221, 255, 0.1), rgba(213, 229, 255, 0.1));
+        color: var(--text-color);
+        border-right: 1px solid var(--shadow-dark);
+        position: relative; /* Diperlukan untuk canvas */
+        overflow: hidden;   /* Mencegah konfeti keluar */
     }
     
-    .sidebar-content h2 {
-        font-size: 2.2rem;
+    #bubble-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .auth-sidebar > * {
+        position: relative;
+        z-index: 1;
+    }
+    
+    [data-theme="light"] .auth-sidebar {
+        background: linear-gradient(135deg, #f8f0ff, #e6f0ff);
+    }
+    .auth-sidebar img {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 25px;
+        animation: float 4s ease-in-out infinite;
+    }
+    .auth-sidebar h2 {
+        font-size: 1.6rem;
         font-weight: 700;
         margin-bottom: 15px;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
     }
-    .sidebar-content p {
-        font-size: 1.1rem;
-        max-width: 320px;
-        text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
-        opacity: 0.9;
+    .auth-sidebar p {
+        font-size: 1rem;
+        color: var(--text-muted);
+        max-width: 300px;
     }
-    /* Akhir blok CSS perubahan */
+    /* Akhir Blok Perubahan */
 
     #auth-box {
         flex: 1;
@@ -187,7 +199,7 @@
     @media (max-width: 991px) {
         #auth-container { max-width: 450px; padding: 10px; }
         .auth-card { flex-direction: column; }
-        .auth-sidebar-custom { display: none; } /* Menyembunyikan sidebar custom di mobile */
+        .auth-sidebar { display: none; }
         #auth-box { padding: 40px 30px; }
         .brand-header { text-align: center; }
         .brand-header img {
@@ -334,11 +346,11 @@
 
     <div id="auth-container">
         <div class="auth-card">
-            <div class="auth-sidebar-custom">
-                <div class="sidebar-content">
-                    <h2>Let's get the party started!</h2>
-                    <p>Create beautiful digital wishes and share them with your loved ones.</p>
-                </div>
+            <div class="auth-sidebar">
+                <canvas id="bubble-canvas"></canvas>
+                <img src="/IMG_1551.png" alt="Logo">
+                <h2>Let's get the party started!</h2>
+                <p>Create beautiful digital wishes and share them with your loved ones.</p>
             </div>
             
             <div id="auth-box">
@@ -918,6 +930,32 @@
             const uploadTask = storage.ref(filePath).put(file);
             uploadTask.on('state_changed', null, (error) => { Swal.fire('Upload Gagal', 'Terjadi kesalahan.', 'error'); }, () => { uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => { newQrImageUrl = downloadURL; document.getElementById('uploadBoxText').innerHTML = `<i class="fas fa-check-circle"></i> Berhasil diunggah!`; }); });
         });
+        
+        // PERUBAHAN: Menambahkan kembali script Konfeti Gelembung
+        const bubbleCanvas = document.getElementById('bubble-canvas');
+        if (bubbleCanvas) {
+            const bubbleConfetti = confetti.create(bubbleCanvas, {
+                resize: true,
+                useWorker: true
+            });
+
+            const bubbleInterval = setInterval(() => {
+                const sidebar = document.querySelector('.auth-sidebar');
+                if (sidebar && getComputedStyle(sidebar).display !== 'none') {
+                    bubbleConfetti({
+                        particleCount: 3,
+                        angle: 270,
+                        spread: 100,
+                        startVelocity: 10,
+                        gravity: -0.05,
+                        drift: 0.3,
+                        scalar: 0.8,
+                        shapes: ['circle'],
+                        colors: ['rgba(238, 221, 255, 0.6)', 'rgba(213, 229, 255, 0.6)', 'rgba(255, 255, 255, 0.7)']
+                    });
+                }
+            }, 800);
+        }
     });
     </script>
 </body>
