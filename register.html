@@ -58,7 +58,7 @@
         transition: var(--transition);
     }
     
-    .theme-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--bg-color); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; transition: var(--transition); }
+    .theme-toggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: var(--bg-color); box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: var(--transition); }
     .theme-toggle:hover { transform: scale(1.1); }
     .theme-toggle:active { box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light); }
     .theme-toggle i { font-size: 1.2rem; color: var(--text-color); transition: var(--transition); }
@@ -81,16 +81,33 @@
     .auth-card {
         display: flex;
         width: 100%;
-        background: var(--bg-color);
+        background-color: var(--bg-color); /* Fallback color */
         border-radius: var(--radius-main);
         box-shadow: 15px 15px 30px var(--shadow-dark), -15px -15px 30px var(--shadow-light);
         overflow: hidden;
         animation: slideIn 0.6s ease-out;
         display: none;
+        position: relative; /* PERUBAHAN: Penting untuk canvas */
+
+        /* PERUBAHAN: Atur GIF Latar Belakang di sini */
+        background-size: cover;
+        background-position: center;
+        /* GANTI DENGAN URL GIF LATAR BELAKANG ANDA */
+        background-image: url('URL_GIF_LATAR_BELAKANG_ANDA.gif');
     }
     #auth-container.loaded .auth-card { display: flex; }
+    
+    /* PERUBAHAN: Canvas untuk konfeti menutupi seluruh kartu */
+    #bubble-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1; /* Di atas GIF background, di bawah konten */
+        pointer-events: none;
+    }
 
-    /* PERUBAHAN: Mengembalikan CSS Sidebar Asli + Penambahan untuk Konfeti */
     .auth-sidebar {
         flex: 0 0 45%;
         padding: 40px;
@@ -99,31 +116,13 @@
         justify-content: center;
         align-items: center;
         text-align: center;
-        background: linear-gradient(135deg, rgba(238, 221, 255, 0.1), rgba(213, 229, 255, 0.1));
-        color: var(--text-color);
-        border-right: 1px solid var(--shadow-dark);
-        position: relative; /* Diperlukan untuk canvas */
-        overflow: hidden;   /* Mencegah konfeti keluar */
-    }
-    
-    #bubble-canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    .auth-sidebar > * {
+        background: transparent; /* PERUBAHAN: Sidebar dibuat transparan */
+        color: #ffffff; /* PERUBAHAN: Warna teks putih agar kontras */
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.5); /* Bayangan agar mudah dibaca */
         position: relative;
-        z-index: 1;
+        z-index: 2; /* Di atas canvas konfeti */
     }
     
-    [data-theme="light"] .auth-sidebar {
-        background: linear-gradient(135deg, #f8f0ff, #e6f0ff);
-    }
     .auth-sidebar img {
         width: 90px;
         height: 90px;
@@ -137,17 +136,18 @@
     }
     .auth-sidebar p {
         font-size: 1rem;
-        color: var(--text-muted);
         max-width: 300px;
     }
-    /* Akhir Blok Perubahan */
-
+    
     #auth-box {
         flex: 1;
         padding: 40px;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        background-color: var(--bg-color); /* PERUBAHAN: Area form diberi background solid */
+        position: relative;
+        z-index: 2; /* Di atas canvas konfeti */
     }
 
     .brand-header { text-align: left; margin-bottom: 30px; }
@@ -199,7 +199,7 @@
     @media (max-width: 991px) {
         #auth-container { max-width: 450px; padding: 10px; }
         .auth-card { flex-direction: column; }
-        .auth-sidebar { display: none; }
+        .auth-sidebar { display: none; } 
         #auth-box { padding: 40px 30px; }
         .brand-header { text-align: center; }
         .brand-header img {
@@ -346,8 +346,9 @@
 
     <div id="auth-container">
         <div class="auth-card">
+            <canvas id="bubble-canvas"></canvas>
+
             <div class="auth-sidebar">
-                <canvas id="bubble-canvas"></canvas>
                 <img src="/IMG_1551.png" alt="Logo">
                 <h2>Let's get the party started!</h2>
                 <p>Create beautiful digital wishes and share them with your loved ones.</p>
@@ -823,7 +824,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     if (settings.targetWhatsappNumber) {
-                        window.open(`https://wa.me/${settings.targetWhatsappNumber}?text=${encodeURIComponent(messageText)}`, '_blank');
+                        window.open(`https.wa.me/${settings.targetWhatsappNumber}?text=${encodeURIComponent(messageText)}`, '_blank');
                     } else {
                         Swal.fire({ icon: 'info', title: 'Nomor WhatsApp Kosong', text: 'Nomor WhatsApp target belum diisi.' });
                     }
@@ -931,30 +932,43 @@
             uploadTask.on('state_changed', null, (error) => { Swal.fire('Upload Gagal', 'Terjadi kesalahan.', 'error'); }, () => { uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => { newQrImageUrl = downloadURL; document.getElementById('uploadBoxText').innerHTML = `<i class="fas fa-check-circle"></i> Berhasil diunggah!`; }); });
         });
         
-        // PERUBAHAN: Menambahkan kembali script Konfeti Gelembung
+        // --- Efek Konfeti dengan Gambar/GIF Kustom ---
         const bubbleCanvas = document.getElementById('bubble-canvas');
         if (bubbleCanvas) {
-            const bubbleConfetti = confetti.create(bubbleCanvas, {
+            const customConfetti = confetti.create(bubbleCanvas, {
                 resize: true,
                 useWorker: true
             });
 
-            const bubbleInterval = setInterval(() => {
-                const sidebar = document.querySelector('.auth-sidebar');
-                if (sidebar && getComputedStyle(sidebar).display !== 'none') {
-                    bubbleConfetti({
-                        particleCount: 3,
-                        angle: 270,
-                        spread: 100,
-                        startVelocity: 10,
-                        gravity: -0.05,
-                        drift: 0.3,
-                        scalar: 0.8,
-                        shapes: ['circle'],
-                        colors: ['rgba(238, 221, 255, 0.6)', 'rgba(213, 229, 255, 0.6)', 'rgba(255, 255, 255, 0.7)']
-                    });
-                }
-            }, 800);
+            const myCustomShape = new Image();
+            // GANTI DENGAN URL GIF PARTIKEL KONFETI ANDA (harus transparan dan kecil)
+            myCustomShape.src = 'URL_GIF_PARTIKEL_KONFETI_ANDA.gif'; 
+
+            myCustomShape.onload = () => {
+                const customParticle = {
+                    type: 'image',
+                    element: myCustomShape,
+                };
+                
+                const customInterval = setInterval(() => {
+                    const card = document.querySelector('.auth-card');
+                    if (card && getComputedStyle(card).display !== 'none') {
+                        customConfetti({
+                            shapes: [customParticle],
+                            particleCount: 5, // Jumlah partikel bisa disesuaikan
+                            spread: 120, // Sebaran partikel lebih luas
+                            startVelocity: 15,
+                            gravity: 0.2, // Jatuh ke bawah perlahan
+                            drift: 0.1,
+                            scalar: 1.2 // Ukuran partikel
+                        });
+                    }
+                }, 1000); // Interval bisa disesuaikan
+            };
+
+            myCustomShape.onerror = () => {
+                console.error("Gagal memuat GIF kustom untuk konfeti. Pastikan URL benar.");
+            };
         }
     });
     </script>
