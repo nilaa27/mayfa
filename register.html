@@ -100,23 +100,15 @@
         align-items: center;
         padding: 40px;
         color: #ffffff;
-        /* PERUBAHAN: URL gambar baru sudah dimasukkan */
         background-image: url('/blir.gif');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
     }
 
-    .auth-sidebar-custom::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Overlay gelap untuk keterbacaan teks */
-        z-index: 0;
-    }
+    /*
+    PERUBAHAN: BLOK .auth-sidebar-custom::before DIHAPUS DARI SINI
+    */
 
     .sidebar-content {
         position: relative;
